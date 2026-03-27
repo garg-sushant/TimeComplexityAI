@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;0,800;1,800&family=Be+Vietnam+Pro:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-headline: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Be Vietnam Pro", sans-serif;
+  --font-label: "Space Grotesk", sans-serif;
+
+  /* Premium Emerald Neobrutalist Theme - Light, Bold, High-Contrast */
+  --color-background: #ffffff; /* White */
+  --color-on-background: #0f172a; /* Slate 900 (Deep Slate) */
+  
+  --color-surface: #ffffff;
+  --color-surface-dim: #f8fafc;
+  --color-surface-bright: #ffffff; 
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f8fafc;
+  --color-surface-container: #f1f5f9; 
+  --color-surface-container-high: #e2e8f0; 
+  --color-surface-container-highest: #cbd5e1; 
+  --color-on-surface: #0f172a; 
+  --color-on-surface-variant: #475569; 
+  --color-inverse-surface: #0f172a; 
+  --color-inverse-on-surface: #ffffff;
+
+  --color-primary: #059669; /* Emerald 600 */
+  --color-on-primary: #ffffff;
+  --color-primary-container: #d1fae5; 
+  --color-on-primary-container: #064e3b; 
+  --color-primary-fixed: #10b981; 
+  --color-on-primary-fixed: #ffffff;
+
+  --color-secondary: #0284c7; /* Sky 600 */
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #e0f2fe; 
+  --on-secondary-container: #0c4a6e; 
+
+  --color-tertiary: #7c3aed; /* Violet 600 */
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #ede9fe; 
+  --on-tertiary-container: #4c1d95; 
+
+  --color-error: #dc2626; /* Red 600 */
+  --color-on-error: #ffffff;
+  --color-error-container: #fee2e2; 
+  --on-error-container: #7f1d1d; 
+
+  --color-outline: #cbd5e1; 
+  --color-outline-variant: #e2e8f0; 
+}
+
+/* Global selection color */
+::selection {
+  background-color: #059669; /* primary emerald */
+  color: #ffffff;
+}
+
+/* Custom selection for dark code editor */
+.bg-\[\#1d1f21\] ::selection {
+  background-color: #10b981; /* primary emerald fixed dim */
+  color: #ffffff;
+}
+
+@layer utilities {
+  .graph-paper {
+    background-color: #ffffff;
+    background-size: 40px 40px;
+    background-image: 
+      linear-gradient(to right, #f1f5f9 1px, transparent 1px),
+      linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
+  }
+  .speech-bubble {
+    position: relative;
+    background: #ffffff;
+    border: 4px solid #0f172a;
+  }
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    top: -16px;
+    left: 40px;
+    border-width: 0 12px 16px 12px;
+    border-style: solid;
+    border-color: transparent transparent #0f172a transparent;
+  }
+  .sticker-shadow {
+    box-shadow: 8px 8px 0px 0px #0f172a;
+  }
+  .asymmetric-tilt-left { transform: rotate(-1.5deg); }
+  .asymmetric-tilt-right { transform: rotate(1.5deg); }
+}

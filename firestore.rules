@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+    function validStringLength(field, minLen, maxLen) {
+      return request.resource.data[field] is string &&
+        request.resource.data[field].size() >= minLen &&
+        request.resource.data[field].size() <= maxLen;
+    }
+    function isValidEmail(email) {
+      return email is string &&
+        email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidUser() {
+      return hasOnlyAllowedFields(['displayName', 'email', 'photoURL', 'createdAt']) &&
+             hasRequiredFields(['email', 'createdAt']) &&
+             isValidEmail(request.resource.data.email) &&
+             request.resource.data.createdAt is timestamp &&
+             (!('displayName' in request.resource.data) || validStringLength('displayName', 1, 100)) &&
+             (!('photoURL' in request.resource.data) || validStringLength('photoURL', 1, 500));
+    }
+
+    function isValidAnalysis() {
+      return hasOnlyAllowedFields(['code', 'complexity', 'complexityClass', 'spaceComplexity', 'explanationPoints', 'createdAt']) &&
+             hasRequiredFields(['code', 'complexity', 'complexityClass', 'spaceComplexity', 'explanationPoints', 'createdAt']) &&
+             validStringLength('code', 1, 50000) &&
+             validStringLength('complexity', 1, 100) &&
+             validStringLength('complexityClass', 1, 50) &&
+             validStringLength('spaceComplexity', 1, 100) &&
+             request.resource.data.explanationPoints is list &&
+             request.resource.data.explanationPoints.size() > 0 &&
+             request.resource.data.createdAt is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser();
+      allow update: if isOwner(userId) && isValidUser() && areImmutableFieldsUnchanged(['createdAt', 'email']);
+      allow delete: if false;
+
+      match /analyses/{analysisId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidAnalysis();
+        allow update: if isOwner(userId) && isValidAnalysis() && areImmutableFieldsUnchanged(['createdAt']);
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}
