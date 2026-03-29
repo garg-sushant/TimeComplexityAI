@@ -195,7 +195,11 @@ export default function InsideMath() {
                         <div className="xl:w-1/2 space-y-4">
                           <div className="bg-[#1d1f21] p-4 rounded-lg overflow-x-auto border-2 border-outline">
                             <pre className="text-sm font-mono text-white m-0">
-                              <code dangerouslySetInnerHTML={{ __html: Prism.highlight(step.codeSnippet, Prism.languages.python, 'python') }} />
+                              <code dangerouslySetInnerHTML={{ 
+                                __html: isServer 
+                                  ? step.codeSnippet 
+                                  : Prism.highlight(step.codeSnippet, Prism.languages.python, 'python') 
+                              }} />
                             </pre>
                           </div>
                         </div>

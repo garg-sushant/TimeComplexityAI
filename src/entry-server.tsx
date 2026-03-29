@@ -4,10 +4,10 @@ import { MemoryRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import type { HelmetServerState } from 'react-helmet-async';
 import { PassThrough } from 'stream';
-import { LoadingFallback } from './AppRoutes';
-import { AppRoutesServer } from './AppRoutesServer';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { AuthContext } from './contexts/AuthContext';
+import { LoadingFallback } from './AppRoutes.tsx';
+import { AppRoutesServer } from './AppRoutesServer.tsx';
+import { ErrorBoundary } from './components/ErrorBoundary.tsx';
+import { AuthContext } from './contexts/AuthContext.tsx';
 
 interface HelmetContextValue {
   helmet?: HelmetServerState | null;
