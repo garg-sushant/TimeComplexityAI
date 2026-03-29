@@ -101,7 +101,9 @@ This project is optimized for deployment on **Vercel**.
 - GitHub: [@garg-sushant](https://github.com/garg-sushant)
 - LinkedIn: [Sushant Garg](https://www.linkedin.com/in/sushant-garg-4b0a37284/)
 - Discord: `sushantgarg.`
-
+**Akshat Aggarwal**
+- GitHub: akshat-chd
+- LinkedIn: [Akshat Aggarwal](https://www.linkedin.com/in/akshat-aggarwal-10bbba301/)
 ---
 
 ## 📄 License
