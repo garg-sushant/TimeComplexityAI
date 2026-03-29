@@ -1,15 +1,16 @@
-import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Ghost, ArrowRight } from 'lucide-react';
+import Seo from '../components/Seo';
 
 export default function NotFound() {
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
-      <Helmet>
-        <title>404 - Page Not Found | AlgoStory</title>
-        <meta name="description" content="The page you are looking for has been moved or doesn't exist." />
-        <meta name="robots" content="noindex, follow" />
-      </Helmet>
+      <Seo
+        title="404 - Page Not Found | AlgoStory"
+        description="The page you are looking for has been moved or doesn't exist."
+        path="/404"
+        robots="noindex, follow"
+      />
       
       <div className="w-32 h-32 bg-error-container rounded-full flex items-center justify-center mb-8 shadow-[8px_8px_0_#2d2f31] border-4 border-on-background">
         <Ghost className="w-16 h-16 text-error animate-bounce" />

@@ -1,10 +1,19 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { signInWithGoogle, logOut } from '../lib/firebase';
 import { LogIn, LogOut, User, Github, Twitter, Linkedin, Mail, ArrowRight } from 'lucide-react';
 
 export default function Layout() {
   const { user } = useAuth();
+
+  const handleSignIn = async () => {
+    const { signInWithGoogle } = await import('../lib/firebase');
+    await signInWithGoogle();
+  };
+
+  const handleSignOut = async () => {
+    const { logOut } = await import('../lib/firebase');
+    await logOut();
+  };
 
   return (
     <div className="min-h-screen bg-background font-body text-on-background selection:bg-primary selection:text-white flex flex-col">
@@ -53,6 +62,18 @@ export default function Layout() {
               >
                 Inside the Math
               </NavLink>
+              <NavLink 
+                to="/blog" 
+                className={({ isActive }) => 
+                  `font-headline font-bold text-sm tracking-tight hover:scale-105 transition-all duration-200 active:scale-95 pb-1 ${
+                    isActive 
+                      ? 'text-primary border-b-4 border-primary' 
+                      : 'text-on-surface-variant hover:text-primary border-b-4 border-transparent'
+                  }`
+                }
+              >
+                Blog
+              </NavLink>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -66,12 +87,12 @@ export default function Layout() {
                   )}
                   <span className="hidden lg:inline">{user.displayName}</span>
                 </div>
-                <button onClick={logOut} className="bg-surface-container-high text-on-surface px-4 py-2 rounded-full font-headline font-bold text-sm hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2">
+                <button onClick={handleSignOut} className="bg-surface-container-high text-on-surface px-4 py-2 rounded-full font-headline font-bold text-sm hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2">
                   <LogOut className="w-4 h-4" /> Sign Out
                 </button>
               </>
             ) : (
-              <button onClick={signInWithGoogle} className="bg-primary text-on-primary px-4 sm:px-8 py-2 sm:py-3 rounded-full font-headline font-bold text-[10px] sm:text-sm hover:scale-105 active:scale-95 transition-all duration-200 border-2 sm:border-4 border-on-primary-container shadow-[3px_3px_0_#064e3b] sm:shadow-[6px_6px_0_#064e3b] flex items-center gap-1 sm:gap-2">
+              <button onClick={handleSignIn} className="bg-primary text-on-primary px-4 sm:px-8 py-2 sm:py-3 rounded-full font-headline font-bold text-[10px] sm:text-sm hover:scale-105 active:scale-95 transition-all duration-200 border-2 sm:border-4 border-on-primary-container shadow-[3px_3px_0_#064e3b] sm:shadow-[6px_6px_0_#064e3b] flex items-center gap-1 sm:gap-2">
                 <LogIn className="w-3 h-3 sm:w-4 sm:h-4" /> <span>Get Started</span>
               </button>
             )}
@@ -119,6 +140,7 @@ export default function Layout() {
                 <li><Link to="/" className="font-body font-bold text-on-surface-variant hover:text-primary flex items-center gap-2 group"><ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" /> AI Analyzer</Link></li>
                 <li><Link to="/tutorials" className="font-body font-bold text-on-surface-variant hover:text-primary flex items-center gap-2 group"><ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" /> Knowledge Base</Link></li>
                 <li><Link to="/inside-math" className="font-body font-bold text-on-surface-variant hover:text-primary flex items-center gap-2 group"><ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" /> Complexity Lab</Link></li>
+                <li><Link to="/blog" className="font-body font-bold text-on-surface-variant hover:text-primary flex items-center gap-2 group"><ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" /> Blog Articles</Link></li>
               </ul>
             </div>
 
@@ -126,8 +148,8 @@ export default function Layout() {
             <div className="space-y-6">
               <h4 className="font-headline font-black text-xl uppercase tracking-tighter text-on-background italic underline decoration-secondary decoration-4 underline-offset-4">Community</h4>
               <ul className="space-y-4">
-                <li><a href="#" className="font-body font-bold text-on-surface-variant hover:text-secondary flex items-center gap-2 group"><ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" /> Docs</a></li>
-                <li><a href="#" className="font-body font-bold text-on-surface-variant hover:text-secondary flex items-center gap-2 group"><ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" /> Open Source</a></li>
+                <li><Link to="/tutorials" className="font-body font-bold text-on-surface-variant hover:text-secondary flex items-center gap-2 group"><ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" /> Docs</Link></li>
+                <li><Link to="/blog" className="font-body font-bold text-on-surface-variant hover:text-secondary flex items-center gap-2 group"><ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" /> Blog</Link></li>
                 <li><a href="https://discordapp.com/users/1181611562277011611" target="_blank" rel="noopener noreferrer" className="font-body font-bold text-on-surface-variant hover:text-secondary flex items-center gap-2 group"><ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" /> Discord (sushantgarg.)</a></li>
               </ul>
             </div>
@@ -154,9 +176,9 @@ export default function Layout() {
           <div className="mt-20 pt-8 border-t-4 border-on-background/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-bold text-on-surface-variant">
             <p>© 2026 AlgoStory. Every line of code tells a story. 📖</p>
             <div className="flex gap-8">
-              <a href="#" className="hover:text-primary transition-colors">Privacy</a>
-              <a href="#" className="hover:text-primary transition-colors">Terms</a>
-              <a href="#" className="hover:text-primary transition-colors">Cookies</a>
+              <Link to="/blog" className="hover:text-primary transition-colors">Blog</Link>
+              <Link to="/tutorials" className="hover:text-primary transition-colors">Tutorials</Link>
+              <Link to="/time-complexity-calculator" className="hover:text-primary transition-colors">Time Calculator</Link>
             </div>
           </div>
         </div>

@@ -1,49 +1,66 @@
-import React, { useState, useMemo } from 'react';
-import { BlockMath, InlineMath } from 'react-katex';
-import 'katex/dist/katex.min.css';
-import { Gauge, Repeat, Network, Brain, Search, Layers, ListOrdered, ArrowRightLeft, Maximize } from 'lucide-react';
+import React from 'react';
+import * as ReactKatex from 'react-katex';
+import { Gauge, Repeat, Network, Brain, Search, Layers, ListOrdered, ArrowRightLeft, Maximize, Zap, Hash, Link2, Box, Trees, BarChart3 } from 'lucide-react';
 import Editor from 'react-simple-code-editor';
 import Prism from 'prismjs';
-import { ComplexityCalculator } from '../components/ComplexityCalculator';
+import { LazyComplexityCalculator } from '../components/LazyComplexityCalculator';
 import { Tutorial } from '../types';
+import { tutorialMetadataById } from './contentMetadata';
 
 // Reusable Code Block Component
-export const CodeBlock = ({ code, language = 'python' }: { code: string, language?: string }) => (
-  <div className="bg-[#1d1f21] rounded-xl overflow-hidden my-6 border-2 border-on-background/20 shadow-lg">
-    <div className="flex items-center px-4 py-2 bg-on-background/50 border-b border-on-background/30">
-      <div className="flex gap-2">
-        <div className="w-3 h-3 rounded-full bg-error"></div>
-        <div className="w-3 h-3 rounded-full bg-tertiary"></div>
-        <div className="w-3 h-3 rounded-full bg-primary-fixed-dim"></div>
+export const CodeBlock = ({ code, language = 'python' }: { code: string, language?: string }) => {
+  if (typeof window === 'undefined') {
+    return (
+      <div className="bg-[#1d1f21] rounded-xl overflow-hidden my-6 border-2 border-on-background/20 shadow-lg">
+        <div className="flex items-center px-4 py-2 bg-on-background/50 border-b border-on-background/30">
+          <div className="flex gap-2">
+            <div className="w-3 h-3 rounded-full bg-error"></div>
+            <div className="w-3 h-3 rounded-full bg-tertiary"></div>
+            <div className="w-3 h-3 rounded-full bg-primary-fixed-dim"></div>
+          </div>
+          <span className="ml-4 text-inverse-on-surface font-label text-xs uppercase tracking-widest font-bold">Example Code</span>
+        </div>
+        <pre className="overflow-auto p-4 text-sm text-white">
+          <code>{code}</code>
+        </pre>
       </div>
-      <span className="ml-4 text-inverse-on-surface font-label text-xs uppercase tracking-widest font-bold">Example Code</span>
+    );
+  }
+
+  return (
+    <div className="bg-[#1d1f21] rounded-xl overflow-hidden my-6 border-2 border-on-background/20 shadow-lg">
+      <div className="flex items-center px-4 py-2 bg-on-background/50 border-b border-on-background/30">
+        <div className="flex gap-2">
+          <div className="w-3 h-3 rounded-full bg-error"></div>
+          <div className="w-3 h-3 rounded-full bg-tertiary"></div>
+          <div className="w-3 h-3 rounded-full bg-primary-fixed-dim"></div>
+        </div>
+        <span className="ml-4 text-inverse-on-surface font-label text-xs uppercase tracking-widest font-bold">Example Code</span>
+      </div>
+      <div className="p-4 overflow-auto text-sm font-mono text-white">
+        <Editor
+          value={code}
+          onValueChange={() => {}}
+          highlight={(value) => Prism.highlight(value, Prism.languages[language] || Prism.languages.javascript, language)}
+          padding={10}
+          style={{
+            fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+            fontSize: 14,
+            backgroundColor: 'transparent',
+          }}
+          disabled
+        />
+      </div>
     </div>
-    <div className="p-4 overflow-auto text-sm font-mono text-white">
-      <Editor
-        value={code}
-        onValueChange={() => {}}
-        highlight={code => Prism.highlight(code, Prism.languages[language] || Prism.languages.javascript, language)}
-        padding={10}
-        style={{
-          fontFamily: '"JetBrains Mono", "Fira Code", monospace',
-          fontSize: 14,
-          backgroundColor: 'transparent',
-        }}
-        disabled
-      />
-    </div>
-  </div>
-);
+  );
+};
 
 
 
 export const tutorialsData: Tutorial[] = [
   {
     id: 'binary-search',
-    title: 'Binary Search: The Art of Halving',
-    category: 'Searching',
-    readTime: '8 min read',
-    description: 'Learn how to find an element in a sorted array in O(log N) time by repeatedly dividing the search interval in half.',
+    ...tutorialMetadataById['binary-search'],
     icon: Search,
     colorClass: 'text-primary',
     bgClass: 'bg-primary-container',
@@ -57,14 +74,14 @@ export const tutorialsData: Tutorial[] = [
           Imagine looking for a word in a dictionary. You don't read page by page. You open it to the middle, check if your word comes before or after, and then repeat the process on the remaining half. That's Binary Search.
         </p>
         <div className="my-6">
-          <BlockMath math="\text{Time Complexity: } \mathcal{O}(\log_2 N)" />
-          <BlockMath math="\text{Space Complexity: } \mathcal{O}(1) \text{ (Iterative)}" />
+          <ReactKatex.BlockMath math="\text{Time Complexity: } \mathcal{O}(\log_2 N)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(1) \text{ (Iterative)}" />
         </div>
         <p className="mb-4">
-          Because the search space is halved with each step, the maximum number of steps required is the logarithm (base 2) of the array size <InlineMath math="N" />.
+          Because the search space is halved with each step, the maximum number of steps required is the logarithm (base 2) of the array size <ReactKatex.InlineMath math="N" />.
         </p>
 
-        <ComplexityCalculator complexityClass="O(log N)" />
+        <LazyComplexityCalculator complexityClass="O(log N)" />
 
         <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
         <CodeBlock code={`def binary_search(arr, target):
@@ -86,10 +103,7 @@ export const tutorialsData: Tutorial[] = [
   },
   {
     id: 'merge-sort',
-    title: 'Merge Sort: Divide and Conquer',
-    category: 'Sorting',
-    readTime: '12 min read',
-    description: 'A highly efficient, stable sorting algorithm that uses the divide and conquer paradigm to sort arrays in O(N log N) time.',
+    ...tutorialMetadataById['merge-sort'],
     icon: Layers,
     colorClass: 'text-secondary',
     bgClass: 'bg-secondary-container',
@@ -103,14 +117,14 @@ export const tutorialsData: Tutorial[] = [
           The algorithm continuously divides the array in half until it cannot be further divided (i.e., the array has only one element). Then, it repeatedly merges the sublists to produce new sorted sublists until there is only one sorted list remaining.
         </p>
         <div className="my-6">
-          <BlockMath math="\text{Time Complexity: } \mathcal{O}(N \log N)" />
-          <BlockMath math="\text{Space Complexity: } \mathcal{O}(N)" />
+          <ReactKatex.BlockMath math="\text{Time Complexity: } \mathcal{O}(N \log N)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(N)" />
         </div>
         <p className="mb-4">
-          The dividing step takes <InlineMath math="\mathcal{O}(\log N)" /> time, and the merging step takes <InlineMath math="\mathcal{O}(N)" /> time at each level of the recursion tree. Thus, the total time complexity is <InlineMath math="\mathcal{O}(N \log N)" />.
+          The dividing step takes <ReactKatex.InlineMath math="\mathcal{O}(\log N)" /> time, and the merging step takes <ReactKatex.InlineMath math="\mathcal{O}(N)" /> time at each level of the recursion tree. Thus, the total time complexity is <ReactKatex.InlineMath math="\mathcal{O}(N \log N)" />.
         </p>
 
-        <ComplexityCalculator complexityClass="O(N log N)" />
+        <LazyComplexityCalculator complexityClass="O(N log N)" />
 
         <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
         <CodeBlock code={`def merge_sort(arr):
@@ -149,10 +163,7 @@ export const tutorialsData: Tutorial[] = [
   },
   {
     id: 'dijkstra',
-    title: "Dijkstra's Shortest Path",
-    category: 'Graphs',
-    readTime: '15 min read',
-    description: 'Find the shortest paths between nodes in a graph. Essential for routing, navigation, and network analysis.',
+    ...tutorialMetadataById.dijkstra,
     icon: Network,
     colorClass: 'text-tertiary',
     bgClass: 'bg-tertiary-container',
@@ -166,11 +177,11 @@ export const tutorialsData: Tutorial[] = [
           The algorithm maintains a set of unvisited nodes and calculates a tentative distance from the source node to every other node. It greedily selects the unvisited node with the smallest tentative distance, visits it, and updates the distances of its neighbors.
         </p>
         <div className="my-6">
-          <BlockMath math="\text{Time Complexity: } \mathcal{O}((V + E) \log V)" />
-          <BlockMath math="\text{Space Complexity: } \mathcal{O}(V)" />
+          <ReactKatex.BlockMath math="\text{Time Complexity: } \mathcal{O}((V + E) \log V)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(V)" />
         </div>
         <p className="mb-4">
-          Where <InlineMath math="V" /> is the number of vertices and <InlineMath math="E" /> is the number of edges. The use of a Priority Queue (Min-Heap) allows us to efficiently extract the node with the minimum distance.
+          Where <ReactKatex.InlineMath math="V" /> is the number of vertices and <ReactKatex.InlineMath math="E" /> is the number of edges. The use of a Priority Queue (Min-Heap) allows us to efficiently extract the node with the minimum distance.
         </p>
 
         <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
@@ -200,10 +211,7 @@ def dijkstra(graph, start):
   },
   {
     id: 'dynamic-programming',
-    title: '0/1 Knapsack (Dynamic Programming)',
-    category: 'Advanced',
-    readTime: '20 min read',
-    description: 'Master Dynamic Programming by solving the classic 0/1 Knapsack problem. Learn to build the DP table.',
+    ...tutorialMetadataById['dynamic-programming'],
     icon: Brain,
     colorClass: 'text-error',
     bgClass: 'bg-error-container',
@@ -214,15 +222,15 @@ def dijkstra(graph, start):
         </p>
         <h3 className="text-xl font-bold mt-8 mb-4">The Theory</h3>
         <p className="mb-4">
-          A naive solution is to consider all subsets of items and calculate the total weight and value of all subsets. This takes <InlineMath math="\mathcal{O}(2^N)" /> time. Dynamic Programming solves this by breaking it down into overlapping subproblems and storing the results in a table.
+          A naive solution is to consider all subsets of items and calculate the total weight and value of all subsets. This takes <ReactKatex.InlineMath math="\mathcal{O}(2^N)" /> time. Dynamic Programming solves this by breaking it down into overlapping subproblems and storing the results in a table.
         </p>
         <div className="my-6">
-          <BlockMath math="DP[i][w] = \max(DP[i-1][w], DP[i-1][w-wt[i]] + val[i])" />
-          <BlockMath math="\text{Time Complexity: } \mathcal{O}(N \times W)" />
-          <BlockMath math="\text{Space Complexity: } \mathcal{O}(N \times W)" />
+          <ReactKatex.BlockMath math="DP[i][w] = \max(DP[i-1][w], DP[i-1][w-wt[i]] + val[i])" />
+          <ReactKatex.BlockMath math="\text{Time Complexity: } \mathcal{O}(N \times W)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(N \times W)" />
         </div>
         <p className="mb-4">
-          Where <InlineMath math="N" /> is the number of items and <InlineMath math="W" /> is the capacity of the knapsack.
+          Where <ReactKatex.InlineMath math="N" /> is the number of items and <ReactKatex.InlineMath math="W" /> is the capacity of the knapsack.
         </p>
 
         <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
@@ -245,10 +253,7 @@ def dijkstra(graph, start):
   },
   {
     id: 'quick-sort',
-    title: 'Quick Sort: The Pivot Master',
-    category: 'Sorting',
-    readTime: '10 min read',
-    description: 'An efficient, in-place sorting algorithm that partitions an array around a pivot element.',
+    ...tutorialMetadataById['quick-sort'],
     icon: ListOrdered,
     colorClass: 'text-primary',
     bgClass: 'bg-primary-container',
@@ -259,15 +264,15 @@ def dijkstra(graph, start):
         </p>
         <h3 className="text-xl font-bold mt-8 mb-4">The Theory</h3>
         <p className="mb-4">
-          Quicksort partitions an array and then calls itself recursively twice to sort the two resulting subarrays. This algorithm is quite efficient for large-sized data sets as its average and best-case complexity are <InlineMath math="\mathcal{O}(N \log N)" />.
+          Quicksort partitions an array and then calls itself recursively twice to sort the two resulting subarrays. This algorithm is quite efficient for large-sized data sets as its average and best-case complexity are <ReactKatex.InlineMath math="\mathcal{O}(N \log N)" />.
         </p>
         <div className="my-6">
-          <BlockMath math="\text{Best/Average Time: } \mathcal{O}(N \log N)" />
-          <BlockMath math="\text{Worst Time: } \mathcal{O}(N^2)" />
-          <BlockMath math="\text{Space Complexity: } \mathcal{O}(\log N)" />
+          <ReactKatex.BlockMath math="\text{Best/Average Time: } \mathcal{O}(N \log N)" />
+          <ReactKatex.BlockMath math="\text{Worst Time: } \mathcal{O}(N^2)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(\log N)" />
         </div>
         
-        <ComplexityCalculator complexityClass="O(N log N)" />
+        <LazyComplexityCalculator complexityClass="O(N log N)" />
 
         <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
         <CodeBlock code={`def partition(arr, low, high):
@@ -295,10 +300,7 @@ def quick_sort(arr, low, high):
   },
   {
     id: 'bfs',
-    title: 'Breadth-First Search (BFS)',
-    category: 'Graphs',
-    readTime: '10 min read',
-    description: 'Explore a graph level by level. Perfect for finding the shortest path in unweighted graphs.',
+    ...tutorialMetadataById.bfs,
     icon: Network,
     colorClass: 'text-secondary',
     bgClass: 'bg-secondary-container',
@@ -312,11 +314,11 @@ def quick_sort(arr, low, high):
           BFS uses a <strong>Queue</strong> data structure to keep track of the nodes to visit next. It guarantees that the shortest path (in terms of number of edges) is found first in unweighted graphs.
         </p>
         <div className="my-6">
-          <BlockMath math="\text{Time Complexity: } \mathcal{O}(V + E)" />
-          <BlockMath math="\text{Space Complexity: } \mathcal{O}(V)" />
+          <ReactKatex.BlockMath math="\text{Time Complexity: } \mathcal{O}(V + E)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(V)" />
         </div>
         
-        <ComplexityCalculator complexityClass="O(N)" />
+        <LazyComplexityCalculator complexityClass="O(N)" />
 
         <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
         <CodeBlock code={`from collections import deque
@@ -339,10 +341,7 @@ def bfs(graph, start):
   },
   {
     id: 'dfs',
-    title: 'Depth-First Search (DFS)',
-    category: 'Graphs',
-    readTime: '10 min read',
-    description: 'Dive deep into a graph before backtracking. Useful for topological sorting and finding connected components.',
+    ...tutorialMetadataById.dfs,
     icon: Network,
     colorClass: 'text-tertiary',
     bgClass: 'bg-tertiary-container',
@@ -356,11 +355,11 @@ def bfs(graph, start):
           DFS uses a <strong>Stack</strong> (often implicitly via recursion) to remember where it should go back to when it reaches a dead end.
         </p>
         <div className="my-6">
-          <BlockMath math="\text{Time Complexity: } \mathcal{O}(V + E)" />
-          <BlockMath math="\text{Space Complexity: } \mathcal{O}(V)" />
+          <ReactKatex.BlockMath math="\text{Time Complexity: } \mathcal{O}(V + E)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(V)" />
         </div>
         
-        <ComplexityCalculator complexityClass="O(N)" />
+        <LazyComplexityCalculator complexityClass="O(N)" />
 
         <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
         <CodeBlock code={`def dfs(graph, start, visited=None):
@@ -380,10 +379,7 @@ def bfs(graph, start):
   },
   {
     id: 'two-pointers',
-    title: 'Two Pointers Technique',
-    category: 'Arrays',
-    readTime: '8 min read',
-    description: 'Optimize array and string problems by using two references to iterate from different ends or at different speeds.',
+    ...tutorialMetadataById['two-pointers'],
     icon: ArrowRightLeft,
     colorClass: 'text-primary',
     bgClass: 'bg-primary-container',
@@ -394,14 +390,14 @@ def bfs(graph, start):
         </p>
         <h3 className="text-xl font-bold mt-8 mb-4">The Theory</h3>
         <p className="mb-4">
-          This technique is particularly useful for problems involving sorted arrays (like finding pairs that sum to a target) or linked lists (like finding the middle or detecting cycles). It often reduces time complexity from <InlineMath math="\mathcal{O}(N^2)" /> to <InlineMath math="\mathcal{O}(N)" />.
+          This technique is particularly useful for problems involving sorted arrays (like finding pairs that sum to a target) or linked lists (like finding the middle or detecting cycles). It often reduces time complexity from <ReactKatex.InlineMath math="\mathcal{O}(N^2)" /> to <ReactKatex.InlineMath math="\mathcal{O}(N)" />.
         </p>
         <div className="my-6">
-          <BlockMath math="\text{Time Complexity: } \mathcal{O}(N)" />
-          <BlockMath math="\text{Space Complexity: } \mathcal{O}(1)" />
+          <ReactKatex.BlockMath math="\text{Time Complexity: } \mathcal{O}(N)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(1)" />
         </div>
         
-        <ComplexityCalculator complexityClass="O(N)" />
+        <LazyComplexityCalculator complexityClass="O(N)" />
 
         <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python - Two Sum Sorted)</h3>
         <CodeBlock code={`def two_sum_sorted(arr, target):
@@ -423,10 +419,7 @@ def bfs(graph, start):
   },
   {
     id: 'sliding-window',
-    title: 'Sliding Window',
-    category: 'Arrays',
-    readTime: '12 min read',
-    description: 'Efficiently solve problems involving contiguous subarrays or substrings by maintaining a "window" of elements.',
+    ...tutorialMetadataById['sliding-window'],
     icon: Maximize,
     colorClass: 'text-error',
     bgClass: 'bg-error-container',
@@ -440,11 +433,11 @@ def bfs(graph, start):
           Instead of recalculating the sum (or other property) of a subarray from scratch, you subtract the element leaving the window and add the element entering the window. This reduces nested loops to a single loop.
         </p>
         <div className="my-6">
-          <BlockMath math="\text{Time Complexity: } \mathcal{O}(N)" />
-          <BlockMath math="\text{Space Complexity: } \mathcal{O}(1)" />
+          <ReactKatex.BlockMath math="\text{Time Complexity: } \mathcal{O}(N)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(1)" />
         </div>
         
-        <ComplexityCalculator complexityClass="O(N)" />
+        <LazyComplexityCalculator complexityClass="O(N)" />
 
         <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python - Max Sum Subarray of Size K)</h3>
         <CodeBlock code={`def max_sum_subarray(arr, k):
@@ -460,5 +453,442 @@ def bfs(graph, start):
     return max_sum`} />
       </>
     )
+  },
+  {
+    id: 'bubble-sort',
+    ...tutorialMetadataById['bubble-sort'],
+    icon: Zap,
+    colorClass: 'text-error',
+    bgClass: 'bg-error-container',
+    content: (
+      <>
+        <p className="mb-4">
+          Bubble Sort is the simplest sorting algorithm. It repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order. The pass through the list is repeated until the list is sorted.
+        </p>
+        <h3 className="text-xl font-bold mt-8 mb-4">The Theory</h3>
+        <p className="mb-4">
+          The algorithm is named for the way smaller elements "bubble" to the top of the list. It's not efficient for large datasets but is great for learning and understanding sorting concepts.
+        </p>
+        <div className="my-6">
+          <ReactKatex.BlockMath math="\text{Best Time: } \mathcal{O}(N)" />
+          <ReactKatex.BlockMath math="\text{Average/Worst Time: } \mathcal{O}(N^2)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(1)" />
+        </div>
+        
+        <LazyComplexityCalculator complexityClass="O(N²)" />
+
+        <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
+        <CodeBlock code={`def bubble_sort(arr):
+    n = len(arr)
+    
+    # Traverse through all array elements
+    for i in range(n):
+        swapped = False
+        
+        # Last i elements are already in place
+        for j in range(0, n - i - 1):
+            
+            # Traverse the array from 0 to n-i-1
+            # Swap if the element found is greater
+            # than the next element
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+        
+        # If no swaps occurred, array is sorted
+        if not swapped:
+            break
+    
+    return arr`} />
+      </>
+    )
+  },
+  {
+    id: 'insertion-sort',
+    ...tutorialMetadataById['insertion-sort'],
+    icon: Repeat,
+    colorClass: 'text-primary',
+    bgClass: 'bg-primary-container',
+    content: (
+      <>
+        <p className="mb-4">
+          Insertion Sort builds the final sorted array one item at a time. It is much less efficient on large lists than more advanced algorithms such as quicksort, heapsort, or merge sort, but provides several advantages such as simplicity and online sorting.
+        </p>
+        <h3 className="text-xl font-bold mt-8 mb-4">The Theory</h3>
+        <p className="mb-4">
+          Imagine sorting playing cards in your hands. You start with an empty left hand and the cards in your right hand. Then you remove one card at a time from your right hand and insert it into the correct position in your left hand. To find the correct position for a card, you compare it with each of the cards already in your hand, from right to left, until you find the right place.
+        </p>
+        <div className="my-6">
+          <ReactKatex.BlockMath math="\text{Best Time: } \mathcal{O}(N)" />
+          <ReactKatex.BlockMath math="\text{Average/Worst Time: } \mathcal{O}(N^2)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(1)" />
+        </div>
+        
+        <LazyComplexityCalculator complexityClass="O(N²)" />
+
+        <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
+        <CodeBlock code={`def insertion_sort(arr):
+    # Traverse through 1 to len(arr)
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        
+        # Move elements of arr[0..i-1] that are
+        # greater than key to one position ahead
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        
+        # Insert the key at its correct position
+        arr[j + 1] = key
+    
+    return arr`} />
+      </>
+    )
+  },
+  {
+    id: 'linear-search',
+    ...tutorialMetadataById['linear-search'],
+    icon: Search,
+    colorClass: 'text-secondary',
+    bgClass: 'bg-secondary-container',
+    content: (
+      <>
+        <p className="mb-4">
+          Linear Search is the simplest search algorithm. It checks every element in the list sequentially until it finds the desired element or reaches the end of the list. Unlike binary search, it doesn't require the list to be sorted.
+        </p>
+        <h3 className="text-xl font-bold mt-8 mb-4">The Theory</h3>
+        <p className="mb-4">
+          Linear search is useful when working with unsorted data or small datasets. It's straightforward to implement but scales poorly as the dataset grows. Each comparison has an equal probability of being the right one, so the average case is <ReactKatex.InlineMath math="\mathcal{O}(N/2)" /> which simplifies to <ReactKatex.InlineMath math="\mathcal{O}(N)" />.
+        </p>
+        <div className="my-6">
+          <ReactKatex.BlockMath math="\text{Best Time: } \mathcal{O}(1)" />
+          <ReactKatex.BlockMath math="\text{Average Time: } \mathcal{O}(N)" />
+          <ReactKatex.BlockMath math="\text{Worst Time: } \mathcal{O}(N)" />
+        </div>
+        
+        <LazyComplexityCalculator complexityClass="O(N)" />
+
+        <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
+        <CodeBlock code={`def linear_search(arr, target):
+    """
+    Perform linear search on an unsorted array
+    Returns the index if found, -1 otherwise
+    """
+    for i in range(len(arr)):
+        if arr[i] == target:
+            return i
+    
+    return -1
+
+
+# Example usage
+arr = [3, 1, 4, 1, 5, 9, 2, 6]
+target = 5
+result = linear_search(arr, target)
+print(f"Element found at index: {result}")`} />
+      </>
+    )
+  },
+  {
+    id: 'hash-table',
+    ...tutorialMetadataById['hash-table'],
+    icon: Hash,
+    colorClass: 'text-tertiary',
+    bgClass: 'bg-tertiary-container',
+    content: (
+      <>
+        <p className="mb-4">
+          A Hash Table (also called Hash Map) is a data structure that implements an associative array—a structure that maps keys to values. It uses a hash function to compute an index (hash code) into an array of buckets or slots from which the desired value can be found.
+        </p>
+        <h3 className="text-xl font-bold mt-8 mb-4">The Theory</h3>
+        <p className="mb-4">
+          The ideal hash function distributes keys uniformly across the hash table. When two keys hash to the same index, a <strong>collision</strong> occurs. Common collision resolution techniques include chaining (using linked lists) and open addressing (finding another empty slot).
+        </p>
+        <div className="my-6">
+          <ReactKatex.BlockMath math="\text{Average Search: } \mathcal{O}(1)" />
+          <ReactKatex.BlockMath math="\text{Worst Search: } \mathcal{O}(N)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(N)" />
+        </div>
+        
+        <LazyComplexityCalculator complexityClass="O(1)" />
+
+        <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python - Dictionary/HashMap)</h3>
+        <CodeBlock code={`class HashTable:
+    def __init__(self, size=10):
+        self.size = size
+        self.table = [[] for _ in range(size)]
+    
+    def _hash(self, key):
+        return hash(key) % self.size
+    
+    def insert(self, key, value):
+        index = self._hash(key)
+        bucket = self.table[index]
+        
+        # Update if exists, else append
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                bucket[i] = (key, value)
+                return
+        
+        bucket.append((key, value))
+    
+    def get(self, key):
+        index = self._hash(key)
+        bucket = self.table[index]
+        
+        for k, v in bucket:
+            if k == key:
+                return v
+        
+        return None`} />
+      </>
+    )
+  },
+  {
+    id: 'linked-list',
+    ...tutorialMetadataById['linked-list'],
+    icon: Link2,
+    colorClass: 'text-error',
+    bgClass: 'bg-error-container',
+    content: (
+      <>
+        <p className="mb-4">
+          A Linked List is a linear data structure where elements (nodes) are stored in objects called nodes. Each node contains data and a reference (link) to the next node in the sequence. Unlike arrays, linked lists allow efficient insertion and deletion at any position.
+        </p>
+        <h3 className="text-xl font-bold mt-8 mb-4">The Theory</h3>
+        <p className="mb-4">
+          Singly linked lists have one pointer per node (to the next node), while doubly linked lists have two pointers (to next and previous). This dynamic memory allocation comes with the cost of extra memory for pointers and slower random access compared to arrays.
+        </p>
+        <div className="my-6">
+          <ReactKatex.BlockMath math="\text{Access: } \mathcal{O}(N)" />
+          <ReactKatex.BlockMath math="\text{Insertion/Deletion (if position known): } \mathcal{O}(1)" />
+          <ReactKatex.BlockMath math="\text{Search: } \mathcal{O}(N)" />
+        </div>
+        
+        <LazyComplexityCalculator complexityClass="O(N)" />
+
+        <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
+        <CodeBlock code={`class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+    
+    def insert_at_head(self, data):
+        new_node = Node(data)
+        new_node.next = self.head
+        self.head = new_node
+    
+    def insert_at_end(self, data):
+        new_node = Node(data)
+        
+        if not self.head:
+            self.head = new_node
+            return
+        
+        current = self.head
+        while current.next:
+            current = current.next
+        
+        current.next = new_node
+    
+    def delete(self, data):
+        if not self.head:
+            return
+        
+        if self.head.data == data:
+            self.head = self.head.next
+            return
+        
+        current = self.head
+        while current.next:
+            if current.next.data == data:
+                current.next = current.next.next
+                return
+            current = current.next`} />
+      </>
+    )
+  },
+  {
+    id: 'stack-queue',
+    ...tutorialMetadataById['stack-queue'],
+    icon: Box,
+    colorClass: 'text-primary',
+    bgClass: 'bg-primary-container',
+    content: (
+      <>
+        <p className="mb-4">
+          Stacks and Queues are fundamental abstract data types used in computer science. A Stack follows the Last-In-First-Out (LIFO) principle, while a Queue follows the First-In-First-Out (FIFO) principle. Both can be implemented using arrays or linked lists.
+        </p>
+        <h3 className="text-xl font-bold mt-8 mb-4">The Theory</h3>
+        <p className="mb-4">
+          <strong>Stack (LIFO):</strong> The most recently added element is removed first. Think of a stack of plates—you add and remove from the top. <br/>
+          <strong>Queue (FIFO):</strong> The first element added is the first one to be removed. Like a line at a grocery store.
+        </p>
+        <div className="my-6">
+          <ReactKatex.BlockMath math="\text{Stack/Queue Push/Pop: } \mathcal{O}(1)" />
+          <ReactKatex.BlockMath math="\text{Stack/Queue Peek: } \mathcal{O}(1)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(N)" />
+        </div>
+        
+        <LazyComplexityCalculator complexityClass="O(1)" />
+
+        <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
+        <CodeBlock code={`from collections import deque
+
+# Stack using list (LIFO)
+stack = []
+stack.append(1)    # Push
+stack.append(2)
+stack.append(3)
+print(stack.pop()) # Pop: returns 3
+
+# Queue using deque (FIFO)
+queue = deque()
+queue.append(1)      # Enqueue
+queue.append(2)
+queue.append(3)
+print(queue.popleft())  # Dequeue: returns 1
+
+# Alternative: Queue using list (slower)
+queue2 = []
+queue2.append(1)   # Append to end
+queue2.pop(0)      # Remove from front`} />
+      </>
+    )
+  },
+  {
+    id: 'tree-traversal',
+    ...tutorialMetadataById['tree-traversal'],
+    icon: Trees,
+    colorClass: 'text-secondary',
+    bgClass: 'bg-secondary-container',
+    content: (
+      <>
+        <p className="mb-4">
+          Tree Traversal is the process of visiting all the nodes in a tree data structure. There are three main depth-first traversal methods: Inorder, Preorder, and Postorder. Each visits nodes in a different sequence, useful for different applications.
+        </p>
+        <h3 className="text-xl font-bold mt-8 mb-4">The Theory</h3>
+        <p className="mb-4">
+          <strong>Inorder (Left-Root-Right):</strong> Produces sorted output for BSTs. <br/>
+          <strong>Preorder (Root-Left-Right):</strong> Useful for copying the tree. <br/>
+          <strong>Postorder (Left-Right-Root):</strong> Useful for deletion and evaluation of expressions.
+        </p>
+        <div className="my-6">
+          <ReactKatex.BlockMath math="\text{Time Complexity: } \mathcal{O}(N)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(H)" />
+        </div>
+        <p className="text-sm text-on-surface-variant mb-4">Where H is the height of the tree (O(N) worst case for skewed trees)</p>
+        
+        <LazyComplexityCalculator complexityClass="O(N)" />
+
+        <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
+        <CodeBlock code={`class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def inorder(root, result=[]):
+    """Left-Root-Right (produces sorted for BST)"""
+    if root:
+        inorder(root.left, result)
+        result.append(root.val)
+        inorder(root.right, result)
+    return result
+
+def preorder(root, result=[]):
+    """Root-Left-Right"""
+    if root:
+        result.append(root.val)
+        preorder(root.left, result)
+        preorder(root.right, result)
+    return result
+
+def postorder(root, result=[]):
+    """Left-Right-Root"""
+    if root:
+        postorder(root.left, result)
+        postorder(root.right, result)
+        result.append(root.val)
+    return result`} />
+      </>
+    )
+  },
+  {
+    id: 'binary-tree-search',
+    ...tutorialMetadataById['binary-tree-search'],
+    icon: BarChart3,
+    colorClass: 'text-error',
+    bgClass: 'bg-error-container',
+    content: (
+      <>
+        <p className="mb-4">
+          A Binary Search Tree (BST) is a binary tree data structure where each node has at most two children (left and right). The key property is that for each node, all values in its left subtree are smaller, and all values in its right subtree are larger.
+        </p>
+        <h3 className="text-xl font-bold mt-8 mb-4">The Theory</h3>
+        <p className="mb-4">
+          This ordering property allows for efficient searching, insertion, and deletion. In a balanced BST, operations run in <ReactKatex.InlineMath math="\mathcal{O}(\log N)" /> time. However, if the tree becomes skewed (like a linked list), performance degrades to <ReactKatex.InlineMath math="\mathcal{O}(N)" />.
+        </p>
+        <div className="my-6">
+          <ReactKatex.BlockMath math="\text{Balanced BST Search: } \mathcal{O}(\log N)" />
+          <ReactKatex.BlockMath math="\text{Unbalanced BST Search: } \mathcal{O}(N)" />
+          <ReactKatex.BlockMath math="\text{Space Complexity: } \mathcal{O}(H)" />
+        </div>
+        
+        <LazyComplexityCalculator complexityClass="O(log N)" />
+
+        <h3 className="text-xl font-bold mt-8 mb-4">The Code (Python)</h3>
+        <CodeBlock code={`class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+class BST:
+    def __init__(self):
+        self.root = None
+    
+    def search(self, val):
+        """Search for a value in the BST"""
+        current = self.root
+        while current:
+            if val == current.val:
+                return True
+            elif val < current.val:
+                current = current.left
+            else:
+                current = current.right
+        return False
+    
+    def insert(self, val):
+        """Insert a value into the BST"""
+        if not self.root:
+            self.root = TreeNode(val)
+        else:
+            self._insert_recursive(self.root, val)
+    
+    def _insert_recursive(self, node, val):
+        if val < node.val:
+            if node.left:
+                self._insert_recursive(node.left, val)
+            else:
+                node.left = TreeNode(val)
+        else:
+            if node.right:
+                self._insert_recursive(node.right, val)
+            else:
+                node.right = TreeNode(val)`} />
+      </>
+    )
   }
 ];
+
+export const tutorialsById = Object.fromEntries(
+  tutorialsData.map((tutorial) => [tutorial.id, tutorial]),
+) as Record<string, Tutorial>;

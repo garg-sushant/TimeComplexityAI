@@ -1,34 +1,49 @@
 import fs from 'fs';
 import path from 'path';
-
-const DOMAIN = 'https://algostory.com';
+import { SITE_URL, blogMetadata, tutorialMetadata } from '../src/data/contentMetadata';
 
 const routes = [
   '/',
   '/time-complexity-calculator',
   '/space-complexity-calculator',
   '/tutorials',
+  ...tutorialMetadata.map((tutorial) => `/tutorials/${tutorial.id}`),
   '/inside-math',
-  '/blog/big-o-notation-explained',
-  '/blog/bubble-sort-time-complexity',
-  '/blog/merge-sort-time-complexity'
+  '/blog',
+  ...blogMetadata.map((post) => `/blog/${post.slug}`),
 ];
 
+function priorityForRoute(route: string) {
+  if (route === '/' || route.includes('calculator')) {
+    return '1.0';
+  }
+
+  if (route.startsWith('/tutorials/') || route.startsWith('/blog/')) {
+    return '0.8';
+  }
+
+  return '0.7';
+}
+
 function generateSitemap() {
+  const now = new Date().toISOString();
   const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${routes.map(route => `
+${routes
+  .map(
+    (route) => `
   <url>
-    <loc>${DOMAIN}${route}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
+    <loc>${SITE_URL}${route === '/' ? '/' : route}</loc>
+    <lastmod>${now}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>${route === '/' || route.includes('calculator') ? '1.0' : '0.8'}</priority>
-  </url>
-`).join('')}
+    <priority>${priorityForRoute(route)}</priority>
+  </url>`,
+  )
+  .join('')}
 </urlset>`;
 
   const publicPath = path.resolve(process.cwd(), 'public');
-  
+
   if (!fs.existsSync(publicPath)) {
     fs.mkdirSync(publicPath, { recursive: true });
   }

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
 import Editor from 'react-simple-code-editor';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-python';
@@ -7,10 +6,10 @@ import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-c';
 import 'prismjs/components/prism-cpp';
-import 'prismjs/themes/prism-tomorrow.css';
-import { analyzeCodeStepByStep } from '../lib/gemini';
 import { StepByStepAnalysis } from '../types';
 import { Calculator, Zap, ListOrdered, Copy, Check } from 'lucide-react';
+import Breadcrumbs from '../components/Breadcrumbs';
+import Seo from '../components/Seo';
 
 export default function InsideMath() {
   const [code, setCode] = useState(`def fibonacci(n):
@@ -21,6 +20,7 @@ export default function InsideMath() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<StepByStepAnalysis | null>(null);
   const [copied, setCopied] = useState(false);
+  const isServer = typeof window === 'undefined';
 
   const handleCopy = async () => {
     try {
@@ -37,6 +37,7 @@ export default function InsideMath() {
     setIsAnalyzing(true);
     setResult(null);
     try {
+      const { analyzeCodeStepByStep } = await import('../lib/gemini');
       const res = await analyzeCodeStepByStep(code);
       setResult(res);
     } catch (error: any) {
@@ -53,24 +54,21 @@ export default function InsideMath() {
 
   return (
     <div className="min-h-screen max-w-7xl mx-auto px-4 py-12">
-      <Helmet>
-        <title>Complexity Lab: Line-by-Line Code Analysis | AlgoStory</title>
-        <meta name="description" content="Analyze your algorithms step-by-step. Get a complete mathematical breakdown of loops, recursion, and Big O notation." />
-        <link rel="canonical" href="https://algostory.com/complexity-lab" />
-        <meta property="og:title" content="Complexity Lab: Line-by-Line Code Analysis | AlgoStory" />
-        <meta property="og:description" content="Analyze algorithms step-by-step with mathematical precision." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://algostory.com/complexity-lab" />
-        <meta name="twitter:card" content="summary" />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            "name": "AlgoStory Complexity Lab",
-            "description": "Step-by-step mathematical breakdown of time and space complexity."
-          })}
-        </script>
-      </Helmet>
+      <Seo
+        title="Complexity Lab: Line-By-Line Code Analysis | AlgoStory"
+        description="Analyze your algorithms step-by-step. Get a mathematical breakdown of loops, recursion, and Big O notation."
+        path="/inside-math"
+        keywords="big o breakdown, line by line complexity analysis, recursion analysis, algorithm math"
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'WebApplication',
+          name: 'AlgoStory Complexity Lab',
+          description: 'Step-by-step mathematical breakdown of time and space complexity.',
+          url: 'https://algostory.com/inside-math',
+        }}
+      />
+
+      <Breadcrumbs />
 
       <section className="mb-8 sm:mb-16 text-center px-4">
         <h1 className="font-headline font-black text-4xl sm:text-6xl md:text-8xl text-on-background tracking-tighter mb-4 sm:mb-6 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 italic uppercase">
@@ -105,18 +103,24 @@ export default function InsideMath() {
               </div>
             </div>
             <div className="bg-[#1d1f21] min-h-[400px] max-h-[600px] overflow-auto">
-              <Editor
-                value={code}
-                onValueChange={code => setCode(code)}
-                highlight={code => Prism.highlight(code, Prism.languages.python, 'python')}
-                padding={24}
-                style={{
-                  fontFamily: '"JetBrains Mono", "Fira Code", monospace',
-                  fontSize: 14,
-                  backgroundColor: 'transparent',
-                }}
-                className="text-white"
-              />
+              {isServer ? (
+                <pre className="overflow-auto p-6 text-sm text-white">
+                  <code>{code}</code>
+                </pre>
+              ) : (
+                <Editor
+                  value={code}
+                  onValueChange={value => setCode(value)}
+                  highlight={value => Prism.highlight(value, Prism.languages.python, 'python')}
+                  padding={24}
+                  style={{
+                    fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+                    fontSize: 14,
+                    backgroundColor: 'transparent',
+                  }}
+                  className="text-white"
+                />
+              )}
             </div>
           </div>
 

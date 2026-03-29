@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Link, useLocation } from 'react-router-dom';
 import Editor from 'react-simple-code-editor';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-python';
@@ -7,17 +7,16 @@ import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-c';
 import 'prismjs/components/prism-cpp';
-import 'prismjs/themes/prism-tomorrow.css';
 import { useAuth } from '../contexts/AuthContext';
-import { analyzeCodeComplexity, fastCodeHint } from '../lib/gemini';
 import { AnalysisResult } from '../types';
-import { db } from '../lib/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { Zap, BookOpen, Cpu, Activity, Lightbulb, Save, Copy, Check } from 'lucide-react';
-import { ComplexityCalculator } from '../components/ComplexityCalculator';
+import { Zap, BookOpen, Cpu, Activity, Lightbulb, Save, Copy, Check, ArrowRight } from 'lucide-react';
+import { LazyComplexityCalculator } from '../components/LazyComplexityCalculator';
+import Seo from '../components/Seo';
+import { homeRouteMetadata, SITE_URL } from '../data/contentMetadata';
 
 export default function Home() {
   const { user } = useAuth();
+  const { pathname } = useLocation();
   const [code, setCode] = useState(`def bubble_sort(arr):
     n = len(arr)
     for i in range(n):
@@ -45,17 +44,26 @@ export default function Home() {
   };
 
   useEffect(() => {
+    let cancelled = false;
+
     const timer = setTimeout(async () => {
       if (code.trim().length > 10) {
         try {
+          const { fastCodeHint } = await import('../lib/gemini');
           const quickHint = await fastCodeHint(code);
-          setHint(quickHint);
+          if (!cancelled) {
+            setHint(quickHint);
+          }
         } catch (e) {
           console.error(e);
         }
       }
     }, 1500);
-    return () => clearTimeout(timer);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [code]);
 
   const handleAnalyze = async () => {
@@ -64,6 +72,7 @@ export default function Home() {
     setResult(null);
     setIsSaved(false);
     try {
+      const { analyzeCodeComplexity } = await import('../lib/gemini');
       const res = await analyzeCodeComplexity(code);
       setResult(res);
       setAnalyzedCode(code);
@@ -88,13 +97,18 @@ export default function Home() {
 
     setIsSaving(true);
     try {
-      await addDoc(collection(db, 'users', user.uid, 'analyses'), {
+      const [{ db }, firestore] = await Promise.all([
+        import('../lib/firebase'),
+        import('firebase/firestore'),
+      ]);
+
+      await firestore.addDoc(firestore.collection(db, 'users', user.uid, 'analyses'), {
         code: analyzedCode,
         complexity: result.complexity,
         complexityClass: result.complexityClass,
         spaceComplexity: result.spaceComplexity,
         explanationPoints: result.explanationPoints,
-        createdAt: serverTimestamp()
+        createdAt: firestore.serverTimestamp()
       });
       setIsSaved(true);
     } catch (error) {
@@ -105,37 +119,100 @@ export default function Home() {
     }
   };
 
+  const pageSeo =
+    homeRouteMetadata[pathname as keyof typeof homeRouteMetadata] ?? homeRouteMetadata['/'];
+  const pagePath = pathname || '/';
+  const isTimeCalculator = pagePath === '/time-complexity-calculator';
+  const isSpaceCalculator = pagePath === '/space-complexity-calculator';
+  const isServer = typeof window === 'undefined';
+
+  const schema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: isSpaceCalculator
+        ? 'AlgoStory Space Complexity Calculator'
+        : isTimeCalculator
+          ? 'AlgoStory Time Complexity Calculator'
+          : 'AlgoStory Code Complexity Analyzer',
+      applicationCategory: 'EducationalApplication',
+      operatingSystem: 'Any',
+      url: `${SITE_URL}${pagePath === '/' ? '' : pagePath}`,
+      description: pageSeo.description,
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+      },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'What does this complexity calculator do?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'AlgoStory reviews your code and explains how time and space complexity grow as the input size increases.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can it help with Big O notation?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. It turns loops, recursion, and data structure usage into readable Big O explanations.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does it cover both time and space complexity?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. The analyzer surfaces both runtime growth and auxiliary memory usage so you can compare tradeoffs clearly.',
+          },
+        },
+      ],
+    },
+  ];
+
   return (
     <div className="graph-paper min-h-screen">
-      <Helmet>
-        <title>AlgoStory: AI-Powered Code Complexity Visualizer</title>
-        <meta name="description" content="Instantly analyze Big O time and space complexity with AI-powered narrative explanations. Master algorithms through the art of storytelling." />
-        <link rel="canonical" href="https://algostory.com" />
-        <meta property="og:title" content="AlgoStory: AI-Powered Code Complexity Visualizer" />
-        <meta property="og:description" content="Instantly analyze Big O time and space complexity with AI-powered narrative explanations." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://algostory.com" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
-            "name": "AlgoStory Complexity Calculator",
-            "applicationCategory": "EducationalApplication",
-            "operatingSystem": "Any",
-            "offers": {
-              "@type": "Offer",
-              "price": "0"
-            }
-          })}
-        </script>
-      </Helmet>
+      <Seo
+        title={pageSeo.title}
+        description={pageSeo.description}
+        path={pagePath}
+        keywords={
+          isSpaceCalculator
+            ? 'space complexity calculator, auxiliary space calculator, memory complexity, big o space complexity'
+            : isTimeCalculator
+              ? 'time complexity calculator, big o calculator, runtime complexity analyzer, algorithm complexity'
+              : 'code complexity analyzer, big o notation, time complexity, space complexity, algorithm tutorials'
+        }
+        schema={schema}
+      />
 
       <div className="mb-12 text-center max-w-3xl mx-auto space-y-4 px-4">
         <h1 className="font-headline font-black text-4xl sm:text-5xl md:text-7xl tracking-tight leading-[1.1] md:leading-[1.05]">
-          Every line of code <span className="text-primary italic underline decoration-[8px] md:decoration-[12px] decoration-primary-container">tells a story.</span>
+          {pagePath === '/' ? (
+            <>
+              Every line of code{' '}
+              <span className="text-primary italic underline decoration-[8px] md:decoration-[12px] decoration-primary-container">
+                tells a story.
+              </span>
+            </>
+          ) : (
+            <>
+              {pageSeo.heading.split(' ').slice(0, -1).join(' ')}{' '}
+              <span className="text-primary italic underline decoration-[8px] md:decoration-[12px] decoration-primary-container">
+                {pageSeo.heading.split(' ').slice(-1)}
+              </span>
+            </>
+          )}
         </h1>
-        <p className="text-lg md:text-xl text-on-surface-variant font-bold max-w-2xl mx-auto">Paste your code below and watch the complexity come to life with our whimsical analyzer.</p>
+        <p className="text-lg md:text-xl text-on-surface-variant font-bold max-w-2xl mx-auto">
+          {pageSeo.intro}
+        </p>
       </div>
 
       <div className="grid lg:grid-cols-12 gap-10 items-start">
@@ -167,18 +244,24 @@ export default function Home() {
                 </div>
               </div>
               <div className="bg-[#1d1f21] min-h-[250px] max-h-[400px] overflow-auto">
-                <Editor
-                  value={code}
-                  onValueChange={code => setCode(code)}
-                  highlight={code => Prism.highlight(code, Prism.languages.python, 'python')}
-                  padding={24}
-                  style={{
-                    fontFamily: '"JetBrains Mono", "Fira Code", monospace',
-                    fontSize: 14,
-                    backgroundColor: 'transparent',
-                  }}
-                  className="text-white"
-                />
+                {isServer ? (
+                  <pre className="overflow-auto p-6 text-sm text-white">
+                    <code>{code}</code>
+                  </pre>
+                ) : (
+                  <Editor
+                    value={code}
+                    onValueChange={code => setCode(code)}
+                    highlight={value => Prism.highlight(value, Prism.languages.python, 'python')}
+                    padding={24}
+                    style={{
+                      fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+                      fontSize: 14,
+                      backgroundColor: 'transparent',
+                    }}
+                    className="text-white"
+                  />
+                )}
               </div>
             </div>
             {hint && (
@@ -248,7 +331,7 @@ export default function Home() {
                 </div>
 
                 <div className="w-full">
-                  <ComplexityCalculator complexityClass={result.complexityClass} />
+                  <LazyComplexityCalculator complexityClass={result.complexityClass} />
                 </div>
 
                 <div className="mt-12 flex items-start gap-4 z-10">
@@ -327,6 +410,263 @@ export default function Home() {
                 {cls.desc}
               </p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mb-16 pt-16 border-t-4 border-on-background">
+        <div className="text-center mb-16 px-4">
+          <h2 className="font-headline text-4xl sm:text-5xl md:text-6xl font-black text-on-background mb-4 uppercase">
+            The <span className="text-primary">Free Time Complexity</span> Calculator
+          </h2>
+          <p className="text-xl text-on-surface-variant max-w-2xl mx-auto font-bold">
+            AlgoStory is the most powerful free Big O calculator available. Better than BigOCalc, more intuitive than manual analysis.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          <div className="bg-primary-container p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#064e3b]">
+            <div className="flex items-center gap-3 mb-4">
+              <Zap className="w-8 h-8 text-primary" />
+              <h3 className="font-headline font-black text-2xl text-on-background">⚡ Time Complexity Analyzer</h3>
+            </div>
+            <p className="text-on-surface-variant font-bold">Instantly analyze O(N), O(log N), O(N²) and more patterns in your code. Get Big O notation with AI explanations.</p>
+          </div>
+
+          <div className="bg-secondary-container p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#0c4a6e]">
+            <div className="flex items-center gap-3 mb-4">
+              <Cpu className="w-8 h-8 text-secondary" />
+              <h3 className="font-headline font-black text-2xl text-on-background">💾 Space Complexity Calculator</h3>
+            </div>
+            <p className="text-on-surface-variant font-bold">Calculate auxiliary space and memory usage of your algorithms. Analyze O notation with AI-powered insights.</p>
+          </div>
+
+          <div className="bg-tertiary-container p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#4c1d95]">
+            <div className="flex items-center gap-3 mb-4">
+              <Lightbulb className="w-8 h-8 text-tertiary" />
+              <h3 className="font-headline font-black text-2xl text-on-background">🤖 AI-Powered Insights</h3>
+            </div>
+            <p className="text-on-surface-variant font-bold">Get natural language explanations of complexity patterns. Understand algorithm efficiency in plain English.</p>
+          </div>
+
+          <div className="bg-error-container p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#7f1d1d]">
+            <div className="flex items-center gap-3 mb-4">
+              <BookOpen className="w-8 h-8 text-error" />
+              <h3 className="font-headline font-black text-2xl text-on-background">📚 Learn Big O Notation</h3>
+            </div>
+            <p className="text-on-surface-variant font-bold">Master algorithm complexity with 16+ interactive tutorials. From linear search to dynamic programming.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mb-16 bg-secondary-container p-12 rounded-3xl border-4 border-on-background shadow-[12px_12px_0_#0c4a6e]">
+        <h2 className="font-headline text-4xl font-black text-on-background text-center mb-12">
+          Why Choose AlgoStory Over BigOCalc?
+        </h2>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b-4 border-on-background">
+                <th className="text-left p-4 font-headline font-black text-lg text-on-background">Feature</th>
+                <th className="text-center p-4 font-headline font-black text-lg text-on-background">AlgoStory</th>
+                <th className="text-center p-4 font-headline font-black text-lg text-on-background">BigOCalc</th>
+                <th className="text-center p-4 font-headline font-black text-lg text-on-background">Manual</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b-2 border-on-background/30 hover:bg-on-background/5">
+                <td className="p-4 font-bold text-on-background">Free Forever</td>
+                <td className="text-center p-4 text-2xl">✅</td>
+                <td className="text-center p-4 text-2xl">⚠️</td>
+                <td className="text-center p-4 text-2xl">✅</td>
+              </tr>
+              <tr className="border-b-2 border-on-background/30 hover:bg-on-background/5">
+                <td className="p-4 font-bold text-on-background">AI Explanations</td>
+                <td className="text-center p-4 text-2xl">✅</td>
+                <td className="text-center p-4 text-2xl">❌</td>
+                <td className="text-center p-4 text-2xl">❌</td>
+              </tr>
+              <tr className="border-b-2 border-on-background/30 hover:bg-on-background/5">
+                <td className="p-4 font-bold text-on-background">Space Complexity</td>
+                <td className="text-center p-4 text-2xl">✅</td>
+                <td className="text-center p-4 text-2xl">⚠️</td>
+                <td className="text-center p-4 text-2xl">❌</td>
+              </tr>
+              <tr className="border-b-2 border-on-background/30 hover:bg-on-background/5">
+                <td className="p-4 font-bold text-on-background">16+ Tutorials</td>
+                <td className="text-center p-4 text-2xl">✅</td>
+                <td className="text-center p-4 text-2xl">❌</td>
+                <td className="text-center p-4 text-2xl">❌</td>
+              </tr>
+              <tr className="hover:bg-on-background/5">
+                <td className="p-4 font-bold text-on-background">Step-by-Step Breakdown</td>
+                <td className="text-center p-4 text-2xl">✅</td>
+                <td className="text-center p-4 text-2xl">❌</td>
+                <td className="text-center p-4 text-2xl">❌</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p className="text-center text-on-background font-bold text-lg mt-8">
+          Get started now with our <strong>Free Time Complexity Calculator</strong> - No signup, no limits, no ads.
+        </p>
+      </section>
+
+      <section className="mb-16 bg-surface-container-low p-12 rounded-3xl">
+        <h2 className="font-headline text-4xl font-black text-on-background mb-12 text-center">
+          How Our Complexity Calculator Works
+        </h2>
+
+        <div className="space-y-6">
+          <div className="flex gap-6 items-start">
+            <div className="shrink-0">
+              <div className="w-12 h-12 rounded-full bg-primary text-white font-headline font-black text-xl flex items-center justify-center border-2 border-on-background">
+                1
+              </div>
+            </div>
+            <div>
+              <h3 className="font-headline font-black text-xl text-on-background mb-2">Paste Your Code</h3>
+              <p className="text-on-surface-variant font-bold">Paste any Python, Java, JavaScript, C++ or other language code into our Big O calculator</p>
+            </div>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="shrink-0">
+              <div className="w-12 h-12 rounded-full bg-secondary text-white font-headline font-black text-xl flex items-center justify-center border-2 border-on-background">
+                2
+              </div>
+            </div>
+            <div>
+              <h3 className="font-headline font-black text-xl text-on-background mb-2">AI Analyzes Complexity</h3>
+              <p className="text-on-surface-variant font-bold">Our AI examines your code and calculates time complexity, space complexity, and identifies optimization opportunities</p>
+            </div>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="shrink-0">
+              <div className="w-12 h-12 rounded-full bg-tertiary text-white font-headline font-black text-xl flex items-center justify-center border-2 border-on-background">
+                3
+              </div>
+            </div>
+            <div>
+              <h3 className="font-headline font-black text-xl text-on-background mb-2">Get Big O Analysis</h3>
+              <p className="text-on-surface-variant font-bold">Receive instant O(N) notation with natural language explanations of why your algorithm has that complexity</p>
+            </div>
+          </div>
+
+          <div className="flex gap-6 items-start">
+            <div className="shrink-0">
+              <div className="w-12 h-12 rounded-full bg-error text-white font-headline font-black text-xl flex items-center justify-center border-2 border-on-background">
+                4
+              </div>
+            </div>
+            <div>
+              <h3 className="font-headline font-black text-xl text-on-background mb-2">Learn & Improve</h3>
+              <p className="text-on-surface-variant font-bold">Use our 16+ algorithm tutorials to understand complexity patterns and optimize your code for better performance</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mb-16 rounded-[2rem] border-4 border-on-background bg-white px-6 py-10 shadow-[12px_12px_0_#0f172a] sm:px-10">
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-2xl">
+            <h2 className="mb-3 font-headline text-4xl font-black uppercase italic tracking-tighter">
+              Learn The Patterns Behind The Output
+            </h2>
+            <p className="text-base font-bold leading-relaxed text-on-surface-variant sm:text-lg">
+              Strong SEO pages need strong internal linking. These guides connect the calculator to
+              specific algorithm topics users actually search for.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          <Link
+            to="/tutorials"
+            className="rounded-3xl border-4 border-on-background bg-primary-container p-6 shadow-[8px_8px_0_#0f172a] transition-transform hover:-translate-y-1"
+          >
+            <BookOpen className="mb-5 h-10 w-10 text-primary" />
+            <h3 className="mb-3 font-headline text-2xl font-black">Algorithm Tutorials</h3>
+            <p className="mb-5 text-sm font-bold leading-relaxed text-on-surface-variant">
+              Crawlable guides on binary search, merge sort, graphs, dynamic programming, and more.
+            </p>
+            <span className="inline-flex items-center gap-2 text-sm font-black text-primary">
+              Browse Tutorials
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </Link>
+
+          <Link
+            to="/inside-math"
+            className="rounded-3xl border-4 border-on-background bg-secondary-container p-6 shadow-[8px_8px_0_#0f172a] transition-transform hover:-translate-y-1"
+          >
+            <Cpu className="mb-5 h-10 w-10 text-secondary" />
+            <h3 className="mb-3 font-headline text-2xl font-black">Line-By-Line Breakdowns</h3>
+            <p className="mb-5 text-sm font-bold leading-relaxed text-on-surface-variant">
+              Use the step-by-step analyzer to understand where each complexity term comes from.
+            </p>
+            <span className="inline-flex items-center gap-2 text-sm font-black text-secondary">
+              Open Complexity Lab
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </Link>
+
+          <Link
+            to="/blog"
+            className="rounded-3xl border-4 border-on-background bg-tertiary-container p-6 shadow-[8px_8px_0_#0f172a] transition-transform hover:-translate-y-1"
+          >
+            <Activity className="mb-5 h-10 w-10 text-tertiary" />
+            <h3 className="mb-3 font-headline text-2xl font-black">Big O Articles</h3>
+            <p className="mb-5 text-sm font-bold leading-relaxed text-on-surface-variant">
+              Read focused explainers on Big O notation, Bubble Sort, and Merge Sort complexity.
+            </p>
+            <span className="inline-flex items-center gap-2 text-sm font-black text-tertiary">
+              Read The Blog
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </Link>
+        </div>
+      </section>
+
+      <section className="mb-10 px-4">
+        <div className="mb-8 max-w-3xl">
+          <h2 className="mb-4 font-headline text-4xl font-black uppercase italic tracking-tighter">
+            Complexity Calculator FAQ
+          </h2>
+          <p className="text-lg font-bold leading-relaxed text-on-surface-variant">
+            This extra explanatory content helps users and search engines understand what the tool
+            does, which queries it serves, and when to use each experience.
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {[
+            {
+              question: 'When should I use the time complexity calculator?',
+              answer:
+                'Use it when you want to estimate how runtime changes as input size grows, especially for loops, nested loops, and recursive code.',
+            },
+            {
+              question: 'When should I use the space complexity calculator?',
+              answer:
+                'Use it when memory growth matters, including recursion stack depth, temporary arrays, hash maps, and auxiliary storage.',
+            },
+            {
+              question: 'Can I learn Big O from this site?',
+              answer:
+                'Yes. The calculator is paired with tutorials, articles, and a line-by-line lab so users can move from quick answers to deeper understanding.',
+            },
+          ].map((item) => (
+            <article
+              key={item.question}
+              className="rounded-3xl border-4 border-on-background bg-white p-6 shadow-[8px_8px_0_#0f172a]"
+            >
+              <h3 className="mb-3 font-headline text-2xl font-black leading-tight">{item.question}</h3>
+              <p className="text-sm font-bold leading-relaxed text-on-surface-variant">{item.answer}</p>
+            </article>
           ))}
         </div>
       </section>

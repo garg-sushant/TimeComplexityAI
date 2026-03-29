@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { InlineMath } from 'react-katex';
-import 'katex/dist/katex.min.css';
+import * as ReactKatex from 'react-katex';
 import { Gauge } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -51,7 +50,7 @@ export const ComplexityCalculator = ({ complexityClass }: { complexityClass: str
         <Gauge className="w-6 h-6 sm:w-8 sm:h-8" /> Interactive Lab Metrics
       </h4>
       <p className="text-md sm:text-lg text-on-surface-variant mb-6 sm:mb-8 font-bold">
-        Adjust the input size <InlineMath math="N" /> to see how the number of operations grows for <InlineMath math={complexityClass.replace('O(', '\\mathcal{O}(')} />.
+        Adjust the input size <ReactKatex.InlineMath math="N" /> to see how the number of operations grows for <ReactKatex.InlineMath math={complexityClass.replace('O(', '\\mathcal{O}(')} />.
       </p>
       
       <div className="flex flex-col xl:flex-row gap-10 items-start">

@@ -7,6 +7,48 @@ export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   return {
     plugins: [react(), tailwindcss()],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes('node_modules')) {
+              return undefined;
+            }
+
+            if (id.includes('firebase')) {
+              return 'firebase';
+            }
+
+            if (id.includes('@google/genai')) {
+              return 'genai';
+            }
+
+            if (id.includes('recharts')) {
+              return 'charts';
+            }
+
+            if (id.includes('katex') || id.includes('react-katex')) {
+              return 'math';
+            }
+
+            if (id.includes('prismjs')) {
+              return 'prism';
+            }
+
+            if (
+              id.includes('react-router') ||
+              id.includes('/react/') ||
+              id.includes('react-dom') ||
+              id.includes('scheduler')
+            ) {
+              return 'react-vendor';
+            }
+
+            return 'vendor';
+          },
+        },
+      },
+    },
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.VITE_GEMINI_API_KEY),
     },
