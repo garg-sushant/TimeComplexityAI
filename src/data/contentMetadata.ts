@@ -156,6 +156,12 @@ export const tutorialMetadata = Object.entries(tutorialMetadataById).map(([id, v
 }));
 
 export const blogMetadataBySlug = {
+  'algorithm-complexity-cheatsheet': {
+    title: 'Algorithm Complexity Cheatsheet: The Ultimate Comparison',
+    description:
+      'A comprehensive reference table for time and space complexities of sorting, graph algorithms, and common DSA patterns.',
+    readTime: '15 min read',
+  },
   'big-o-notation-explained': {
     title: 'Big O Notation Explained: The Ultimate Guide',
     description:
@@ -173,6 +179,66 @@ export const blogMetadataBySlug = {
     description:
       'A practical explanation of Merge Sort with divide-and-conquer reasoning, recurrence intuition, and space tradeoffs.',
     readTime: '8 min read',
+  },
+  'understanding-recursion': {
+    title: 'Understanding Recursion: The Foundational Concept',
+    description:
+      'Learn how recursion works, why base cases matter, and how to visualize recursive calls with practical examples.',
+    readTime: '10 min read',
+  },
+  'backtracking-guide': {
+    title: 'Solving Problems with Backtracking: A Comprehensive Guide',
+    description:
+      'Master backtracking by exploring state-space trees and pruning techniques for complex problem-solving.',
+    readTime: '12 min read',
+  },
+  'segment-trees-mastery': {
+    title: 'Mastering Segment Trees: Range Queries and Updates',
+    description:
+      'Efficiently perform range sum, minimum, and maximum queries along with pointwise updates in O(log N) time.',
+    readTime: '15 min read',
+  },
+  'bit-manipulation-hacks': {
+    title: 'Bit Manipulation Hacks for Fast Programming',
+    description:
+      'Speed up your CP solutions with clever bit manipulation tricks and binary representation insights.',
+    readTime: '10 min read',
+  },
+  'dynamic-programming-optimization': {
+    title: 'Dynamic Programming: Optimizing Recursive Solutions',
+    description:
+      'Convert recursive solutions into efficient iterative ones using memoization and tabular DP approaches.',
+    readTime: '14 min read',
+  },
+  'graph-representation': {
+    title: 'Graph Representation: Adjacency Lists vs. Matrices',
+    description:
+      'Explore the trade-offs between adjacency lists and matrices for storing and traversing graph data in memory.',
+    readTime: '9 min read',
+  },
+  'sorting-algorithms-comparison': {
+    title: 'Sorting Algorithms: Choosing the Right Strategy',
+    description:
+      'A deep dive into common sorting algorithms and when to use each for maximum performance.',
+    readTime: '11 min read',
+  },
+  'linked-lists-vs-arrays': {
+    title: 'Linked Lists vs. Arrays: Choosing the Right Data Structure',
+    description:
+      'Understand the fundamental differences and use cases for linear data structures in memory.',
+    readTime: '8 min read',
+  },
+  'hash-map-collisions': {
+    title: 'Inside Hash Maps: Solving the Collision Problem',
+    description:
+      'How hash maps work internally and how they handle collisions through chaining and open addressing.',
+    readTime: '12 min read',
+  },
+  'balanced-bst-trees': {
+    title: 'Balanced Binary Search Trees: Keeping Data in Order',
+    description:
+      'A guide to AVL trees and Red-Black trees and how they maintain O(log N) operations.',
+    readTime: '13 min read',
   },
 } as const;
 
