@@ -9,7 +9,8 @@ import 'prismjs/components/prism-c';
 import 'prismjs/components/prism-cpp';
 import { useAuth } from '../contexts/AuthContext';
 import { AnalysisResult } from '../types';
-import { Zap, BookOpen, Cpu, Activity, Lightbulb, Save, Copy, Check, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Zap, BookOpen, Cpu, Activity, Lightbulb, Save, Copy, Check, ArrowRight, Sparkles } from 'lucide-react';
 import { LazyComplexityCalculator } from '../components/LazyComplexityCalculator';
 import Seo from '../components/Seo';
 import { homeRouteMetadata, SITE_URL } from '../data/contentMetadata';
@@ -202,40 +203,57 @@ export default function Home() {
         schema={schema}
       />
 
-      <div className="mb-12 text-center max-w-3xl mx-auto space-y-4 px-4">
-        <h1 className="font-headline font-black text-4xl sm:text-5xl md:text-7xl tracking-tight leading-[1.1] md:leading-[1.05]">
+      <div className="mb-16 text-center max-w-4xl mx-auto space-y-6 px-4">
+        <motion.h1 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="font-headline font-black text-5xl sm:text-6xl md:text-8xl tracking-tight leading-[1] md:leading-[0.95]"
+        >
           {pagePath === '/' ? (
             <>
               Every line of code{' '}
-              <span className="text-primary italic underline decoration-[8px] md:decoration-[12px] decoration-primary-container">
+              <span className="modern-gradient-text italic underline decoration-8 md:decoration-[14px] decoration-primary/10 underline-offset-8">
                 tells a story.
               </span>
             </>
           ) : (
             <>
               {pageSeo.heading.split(' ').slice(0, -1).join(' ')}{' '}
-              <span className="text-primary italic underline decoration-[8px] md:decoration-[12px] decoration-primary-container">
+              <span className="modern-gradient-text italic underline decoration-8 md:decoration-[14px] decoration-primary/10 underline-offset-8">
                 {pageSeo.heading.split(' ').slice(-1)}
               </span>
             </>
           )}
-        </h1>
-        <p className="text-lg md:text-xl text-on-surface-variant font-bold max-w-2xl mx-auto">
+        </motion.h1>
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="text-lg md:text-2xl text-on-surface-variant font-bold max-w-3xl mx-auto leading-relaxed"
+        >
           {pageSeo.intro}
-        </p>
+        </motion.p>
       </div>
 
-      <div className="grid lg:grid-cols-12 gap-10 items-start">
+      <div className="grid lg:grid-cols-12 gap-12 items-start">
         {/* Left Side: The Lab */}
-        <section className="lg:col-span-5 space-y-8">
-          <div className="flex items-center gap-3">
-            <Activity className="text-primary w-10 h-10" />
-            <h2 className="font-headline font-black text-4xl tracking-tighter uppercase italic">The Lab</h2>
+        <motion.section 
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="lg:col-span-5 space-y-8"
+        >
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-primary-container rounded-2xl border-2 border-on-background shadow-neo">
+              <Activity className="text-primary w-8 h-8" />
+            </div>
+            <h2 className="font-headline font-black text-3xl tracking-tighter uppercase italic">The Lab</h2>
           </div>
 
-          <div className="relative group px-2 sm:px-0">
-            <div className="bg-[#0f172a] rounded-3xl overflow-hidden border-4 border-on-background shadow-[8px_8px_0_#0f172a] sm:shadow-[12px_12px_0_#0f172a]">
-              <div className="flex items-center justify-between px-4 py-3 bg-on-background/50 border-b-2 border-on-background/30">
+          <div className="relative group px-1 sm:px-0">
+            <div className="bg-[#0f172a] rounded-[2.5rem] overflow-hidden border-2 border-on-background shadow-neo-lg sm:shadow-neo-xl transition-all group-hover:shadow-neo group-hover:translate-x-1 group-hover:translate-y-1">
+              <div className="flex items-center justify-between px-6 py-4 bg-on-background/20 border-b border-white/10">
                 <div className="flex gap-2">
                   <div className="w-3 h-3 rounded-full bg-error"></div>
                   <div className="w-3 h-3 rounded-full bg-tertiary"></div>
@@ -281,88 +299,132 @@ export default function Home() {
             )}
           </div>
 
-          <div className="flex flex-col items-center gap-4 py-4">
-            <button
+          <div className="flex flex-col items-center gap-6 py-6">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={handleAnalyze}
               disabled={isAnalyzing}
-              className="bg-primary text-white w-40 h-40 sm:w-52 sm:h-52 rounded-full flex flex-col items-center justify-center gap-2 border-4 sm:border-8 border-on-primary-container shadow-[0_8px_0_#064e3b] sm:shadow-[0_12px_0_#064e3b] hover:translate-y-1 hover:shadow-[0_6px_0_#064e3b] sm:hover:shadow-[0_8px_0_#064e3b] active:translate-y-3 active:shadow-none transition-all duration-150 group disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-primary text-white w-44 h-44 sm:w-56 sm:h-56 rounded-[3rem] flex flex-col items-center justify-center gap-3 border-2 sm:border-4 border-on-primary-container shadow-neo-lg sm:shadow-neo-xl hover:translate-y-1 hover:shadow-neo active:translate-y-2 active:shadow-none transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
             >
-              <Zap className={`w-12 h-12 ${isAnalyzing ? 'animate-pulse' : 'group-hover:scale-110 transition-transform'}`} />
-              <span className="font-headline font-extrabold text-center px-4 leading-tight uppercase">
-                {isAnalyzing ? 'Analyzing...' : 'Analyze Complexity'}
+              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              <Zap className={`w-14 h-14 ${isAnalyzing ? 'animate-bounce' : 'group-hover:rotate-12 transition-transform'}`} />
+              <span className="font-headline font-black text-center px-4 leading-none uppercase text-sm sm:text-base tracking-tighter">
+                {isAnalyzing ? 'Decoding...' : 'Analyze Story'}
               </span>
-            </button>
-            <p className="font-label text-on-surface-variant text-sm font-bold tracking-wide italic">"Push it. I dare you."</p>
+            </motion.button>
+            <div className="flex items-center gap-2 font-label text-on-surface-variant text-sm font-black tracking-widest uppercase italic opacity-60">
+              <Sparkles className="w-4 h-4" />
+              <span>Push it. I dare you.</span>
+            </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Right Side: The Story */}
-        <section className="lg:col-span-7 space-y-8">
-          <div className="flex items-center gap-3">
-            <BookOpen className="text-tertiary w-10 h-10" />
-            <h2 className="font-headline font-black text-4xl tracking-tighter uppercase italic">The Story</h2>
+        <motion.section 
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="lg:col-span-7 space-y-8"
+        >
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-secondary-container rounded-2xl border-2 border-on-background shadow-neo">
+              <BookOpen className="text-secondary w-8 h-8" />
+            </div>
+            <h2 className="font-headline font-black text-3xl tracking-tighter uppercase italic">The Story</h2>
           </div>
 
-          <div className="bg-white border-4 border-on-background rounded-3xl p-4 sm:p-8 shadow-[8px_8px_0_#0f172a] sm:shadow-[16px_16px_0_#0f172a] min-h-[400px] sm:min-h-[500px] flex flex-col relative overflow-hidden">
+          <div className="bg-white border-2 border-on-background rounded-[2.5rem] p-5 sm:p-10 shadow-neo-lg sm:shadow-neo-xl min-h-[400px] sm:min-h-[500px] flex flex-col relative overflow-hidden group">
             {/* Subtle light glow effect */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/2 blur-[100px] rounded-full pointer-events-none"></div>
-            {!result && !isAnalyzing && (
-              <div className="flex-grow flex items-center justify-center text-on-surface-variant font-headline text-lg italic">
-                Waiting for your code...
-              </div>
-            )}
-
-            {isAnalyzing && (
-              <div className="flex-grow flex flex-col items-center justify-center gap-4">
-                <div className="w-16 h-16 border-8 border-primary border-t-transparent rounded-full animate-spin"></div>
-                <p className="font-headline font-bold text-primary animate-pulse">Consulting the math wizards...</p>
-              </div>
-            )}
-
-            {result && (
-              <>
-                <div className="flex justify-between items-center mb-6">
-                  <div className="flex flex-col">
-                    <span className="font-label text-xs font-bold text-on-surface-variant uppercase tracking-tighter">Growth Metric</span>
-                    <span className="font-headline font-bold text-lg">Computational Velocity</span>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] rounded-full pointer-events-none group-hover:bg-primary/10 transition-colors"></div>
+            
+            <AnimatePresence mode="wait">
+              {!result && !isAnalyzing ? (
+                <motion.div 
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex-grow flex flex-col items-center justify-center text-on-surface-variant font-headline text-lg italic gap-4"
+                >
+                  <div className="p-4 bg-surface-container rounded-3xl opacity-20">
+                    <Sparkles className="w-12 h-12" />
                   </div>
-                  <div className="flex flex-wrap gap-2 items-center justify-end">
-                    <span className="px-3 py-1 bg-surface-container rounded-full text-xs font-bold font-label">Time: {result.complexity}</span>
-                    <span className="px-3 py-1 bg-secondary-container rounded-full text-xs font-bold font-label text-on-secondary-container">Space: {result.spaceComplexity}</span>
-                    <button 
-                      onClick={handleSaveAnalysis}
-                      disabled={isSaving || isSaved}
-                      className="flex items-center gap-2 px-4 py-1.5 bg-primary text-on-primary rounded-full font-bold text-xs shadow hover:bg-primary/90 disabled:opacity-50 transition-all"
-                    >
-                      <Save className="w-4 h-4" />
-                      {isSaving ? 'Saving...' : isSaved ? 'Saved!' : 'Save Analysis'}
-                    </button>
+                  <span className="opacity-40">"Your code is a blank page. Let's write the story."</span>
+                </motion.div>
+              ) : isAnalyzing ? (
+                <motion.div 
+                  key="analyzing"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex-grow flex flex-col items-center justify-center gap-6"
+                >
+                  <div className="relative">
+                    <div className="w-20 h-20 border-4 border-primary/20 rounded-full"></div>
+                    <div className="absolute top-0 left-0 w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <Activity className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary w-8 h-8 animate-pulse" />
                   </div>
-                </div>
-
-                <div className="w-full">
-                  <LazyComplexityCalculator complexityClass={result.complexityClass} />
-                </div>
-
-                <div className="mt-12 flex items-start gap-4 z-10">
-                  <div className="w-20 h-20 rounded-2xl border-4 border-on-background bg-tertiary-container shadow-[6px_6px_0_#0f172a] flex items-center justify-center shrink-0">
-                    <Cpu className="w-10 h-10 text-on-tertiary-container" />
-                  </div>
-                  <div className="speech-bubble p-4 sm:p-8 rounded-3xl shadow-[6px_6px_0_#0f172a] sm:shadow-[8px_8px_0_#0f172a] bg-white w-full">
-                    <div className="flex items-center gap-3 mb-4">
-                      <h3 className="font-headline font-black text-2xl text-primary">{result.complexity}</h3>
+                  <p className="font-headline font-black text-primary uppercase tracking-tighter animate-pulse text-xl">Consulting the math wizards...</p>
+                </motion.div>
+              ) : result ? (
+                <motion.div 
+                  key="result"
+                  initial={{ opacity: 0, scale: 0.98, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex-grow flex flex-col h-full"
+                >
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                    <div className="flex flex-col">
+                      <span className="font-label text-[10px] font-black text-on-surface-variant uppercase tracking-widest opacity-60">Growth Metric</span>
+                      <span className="font-headline font-black text-xl italic uppercase tracking-tighter">Computational Velocity</span>
                     </div>
-                    <ul className="font-body text-on-surface leading-relaxed list-disc list-inside space-y-2">
-                      {result.explanationPoints?.map((point, index) => (
-                        <li key={index} className="text-sm">{point}</li>
-                      ))}
-                    </ul>
+                    <div className="flex flex-wrap gap-3 items-center">
+                      <div className="px-4 py-2 bg-primary-container border-2 border-on-background rounded-full text-xs font-black font-label shadow-neo">
+                        Time: {result.complexityClass}
+                      </div>
+                      <button 
+                        onClick={handleSaveAnalysis}
+                        disabled={isSaving || isSaved}
+                        className="flex items-center gap-2 px-6 py-2 bg-tertiary text-white rounded-full font-black text-xs shadow-neo border-2 border-on-background hover:translate-y-0.5 hover:shadow-none transition-all disabled:opacity-50"
+                      >
+                        <Save className="w-4 h-4" />
+                        {isSaving ? 'Saving...' : isSaved ? 'Saved!' : 'Save Analysis'}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
+
+                  <div className="w-full mb-10">
+                    <LazyComplexityCalculator complexityClass={result.complexityClass} />
+                  </div>
+
+                  <div className="mt-auto flex flex-col sm:flex-row items-center sm:items-start gap-6 pt-8 border-t-2 border-on-background/5">
+                    <div className="w-20 h-20 rounded-3xl border-2 border-on-background bg-secondary-container shadow-neo flex items-center justify-center shrink-0">
+                      <Cpu className="w-10 h-10 text-on-secondary-container" />
+                    </div>
+                    <div className="p-6 bg-surface-container-low border-2 border-on-background rounded-[2rem] shadow-neo w-full relative">
+                      <div className="absolute -top-3 -left-3 bg-primary text-white p-2 rounded-xl border-2 border-on-background shadow-neo rotate-[-6deg]">
+                        <Lightbulb className="w-4 h-4" />
+                      </div>
+                      <h3 className="font-headline font-black text-2xl text-primary mb-4 italic uppercase tracking-tighter">
+                        {result.complexity}
+                      </h3>
+                      <ul className="font-body text-on-surface leading-relaxed space-y-3 list-none">
+                        {result.explanationPoints?.map((point, index) => (
+                          <li key={index} className="text-sm font-bold flex gap-3 items-start">
+                            <span className="text-primary mt-1 flex-shrink-0">●</span>
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </div>
-        </section>
+        </motion.section>
       </div>
 
       {result && (
@@ -382,304 +444,280 @@ export default function Home() {
 
       {/* Common Complexity Classes Section */}
       <section className="mt-32 mb-16 px-4">
-        <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
-          <div className="max-w-xl text-center md:text-left">
-            <h2 className="font-headline font-black text-4xl sm:text-5xl tracking-tighter uppercase italic mb-4">
-              Common Complexity Classes
+        <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-8">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="max-w-2xl text-center md:text-left"
+          >
+            <h2 className="font-headline font-black text-4xl sm:text-6xl tracking-tighter uppercase italic mb-6">
+              Common <span className="modern-gradient-text">Complexity</span> Classes
             </h2>
-            <p className="text-lg text-on-surface-variant font-bold leading-relaxed">
-              Every algorithm has its own growth story. Here are the most common computational arcs you'll encounter.
+            <p className="text-xl text-on-surface-variant font-bold leading-relaxed opacity-80">
+              Every algorithm has its own growth story. Here are the most common computational arcs you'll encounter in the wild.
             </p>
-          </div>
-          <div className="hidden lg:block w-24 h-24 bg-primary rounded-full border-4 border-on-background shadow-[6px_6px_0_#0f172a] animate-bounce"></div>
+          </motion.div>
+          <motion.div 
+            animate={{ 
+              y: [0, -20, 0],
+              rotate: [0, 5, -5, 0]
+            }}
+            transition={{ 
+              duration: 6, 
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="hidden lg:flex w-28 h-28 bg-primary rounded-[2rem] border-2 border-on-background shadow-neo-lg items-center justify-center"
+          >
+            <Sparkles className="w-12 h-12 text-white animate-pulse" />
+          </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <motion.div 
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1
+              }
+            }
+          }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
           {[
-            { tag: 'O(1)', title: 'Constant', desc: 'Array access, hash lookup', color: 'bg-primary', accent: '#059669' },
-            { tag: 'O(log n)', title: 'Logarithmic', desc: 'Binary search', color: 'bg-secondary', accent: '#0284c7' },
-            { tag: 'O(n)', title: 'Linear', desc: 'Single loop, linear search', color: 'bg-[#f59e0b]', accent: '#f59e0b' },
-            { tag: 'O(n log n)', title: 'Linearithmic', desc: 'Merge sort, quick sort', color: 'bg-[#d97706]', accent: '#d97706' },
-            { tag: 'O(n²)', title: 'Quadratic', desc: 'Nested loops, bubble sort', color: 'bg-error', accent: '#dc2626' },
-            { tag: 'O(2ⁿ)', title: 'Exponential', desc: 'Recursive Fibonacci', color: 'bg-[#991b1b]', accent: '#991b1b' },
+            { tag: 'O(1)', title: 'Constant', desc: 'Array access, hash lookup', color: 'bg-primary' },
+            { tag: 'O(log n)', title: 'Logarithmic', desc: 'Binary searching', color: 'bg-secondary' },
+            { tag: 'O(n)', title: 'Linear', desc: 'Single loop, linear search', color: 'bg-[#f59e0b]' },
+            { tag: 'O(n log n)', title: 'Linearithmic', desc: 'Merge sort, quick sort', color: 'bg-[#d97706]' },
+            { tag: 'O(n²)', title: 'Quadratic', desc: 'Nested loops, bubble sort', color: 'bg-error' },
+            { tag: 'O(2ⁿ)', title: 'Exponential', desc: 'Recursive Fibonacci', color: 'bg-[#991b1b]' },
           ].map((cls, idx) => (
-            <div 
+            <motion.div 
               key={idx} 
-              className={`bg-white p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#0f172a] hover:-translate-y-2 transition-transform cursor-default group ${idx % 2 === 1 ? 'lg:rotate-1' : 'lg:-rotate-1'}`}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 }
+              }}
+              whileHover={{ y: -8, scale: 1.02 }}
+              className="bg-white p-10 rounded-[2.5rem] border-2 border-on-background shadow-neo-lg transition-all cursor-default group relative overflow-hidden"
             >
-              <div className="flex items-center justify-between mb-6">
-                <span className={`${cls.color} text-white px-4 py-1.5 rounded-full font-headline font-black text-sm border-2 border-on-background shadow-[3px_3px_0_#0f172a] uppercase`}>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-on-background/5 blur-3xl rounded-full -mr-10 -mt-10 group-hover:bg-primary/5 transition-colors"></div>
+              
+              <div className="flex items-center justify-between mb-8 relative z-10">
+                <span className={`${cls.color} text-white px-5 py-2 rounded-full font-headline font-black text-xs border-2 border-on-background shadow-neo uppercase tracking-tighter`}>
                   {cls.tag}
                 </span>
-                <Activity className="w-6 h-6 text-on-surface-variant opacity-20 group-hover:opacity-100 transition-opacity" />
+                <div className="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center opacity-40 group-hover:opacity-100 transition-all border border-on-background/10">
+                  <Activity className="w-5 h-5 text-on-surface-variant" />
+                </div>
               </div>
-              <h3 className="font-headline font-black text-2xl mb-2 text-on-surface uppercase italic tracking-tighter">
+              
+              <h3 className="font-headline font-black text-2xl mb-3 text-on-surface uppercase italic tracking-tighter relative z-10 group-hover:text-primary transition-colors">
                 {cls.title}
               </h3>
-              <p className="text-on-surface-variant text-sm font-bold leading-relaxed">
+              <p className="text-on-surface-variant text-sm font-bold leading-relaxed opacity-70 relative z-10">
                 {cls.desc}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
-      <section className="mb-16 pt-16 border-t-4 border-on-background">
+      <section className="mb-16 pt-16 border-t-2 border-on-background/10">
         <div className="text-center mb-16 px-4">
-          <h2 className="font-headline text-4xl sm:text-5xl md:text-6xl font-black text-on-background mb-4 uppercase">
-            The <span className="text-primary">Free Time Complexity</span> Calculator
+          <h2 className="font-headline text-4xl sm:text-5xl md:text-6xl font-black text-on-background mb-4 uppercase italic tracking-tighter">
+            The <span className="text-primary italic">Free Complexity</span> Storyteller
           </h2>
-          <p className="text-xl text-on-surface-variant max-w-2xl mx-auto font-bold">
-            AlgoStory is the most powerful free Big O calculator available. Better than BigOCalc, more intuitive than manual analysis.
+          <p className="text-xl text-on-surface-variant max-w-2xl mx-auto font-bold opacity-80">
+            AlgoStory provides deep computational insights for free. Every algorithm deserves its narrative.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-          <div className="bg-primary-container p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#064e3b]">
-            <div className="flex items-center gap-3 mb-4">
-              <Zap className="w-8 h-8 text-primary" />
-              <h3 className="font-headline font-black text-2xl text-on-background">⚡ Time Complexity Analyzer</h3>
-            </div>
-            <p className="text-on-surface-variant font-bold">Instantly analyze O(N), O(log N), O(N²) and more patterns in your code. Get Big O notation with AI explanations.</p>
-          </div>
-
-          <div className="bg-secondary-container p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#0c4a6e]">
-            <div className="flex items-center gap-3 mb-4">
-              <Cpu className="w-8 h-8 text-secondary" />
-              <h3 className="font-headline font-black text-2xl text-on-background">💾 Space Complexity Calculator</h3>
-            </div>
-            <p className="text-on-surface-variant font-bold">Calculate auxiliary space and memory usage of your algorithms. Analyze O notation with AI-powered insights.</p>
-          </div>
-
-          <div className="bg-tertiary-container p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#4c1d95]">
-            <div className="flex items-center gap-3 mb-4">
-              <Lightbulb className="w-8 h-8 text-tertiary" />
-              <h3 className="font-headline font-black text-2xl text-on-background">🤖 AI-Powered Insights</h3>
-            </div>
-            <p className="text-on-surface-variant font-bold">Get natural language explanations of complexity patterns. Understand algorithm efficiency in plain English.</p>
-          </div>
-
-          <div className="bg-error-container p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#7f1d1d]">
-            <div className="flex items-center gap-3 mb-4">
-              <BookOpen className="w-8 h-8 text-error" />
-              <h3 className="font-headline font-black text-2xl text-on-background">📚 Learn Big O Notation</h3>
-            </div>
-            <p className="text-on-surface-variant font-bold">Master algorithm complexity with 16+ interactive tutorials. From linear search to dynamic programming.</p>
-          </div>
+          <FeatureItem 
+            icon={<Zap className="w-8 h-8 text-primary" />}
+            title="Time Complexity Analyzer"
+            desc="Instantly analyze O(N), O(log N), O(N²) and more patterns in your code. Get Big O notation with AI explanations."
+            color="bg-primary-container"
+          />
+          <FeatureItem 
+            icon={<Cpu className="w-8 h-8 text-secondary" />}
+            title="Space Complexity Calculator"
+            desc="Calculate auxiliary space and memory usage of your algorithms. Analyze O notation with AI-powered insights."
+            color="bg-secondary-container"
+          />
+          <FeatureItem 
+            icon={<Lightbulb className="w-8 h-8 text-tertiary" />}
+            title="AI-Powered Insights"
+            desc="Get natural language explanations of complexity patterns. Understand algorithm efficiency in plain English."
+            color="bg-tertiary-container"
+          />
+          <FeatureItem 
+            icon={<BookOpen className="w-8 h-8 text-error" />}
+            title="Master Big O Notation"
+            desc="Master algorithm complexity with 16+ interactive tutorials. From linear search to dynamic programming."
+            color="bg-error-container"
+          />
         </div>
       </section>
 
-      <section className="mb-16 bg-secondary-container p-12 rounded-3xl border-4 border-on-background shadow-[12px_12px_0_#0c4a6e]">
-        <h2 className="font-headline text-4xl font-black text-on-background text-center mb-12">
-          Why Choose AlgoStory Over BigOCalc?
+      <section className="mb-24 glass-panel p-8 sm:p-16 rounded-[3rem] border-2 border-on-background shadow-neo-xl">
+        <h2 className="font-headline text-3xl sm:text-5xl font-black text-on-background text-center mb-16 italic uppercase tracking-tighter">
+          Why Choose <span className="modern-gradient-text">AlgoStory</span>?
         </h2>
         
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b-4 border-on-background">
-                <th className="text-left p-4 font-headline font-black text-lg text-on-background">Feature</th>
-                <th className="text-center p-4 font-headline font-black text-lg text-on-background">AlgoStory</th>
-                <th className="text-center p-4 font-headline font-black text-lg text-on-background">BigOCalc</th>
-                <th className="text-center p-4 font-headline font-black text-lg text-on-background">Manual</th>
+              <tr className="border-b-2 border-on-background/10">
+                <th className="text-left p-6 font-headline font-black text-xl text-on-background uppercase tracking-tight">Feature</th>
+                <th className="text-center p-6 font-headline font-black text-xl text-primary bg-primary/5 rounded-t-3xl">AlgoStory</th>
+                <th className="text-center p-6 font-headline font-black text-xl text-on-surface-variant opacity-40 italic">Others</th>
               </tr>
             </thead>
-            <tbody>
-              <tr className="border-b-2 border-on-background/30 hover:bg-on-background/5">
-                <td className="p-4 font-bold text-on-background">Free Forever</td>
-                <td className="text-center p-4 text-2xl">✅</td>
-                <td className="text-center p-4 text-2xl">⚠️</td>
-                <td className="text-center p-4 text-2xl">✅</td>
-              </tr>
-              <tr className="border-b-2 border-on-background/30 hover:bg-on-background/5">
-                <td className="p-4 font-bold text-on-background">AI Explanations</td>
-                <td className="text-center p-4 text-2xl">✅</td>
-                <td className="text-center p-4 text-2xl">❌</td>
-                <td className="text-center p-4 text-2xl">❌</td>
-              </tr>
-              <tr className="border-b-2 border-on-background/30 hover:bg-on-background/5">
-                <td className="p-4 font-bold text-on-background">Space Complexity</td>
-                <td className="text-center p-4 text-2xl">✅</td>
-                <td className="text-center p-4 text-2xl">⚠️</td>
-                <td className="text-center p-4 text-2xl">❌</td>
-              </tr>
-              <tr className="border-b-2 border-on-background/30 hover:bg-on-background/5">
-                <td className="p-4 font-bold text-on-background">16+ Tutorials</td>
-                <td className="text-center p-4 text-2xl">✅</td>
-                <td className="text-center p-4 text-2xl">❌</td>
-                <td className="text-center p-4 text-2xl">❌</td>
-              </tr>
-              <tr className="hover:bg-on-background/5">
-                <td className="p-4 font-bold text-on-background">Step-by-Step Breakdown</td>
-                <td className="text-center p-4 text-2xl">✅</td>
-                <td className="text-center p-4 text-2xl">❌</td>
-                <td className="text-center p-4 text-2xl">❌</td>
-              </tr>
+            <tbody className="font-body font-bold text-base">
+              {[
+                { f: 'AI-Powered Explanations', val: true },
+                { f: 'Space Complexity Labs', val: true },
+                { f: '16+ Deep-Dive Tutorials', val: true },
+                { f: 'Step-by-Step Breakdowns', val: true },
+                { f: 'Free & Clean UI', val: true },
+              ].map((row, i) => (
+                <tr key={i} className="border-b border-on-background/5 hover:bg-on-background/[0.02] transition-colors">
+                  <td className="p-6 text-on-background">{row.f}</td>
+                  <td className="text-center p-6 bg-primary/[0.02]"><Check className="mx-auto text-primary w-6 h-6" /></td>
+                  <td className="text-center p-6 opacity-20">---</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
-
-        <p className="text-center text-on-background font-bold text-lg mt-8">
-          Get started now with our <strong>Free Time Complexity Calculator</strong> - No signup, no limits, no ads.
-        </p>
       </section>
 
-      <section className="mb-16 bg-surface-container-low p-12 rounded-3xl">
-        <h2 className="font-headline text-4xl font-black text-on-background mb-12 text-center">
-          How Our Complexity Calculator Works
-        </h2>
-
-        <div className="space-y-6">
-          <div className="flex gap-6 items-start">
-            <div className="shrink-0">
-              <div className="w-12 h-12 rounded-full bg-primary text-white font-headline font-black text-xl flex items-center justify-center border-2 border-on-background">
-                1
-              </div>
-            </div>
-            <div>
-              <h3 className="font-headline font-black text-xl text-on-background mb-2">Paste Your Code</h3>
-              <p className="text-on-surface-variant font-bold">Paste any Python, Java, JavaScript, C++ or other language code into our Big O calculator</p>
-            </div>
-          </div>
-
-          <div className="flex gap-6 items-start">
-            <div className="shrink-0">
-              <div className="w-12 h-12 rounded-full bg-secondary text-white font-headline font-black text-xl flex items-center justify-center border-2 border-on-background">
-                2
-              </div>
-            </div>
-            <div>
-              <h3 className="font-headline font-black text-xl text-on-background mb-2">AI Analyzes Complexity</h3>
-              <p className="text-on-surface-variant font-bold">Our AI examines your code and calculates time complexity, space complexity, and identifies optimization opportunities</p>
-            </div>
-          </div>
-
-          <div className="flex gap-6 items-start">
-            <div className="shrink-0">
-              <div className="w-12 h-12 rounded-full bg-tertiary text-white font-headline font-black text-xl flex items-center justify-center border-2 border-on-background">
-                3
-              </div>
-            </div>
-            <div>
-              <h3 className="font-headline font-black text-xl text-on-background mb-2">Get Big O Analysis</h3>
-              <p className="text-on-surface-variant font-bold">Receive instant O(N) notation with natural language explanations of why your algorithm has that complexity</p>
-            </div>
-          </div>
-
-          <div className="flex gap-6 items-start">
-            <div className="shrink-0">
-              <div className="w-12 h-12 rounded-full bg-error text-white font-headline font-black text-xl flex items-center justify-center border-2 border-on-background">
-                4
-              </div>
-            </div>
-            <div>
-              <h3 className="font-headline font-black text-xl text-on-background mb-2">Learn & Improve</h3>
-              <p className="text-on-surface-variant font-bold">Use our 16+ algorithm tutorials to understand complexity patterns and optimize your code for better performance</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mb-16 rounded-[2rem] border-4 border-on-background bg-white px-6 py-10 shadow-[12px_12px_0_#0f172a] sm:px-10">
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <section className="mb-24 rounded-[3rem] border-2 border-on-background bg-white px-8 py-16 shadow-neo-xl relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-tertiary/5 blur-[120px] rounded-full pointer-events-none group-hover:bg-tertiary/10 transition-colors"></div>
+        
+        <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between relative z-10">
           <div className="max-w-2xl">
-            <h2 className="mb-3 font-headline text-4xl font-black uppercase italic tracking-tighter">
-              Learn The Patterns Behind The Output
+            <h2 className="mb-4 font-headline text-4xl sm:text-6xl font-black uppercase italic tracking-tighter">
+              Learn The Patterns
             </h2>
-            <p className="text-base font-bold leading-relaxed text-on-surface-variant sm:text-lg">
-              Strong SEO pages need strong internal linking. These guides connect the calculator to
-              specific algorithm topics users actually search for.
+            <p className="text-lg font-bold leading-relaxed text-on-surface-variant opacity-80">
+              Go beyond the calculator. These deep-dive guides connect theory to the lines of code you write every day.
             </p>
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          <Link
+        <div className="grid gap-8 md:grid-cols-3 relative z-10">
+          <LinkCard 
             to="/tutorials"
-            className="rounded-3xl border-4 border-on-background bg-primary-container p-6 shadow-[8px_8px_0_#0f172a] transition-transform hover:-translate-y-1"
-          >
-            <BookOpen className="mb-5 h-10 w-10 text-primary" />
-            <h3 className="mb-3 font-headline text-2xl font-black">Algorithm Tutorials</h3>
-            <p className="mb-5 text-sm font-bold leading-relaxed text-on-surface-variant">
-              Crawlable guides on binary search, merge sort, graphs, dynamic programming, and more.
-            </p>
-            <span className="inline-flex items-center gap-2 text-sm font-black text-primary">
-              Browse Tutorials
-              <ArrowRight className="h-4 w-4" />
-            </span>
-          </Link>
-
-          <Link
+            icon={<BookOpen className="w-10 h-10 text-primary" />}
+            title="Tutorials"
+            desc="Crawlable guides on binary search, merge sort, graphs, and dynamic programming."
+            color="bg-primary-container"
+            action="Browse Guides"
+          />
+          <LinkCard 
             to="/inside-math"
-            className="rounded-3xl border-4 border-on-background bg-secondary-container p-6 shadow-[8px_8px_0_#0f172a] transition-transform hover:-translate-y-1"
-          >
-            <Cpu className="mb-5 h-10 w-10 text-secondary" />
-            <h3 className="mb-3 font-headline text-2xl font-black">Line-By-Line Breakdowns</h3>
-            <p className="mb-5 text-sm font-bold leading-relaxed text-on-surface-variant">
-              Use the step-by-step analyzer to understand where each complexity term comes from.
-            </p>
-            <span className="inline-flex items-center gap-2 text-sm font-black text-secondary">
-              Open Complexity Lab
-              <ArrowRight className="h-4 w-4" />
-            </span>
-          </Link>
-
-          <Link
+            icon={<Cpu className="w-10 h-10 text-secondary" />}
+            title="Math Lab"
+            desc="Use the step-by-step analyzer to understand where each complexity term comes from."
+            color="bg-secondary-container"
+            action="Enter Lab"
+          />
+          <LinkCard 
             to="/blog"
-            className="rounded-3xl border-4 border-on-background bg-tertiary-container p-6 shadow-[8px_8px_0_#0f172a] transition-transform hover:-translate-y-1"
-          >
-            <Activity className="mb-5 h-10 w-10 text-tertiary" />
-            <h3 className="mb-3 font-headline text-2xl font-black">Big O Articles</h3>
-            <p className="mb-5 text-sm font-bold leading-relaxed text-on-surface-variant">
-              Read focused explainers on Big O notation, Bubble Sort, and Merge Sort complexity.
-            </p>
-            <span className="inline-flex items-center gap-2 text-sm font-black text-tertiary">
-              Read The Blog
-              <ArrowRight className="h-4 w-4" />
-            </span>
-          </Link>
+            icon={<Activity className="w-10 h-10 text-tertiary" />}
+            title="The Blog"
+            desc="Read focused explainers on Big O notation, Bubble Sort, and Merge Sort theory."
+            color="bg-tertiary-container"
+            action="Read Articles"
+          />
         </div>
       </section>
 
-      <section className="mb-10 px-4">
-        <div className="mb-8 max-w-3xl">
+      <section className="mb-20 px-4">
+        <div className="mb-12 max-w-3xl">
           <h2 className="mb-4 font-headline text-4xl font-black uppercase italic tracking-tighter">
-            Complexity Calculator FAQ
+            Complexity FAQ
           </h2>
-          <p className="text-lg font-bold leading-relaxed text-on-surface-variant">
-            This extra explanatory content helps users and search engines understand what the tool
-            does, which queries it serves, and when to use each experience.
+          <p className="text-lg font-bold text-on-surface-variant opacity-80">
+            Answers to common questions about algorithmic complexity and how to use our toolkit.
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-3">
           {[
             {
-              question: 'When should I use the time complexity calculator?',
-              answer:
-                'Use it when you want to estimate how runtime changes as input size grows, especially for loops, nested loops, and recursive code.',
+              q: 'When to use the Time Analyzer?',
+              a: 'Use it when you want to estimate how runtime changes as input size grows, especially for loops and recursion.',
+              icon: <Zap className="w-5 h-5" />
             },
             {
-              question: 'When should I use the space complexity calculator?',
-              answer:
-                'Use it when memory growth matters, including recursion stack depth, temporary arrays, hash maps, and auxiliary storage.',
+              q: 'When to use the Space Lab?',
+              a: 'Use it when memory growth matters, including recursion stack depth and temporary data structures.',
+              icon: <Cpu className="w-5 h-5" />
             },
             {
-              question: 'Can I learn Big O from this site?',
-              answer:
-                'Yes. The calculator is paired with tutorials, articles, and a line-by-line lab so users can move from quick answers to deeper understanding.',
+              q: 'Can I learn Big O here?',
+              a: 'Yes. The toolkit is paired with tutorials and a step-by-step lab to move you from answers to understanding.',
+              icon: <Lightbulb className="w-5 h-5" />
             },
-          ].map((item) => (
-            <article
-              key={item.question}
-              className="rounded-3xl border-4 border-on-background bg-white p-6 shadow-[8px_8px_0_#0f172a]"
+          ].map((item, idx) => (
+            <motion.article
+              key={idx}
+              whileHover={{ y: -5 }}
+              className="rounded-[2.5rem] border-2 border-on-background bg-white p-8 shadow-neo-lg"
             >
-              <h3 className="mb-3 font-headline text-2xl font-black leading-tight">{item.question}</h3>
-              <p className="text-sm font-bold leading-relaxed text-on-surface-variant">{item.answer}</p>
-            </article>
+              <div className="w-10 h-10 bg-surface-container rounded-xl flex items-center justify-center mb-6 border border-on-background/5 shadow-neo text-primary">
+                {item.icon}
+              </div>
+              <h3 className="mb-4 font-headline text-2xl font-black leading-tight tracking-tight uppercase italic">{item.q}</h3>
+              <p className="text-sm font-bold leading-relaxed text-on-surface-variant opacity-70">{item.a}</p>
+            </motion.article>
           ))}
         </div>
       </section>
     </div>
+  );
+}
+
+function FeatureItem({ icon, title, desc, color }: { icon: React.ReactNode, title: string, desc: string, color: string }) {
+  return (
+    <div className={`${color} p-8 rounded-[2.5rem] border-2 border-on-background shadow-neo-lg hover:shadow-neo transition-all group`}>
+      <div className="flex items-center gap-4 mb-4">
+        <div className="p-3 bg-white border-2 border-on-background rounded-2xl shadow-neo group-hover:scale-110 transition-transform">
+          {icon}
+        </div>
+        <h3 className="font-headline font-black text-xl text-on-background tracking-tight italic uppercase">{title}</h3>
+      </div>
+      <p className="text-on-surface-variant font-bold opacity-80 leading-relaxed">{desc}</p>
+    </div>
+  );
+}
+
+function LinkCard({ to, icon, title, desc, color, action }: { to: string, icon: React.ReactNode, title: string, desc: string, color: string, action: string }) {
+  return (
+    <Link
+      to={to}
+      className={`${color} rounded-[2.5rem] border-2 border-on-background p-8 shadow-neo-lg transition-all hover:translate-y-[-4px] hover:shadow-neo-xl group`}
+    >
+      <div className="mb-6 h-14 w-14 bg-white border-2 border-on-background rounded-2xl flex items-center justify-center shadow-neo group-hover:rotate-6 transition-transform">
+        {icon}
+      </div>
+      <h3 className="mb-3 font-headline text-3xl font-black italic uppercase tracking-tighter">{title}</h3>
+      <p className="mb-6 text-sm font-bold leading-relaxed text-on-surface-variant opacity-80">
+        {desc}
+      </p>
+      <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-on-background group-hover:text-primary transition-colors">
+        {action}
+        <ArrowRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
+      </span>
+    </Link>
   );
 }

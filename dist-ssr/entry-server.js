@@ -1,10 +1,11 @@
-import { jsx, jsxs, Fragment } from "react/jsx-runtime";
+import { jsxs, jsx, Fragment } from "react/jsx-runtime";
 import React__default, { lazy, useContext, createContext, Suspense, useState, useEffect } from "react";
 import { renderToPipeableStream } from "react-dom/server";
-import { Link, NavLink, Outlet, useLocation, useParams, Routes, Route, Navigate, MemoryRouter } from "react-router-dom";
+import { useLocation, Link, NavLink, Outlet, useParams, Routes, Route, Navigate, MemoryRouter } from "react-router-dom";
 import { H as Helmet, a as HelmetProvider } from "./assets/vendor-BbfjqPYt.js";
 import { PassThrough } from "stream";
-import { User, LogOut, LogIn, Github, Linkedin, ArrowRight, Mail, Activity, Check, Copy, Zap, BookOpen, Save, Cpu, Lightbulb, Search, Layers, Network, Brain, ListOrdered, ArrowRightLeft, Maximize, Repeat, Hash, Link2, Box, Trees, BarChart3, Home as Home$2, ChevronRight, Ghost, Calculator, AlertTriangle } from "lucide-react";
+import { User, LogOut, LogIn, Github, Linkedin, ArrowRight, Activity, Check, Copy, Zap, Sparkles, BookOpen, Save, Cpu, Lightbulb, Search, Layers, Network, Brain, ListOrdered, ArrowRightLeft, Maximize, Repeat, Hash, Link2, Box, Trees, BarChart3, Home as Home$2, ChevronRight, Ghost, Calculator, AlertTriangle } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import Editor from "react-simple-code-editor";
 import { P as Prism } from "./assets/prism-OM6GymsZ.js";
 import { r as reactKatexExports } from "./assets/math-DRdIFewa.js";
@@ -22,12 +23,19 @@ lazy(() => Promise.resolve().then(() => BlogPost$1));
 lazy(() => Promise.resolve().then(() => Layout$1));
 lazy(() => Promise.resolve().then(() => NotFound$1));
 function LoadingFallback() {
-  return /* @__PURE__ */ jsx("div", { className: "min-h-screen flex items-center justify-center", children: /* @__PURE__ */ jsx("div", { className: "w-16 h-16 border-8 border-primary border-t-transparent rounded-full animate-spin" }) });
+  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen flex flex-col items-center justify-center gap-4 bg-background", children: [
+    /* @__PURE__ */ jsxs("div", { className: "relative", children: [
+      /* @__PURE__ */ jsx("div", { className: "w-16 h-16 border-4 border-primary/10 rounded-full" }),
+      /* @__PURE__ */ jsx("div", { className: "absolute top-0 left-0 w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin" })
+    ] }),
+    /* @__PURE__ */ jsx("p", { className: "font-headline font-black text-primary uppercase tracking-tighter animate-pulse text-sm", children: "Loading Story..." })
+  ] });
 }
 const AuthContext = createContext({ user: null, loading: false });
 const useAuth = () => useContext(AuthContext);
 function Layout() {
   const { user } = useAuth();
+  const location = useLocation();
   const handleSignIn = async () => {
     const { signInWithGoogle } = await import("./assets/firebase-DDh2ZTZn.js");
     await signInWithGoogle();
@@ -37,157 +45,150 @@ function Layout() {
     await logOut();
   };
   return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-background font-body text-on-background selection:bg-primary selection:text-white flex flex-col", children: [
-    /* @__PURE__ */ jsx("header", { className: "fixed top-0 w-full z-50 bg-white border-b-4 border-on-background shadow-[0_4px_0_rgba(15,23,42,0.05)]", children: /* @__PURE__ */ jsxs("nav", { className: "flex justify-between items-center max-w-7xl mx-auto px-6 h-20", children: [
-      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-8", children: [
-        /* @__PURE__ */ jsxs(Link, { to: "/", className: "text-xl sm:text-2xl font-black text-primary italic font-headline flex items-center gap-2 sm:gap-3", children: [
-          /* @__PURE__ */ jsx("div", { className: "w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary flex items-center justify-center text-white border-2 sm:border-4 border-on-background shadow-[2px_2px_0_#0f172a] sm:shadow-[4px_4px_0_#0f172a]", children: "A" }),
-          /* @__PURE__ */ jsx("span", { className: "truncate max-w-[100px] sm:max-w-none", children: "AlgoStory" })
+    /* @__PURE__ */ jsx("header", { className: "fixed top-6 left-0 right-0 z-50 flex justify-center px-4", children: /* @__PURE__ */ jsxs("nav", { className: "glass-header w-full max-w-5xl rounded-[2.5rem] px-6 h-16 flex justify-between items-center shadow-floating", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-6", children: [
+        /* @__PURE__ */ jsxs(Link, { to: "/", className: "text-lg sm:text-xl font-black text-primary italic font-headline flex items-center gap-2 hover:scale-105 transition-transform active:scale-95", children: [
+          /* @__PURE__ */ jsx("div", { className: "w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white border-2 border-on-background shadow-neo", children: "A" }),
+          /* @__PURE__ */ jsx("span", { className: "hidden sm:inline", children: "AlgoStory" })
         ] }),
-        /* @__PURE__ */ jsxs("div", { className: "hidden md:flex items-center gap-6", children: [
-          /* @__PURE__ */ jsx(
-            NavLink,
-            {
-              to: "/",
-              end: true,
-              className: ({ isActive }) => `font-headline font-bold text-sm tracking-tight hover:scale-105 transition-all duration-200 active:scale-95 pb-1 ${isActive ? "text-primary border-b-4 border-primary" : "text-on-surface-variant hover:text-primary border-b-4 border-transparent"}`,
-              children: "Analyzer"
-            }
-          ),
-          /* @__PURE__ */ jsx(
-            NavLink,
-            {
-              to: "/tutorials",
-              className: ({ isActive }) => `font-headline font-bold text-sm tracking-tight hover:scale-105 transition-all duration-200 active:scale-95 pb-1 ${isActive ? "text-primary border-b-4 border-primary" : "text-on-surface-variant hover:text-primary border-b-4 border-transparent"}`,
-              children: "Tutorials"
-            }
-          ),
-          /* @__PURE__ */ jsx(
-            NavLink,
-            {
-              to: "/inside-math",
-              className: ({ isActive }) => `font-headline font-bold text-sm tracking-tight hover:scale-105 transition-all duration-200 active:scale-95 pb-1 ${isActive ? "text-primary border-b-4 border-primary" : "text-on-surface-variant hover:text-primary border-b-4 border-transparent"}`,
-              children: "Inside the Math"
-            }
-          ),
-          /* @__PURE__ */ jsx(
-            NavLink,
-            {
-              to: "/blog",
-              className: ({ isActive }) => `font-headline font-bold text-sm tracking-tight hover:scale-105 transition-all duration-200 active:scale-95 pb-1 ${isActive ? "text-primary border-b-4 border-primary" : "text-on-surface-variant hover:text-primary border-b-4 border-transparent"}`,
-              children: "Blog"
-            }
-          )
-        ] })
+        /* @__PURE__ */ jsx("div", { className: "hidden md:flex items-center gap-4", children: [
+          { to: "/", label: "Analyzer" },
+          { to: "/tutorials", label: "Tutorials" },
+          { to: "/inside-math", label: "Math Lab" },
+          { to: "/blog", label: "Blog" }
+        ].map((item) => /* @__PURE__ */ jsx(
+          NavLink,
+          {
+            to: item.to,
+            end: item.to === "/",
+            className: ({ isActive }) => `font-headline font-bold text-xs tracking-tight transition-all duration-300 px-3 py-2 rounded-full active:scale-90 ${isActive ? "text-primary bg-primary-container/40" : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low"}`,
+            children: item.label
+          },
+          item.to
+        )) })
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "flex items-center gap-4", children: user ? /* @__PURE__ */ jsxs(Fragment, { children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 text-on-surface-variant font-headline font-bold text-xs sm:text-sm", children: [
-          user.photoURL ? /* @__PURE__ */ jsx("img", { src: user.photoURL, alt: "Profile", className: "w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-primary", referrerPolicy: "no-referrer" }) : /* @__PURE__ */ jsx(User, { className: "w-5 h-5 sm:w-6 sm:h-6" }),
-          /* @__PURE__ */ jsx("span", { className: "hidden lg:inline", children: user.displayName })
+      /* @__PURE__ */ jsx("div", { className: "flex items-center gap-3", children: user ? /* @__PURE__ */ jsxs(Fragment, { children: [
+        /* @__PURE__ */ jsxs("div", { className: "hidden sm:flex items-center gap-2 text-on-surface-variant font-headline font-bold text-xs", children: [
+          user.photoURL ? /* @__PURE__ */ jsx("img", { src: user.photoURL, alt: "Profile", className: "w-6 h-6 rounded-full border-2 border-primary", referrerPolicy: "no-referrer" }) : /* @__PURE__ */ jsx(User, { className: "w-4 h-4" }),
+          /* @__PURE__ */ jsx("span", { className: "max-w-[80px] truncate", children: user.displayName })
         ] }),
-        /* @__PURE__ */ jsxs("button", { onClick: handleSignOut, className: "bg-surface-container-high text-on-surface px-4 py-2 rounded-full font-headline font-bold text-sm hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2", children: [
-          /* @__PURE__ */ jsx(LogOut, { className: "w-4 h-4" }),
-          " Sign Out"
-        ] })
-      ] }) : /* @__PURE__ */ jsxs("button", { onClick: handleSignIn, className: "bg-primary text-on-primary px-4 sm:px-8 py-2 sm:py-3 rounded-full font-headline font-bold text-[10px] sm:text-sm hover:scale-105 active:scale-95 transition-all duration-200 border-2 sm:border-4 border-on-primary-container shadow-[3px_3px_0_#064e3b] sm:shadow-[6px_6px_0_#064e3b] flex items-center gap-1 sm:gap-2", children: [
-        /* @__PURE__ */ jsx(LogIn, { className: "w-3 h-3 sm:w-4 sm:h-4" }),
-        " ",
-        /* @__PURE__ */ jsx("span", { children: "Get Started" })
-      ] }) })
+        /* @__PURE__ */ jsx("button", { onClick: handleSignOut, className: "bg-surface-container-high text-on-surface p-2 rounded-full font-headline font-bold text-xs hover:bg-error-container hover:text-error transition-all group", children: /* @__PURE__ */ jsx(LogOut, { className: "w-4 h-4 group-hover:scale-110" }) })
+      ] }) : /* @__PURE__ */ jsxs(
+        "button",
+        {
+          onClick: handleSignIn,
+          className: "bg-primary text-white px-5 py-2 rounded-full font-headline font-black text-xs hover:scale-105 active:scale-95 transition-all duration-200 border-2 border-on-primary-container shadow-neo flex items-center gap-2",
+          children: [
+            /* @__PURE__ */ jsx(LogIn, { className: "w-3.5 h-3.5" }),
+            " ",
+            /* @__PURE__ */ jsx("span", { children: "Login" })
+          ]
+        }
+      ) })
     ] }) }),
-    /* @__PURE__ */ jsx("main", { className: "flex-grow pt-28 pb-12 px-6 max-w-7xl mx-auto w-full", children: /* @__PURE__ */ jsx(Outlet, {}) }),
-    /* @__PURE__ */ jsxs("footer", { className: "w-full mt-32 bg-white border-t-8 border-on-background relative overflow-hidden", children: [
-      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-[0.03] pointer-events-none graph-paper" }),
-      /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto px-6 py-20 relative z-10", children: [
-        /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16", children: [
+    /* @__PURE__ */ jsx(AnimatePresence, { mode: "wait", children: /* @__PURE__ */ jsx(
+      motion.main,
+      {
+        initial: { opacity: 0, y: 10 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -10 },
+        transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+        className: "flex-grow pt-32 pb-12 px-6 max-w-7xl mx-auto w-full mb-20",
+        children: /* @__PURE__ */ jsx(Outlet, {})
+      },
+      location.pathname
+    ) }),
+    /* @__PURE__ */ jsxs("footer", { className: "w-full bg-white border-t-2 border-on-background relative overflow-hidden", children: [
+      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-[0.02] pointer-events-none graph-paper" }),
+      /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto px-6 py-16 relative z-10", children: [
+        /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12", children: [
           /* @__PURE__ */ jsxs("div", { className: "space-y-8 lg:col-span-2", children: [
-            /* @__PURE__ */ jsxs(Link, { to: "/", className: "text-3xl font-black text-primary italic font-headline flex items-center gap-3", children: [
-              /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white border-4 border-on-background shadow-[4px_4px_0_#0f172a]", children: "A" }),
+            /* @__PURE__ */ jsxs(Link, { to: "/", className: "text-2xl font-black text-primary italic font-headline flex items-center gap-3 group", children: [
+              /* @__PURE__ */ jsx("div", { className: "w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white border-2 border-on-background shadow-neo group-hover:shadow-neo-lg transition-all", children: "A" }),
               "AlgoStory"
             ] }),
             /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
-              /* @__PURE__ */ jsx("h4", { className: "font-headline font-black text-xl uppercase tracking-tighter text-secondary italic underline decoration-secondary decoration-4 underline-offset-4", children: "Developed By" }),
-              /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-8", children: [
-                /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
-                  /* @__PURE__ */ jsx("div", { className: "font-headline font-black text-lg text-on-background uppercase tracking-tight", children: "Sushant Garg" }),
-                  /* @__PURE__ */ jsxs("div", { className: "flex gap-3", children: [
-                    /* @__PURE__ */ jsx("a", { href: "https://github.com/garg-sushant", target: "_blank", rel: "noopener noreferrer", className: "w-9 h-9 bg-white border-2 border-on-background rounded-lg flex items-center justify-center hover:bg-primary-container transition-colors shadow-[3px_3px_0_#0f172a] hover:translate-y-[-2px]", children: /* @__PURE__ */ jsx(Github, { className: "w-4 h-4" }) }),
-                    /* @__PURE__ */ jsx("a", { href: "https://www.linkedin.com/in/sushant-garg-4b0a37284/", target: "_blank", rel: "noopener noreferrer", className: "w-9 h-9 bg-white border-2 border-on-background rounded-lg flex items-center justify-center hover:bg-tertiary-container transition-colors shadow-[3px_3px_0_#0f172a] hover:translate-y-[-2px]", children: /* @__PURE__ */ jsx(Linkedin, { className: "w-4 h-4" }) })
-                  ] })
-                ] }),
-                /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
-                  /* @__PURE__ */ jsx("div", { className: "font-headline font-black text-lg text-on-background uppercase tracking-tight", children: "Akshat Aggarwal" }),
-                  /* @__PURE__ */ jsxs("div", { className: "flex gap-3", children: [
-                    /* @__PURE__ */ jsx("a", { href: "https://github.com/akshat-chd", target: "_blank", rel: "noopener noreferrer", className: "w-9 h-9 bg-white border-2 border-on-background rounded-lg flex items-center justify-center hover:bg-primary-container transition-colors shadow-[3px_3px_0_#0f172a] hover:translate-y-[-2px]", children: /* @__PURE__ */ jsx(Github, { className: "w-4 h-4" }) }),
-                    /* @__PURE__ */ jsx("a", { href: "https://www.linkedin.com/in/akshat-aggarwal-10bbba301/", target: "_blank", rel: "noopener noreferrer", className: "w-9 h-9 bg-white border-2 border-on-background rounded-lg flex items-center justify-center hover:bg-tertiary-container transition-colors shadow-[3px_3px_0_#0f172a] hover:translate-y-[-2px]", children: /* @__PURE__ */ jsx(Linkedin, { className: "w-4 h-4" }) })
-                  ] })
-                ] })
-              ] }),
-              /* @__PURE__ */ jsx("p", { className: "font-body text-on-surface-variant font-bold leading-relaxed max-w-sm mt-8", children: "Empowering developers to visualize algorithms and master code complexity through the art of storytelling." })
+              /* @__PURE__ */ jsx("h4", { className: "font-headline font-black text-sm uppercase tracking-widest text-on-surface-variant italic", children: "Developed By" }),
+              /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-6", children: [
+                /* @__PURE__ */ jsx(
+                  ContributorCard,
+                  {
+                    name: "Sushant Garg",
+                    github: "https://github.com/garg-sushant",
+                    linkedin: "https://www.linkedin.com/in/sushant-garg-4b0a37284/"
+                  }
+                ),
+                /* @__PURE__ */ jsx(
+                  ContributorCard,
+                  {
+                    name: "Akshat Aggarwal",
+                    github: "https://github.com/akshat-chd",
+                    linkedin: "https://www.linkedin.com/in/akshat-aggarwal-10bbba301/"
+                  }
+                )
+              ] })
             ] })
           ] }),
-          /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
-            /* @__PURE__ */ jsx("h4", { className: "font-headline font-black text-xl uppercase tracking-tighter text-on-background italic underline decoration-primary decoration-4 underline-offset-4", children: "Product" }),
-            /* @__PURE__ */ jsxs("ul", { className: "space-y-4", children: [
-              /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, { to: "/", className: "font-body font-bold text-on-surface-variant hover:text-primary flex items-center gap-2 group", children: [
-                /* @__PURE__ */ jsx(ArrowRight, { className: "w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" }),
-                " AI Analyzer"
-              ] }) }),
-              /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, { to: "/tutorials", className: "font-body font-bold text-on-surface-variant hover:text-primary flex items-center gap-2 group", children: [
-                /* @__PURE__ */ jsx(ArrowRight, { className: "w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" }),
-                " Knowledge Base"
-              ] }) }),
-              /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, { to: "/inside-math", className: "font-body font-bold text-on-surface-variant hover:text-primary flex items-center gap-2 group", children: [
-                /* @__PURE__ */ jsx(ArrowRight, { className: "w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" }),
-                " Complexity Lab"
-              ] }) }),
-              /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, { to: "/blog", className: "font-body font-bold text-on-surface-variant hover:text-primary flex items-center gap-2 group", children: [
-                /* @__PURE__ */ jsx(ArrowRight, { className: "w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" }),
-                " Blog Articles"
-              ] }) })
-            ] })
+          /* @__PURE__ */ jsx(FooterList, { title: "Product", items: [
+            { to: "/", label: "AI Analyzer" },
+            { to: "/tutorials", label: "Docs" },
+            { to: "/inside-math", label: "Math Lab" },
+            { to: "/blog", label: "Blog" }
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
-            /* @__PURE__ */ jsx("h4", { className: "font-headline font-black text-xl uppercase tracking-tighter text-on-background italic underline decoration-secondary decoration-4 underline-offset-4", children: "Community" }),
-            /* @__PURE__ */ jsxs("ul", { className: "space-y-4", children: [
-              /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, { to: "/tutorials", className: "font-body font-bold text-on-surface-variant hover:text-secondary flex items-center gap-2 group", children: [
-                /* @__PURE__ */ jsx(ArrowRight, { className: "w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" }),
-                " Docs"
-              ] }) }),
-              /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, { to: "/blog", className: "font-body font-bold text-on-surface-variant hover:text-secondary flex items-center gap-2 group", children: [
-                /* @__PURE__ */ jsx(ArrowRight, { className: "w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" }),
-                " Blog"
-              ] }) })
-            ] })
-          ] }),
-          /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
-            /* @__PURE__ */ jsx("h4", { className: "font-headline font-black text-xl uppercase tracking-tighter text-on-background italic underline decoration-tertiary decoration-4 underline-offset-4", children: "Stay Notified" }),
-            /* @__PURE__ */ jsxs("div", { className: "relative", children: [
+            /* @__PURE__ */ jsx("h4", { className: "font-headline font-black text-sm uppercase tracking-widest text-on-surface-variant italic", children: "Stay Notified" }),
+            /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
               /* @__PURE__ */ jsx(
                 "input",
                 {
                   type: "email",
                   placeholder: "name@email.com",
-                  className: "w-full px-4 py-3 bg-white border-4 border-on-background rounded-xl font-body font-bold text-sm focus:outline-none focus:ring-4 focus:ring-tertiary/20 shadow-[4px_4px_0_#94a3b8]"
+                  className: "w-full px-4 py-3 bg-surface-container-low border-2 border-on-background rounded-2xl font-body font-bold text-sm focus:outline-none focus:ring-4 focus:ring-primary/20 shadow-neo transition-all"
                 }
               ),
-              /* @__PURE__ */ jsx("button", { className: "mt-4 w-full bg-tertiary text-white py-3 rounded-xl font-headline font-black uppercase text-sm border-4 border-on-background shadow-[4px_4px_0_#4c1d95] hover:translate-y-1 hover:shadow-none transition-all", children: "Join The Story" })
-            ] }),
-            /* @__PURE__ */ jsxs("p", { className: "flex items-center gap-2 text-xs font-bold text-on-surface-variant", children: [
-              /* @__PURE__ */ jsx(Mail, { className: "w-4 h-4" }),
-              " weekly tips on complexity."
+              /* @__PURE__ */ jsx("button", { className: "w-full bg-tertiary text-white py-3 rounded-2xl font-headline font-black uppercase text-xs border-2 border-on-background shadow-neo hover:translate-y-1 hover:shadow-none transition-all", children: "Sign Up" })
             ] })
           ] })
         ] }),
-        /* @__PURE__ */ jsxs("div", { className: "mt-20 pt-8 border-t-4 border-on-background/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-bold text-on-surface-variant", children: [
+        /* @__PURE__ */ jsxs("div", { className: "mt-16 pt-8 border-t-2 border-on-background/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-on-surface-variant", children: [
           /* @__PURE__ */ jsx("p", { children: "© 2026 AlgoStory. Every line of code tells a story. 📖" }),
-          /* @__PURE__ */ jsxs("div", { className: "flex gap-8", children: [
+          /* @__PURE__ */ jsxs("div", { className: "flex gap-6", children: [
             /* @__PURE__ */ jsx(Link, { to: "/blog", className: "hover:text-primary transition-colors", children: "Blog" }),
-            /* @__PURE__ */ jsx(Link, { to: "/tutorials", className: "hover:text-primary transition-colors", children: "Tutorials" }),
-            /* @__PURE__ */ jsx(Link, { to: "/time-complexity-calculator", className: "hover:text-primary transition-colors", children: "Time Calculator" })
+            /* @__PURE__ */ jsx(Link, { to: "/tutorials", className: "hover:text-primary transition-colors", children: "Tutorials" })
           ] })
         ] })
       ] })
     ] })
+  ] });
+}
+function ContributorCard({ name, github, linkedin }) {
+  return /* @__PURE__ */ jsxs("div", { className: "space-y-3", children: [
+    /* @__PURE__ */ jsx("div", { className: "font-headline font-black text-base text-on-background uppercase tracking-tight", children: name }),
+    /* @__PURE__ */ jsxs("div", { className: "flex gap-2", children: [
+      /* @__PURE__ */ jsx(SocialButton, { href: github, icon: /* @__PURE__ */ jsx(Github, { className: "w-4 h-4" }), color: "hover:bg-primary-container" }),
+      /* @__PURE__ */ jsx(SocialButton, { href: linkedin, icon: /* @__PURE__ */ jsx(Linkedin, { className: "w-4 h-4" }), color: "hover:bg-tertiary-container" })
+    ] })
+  ] });
+}
+function SocialButton({ href, icon, color }) {
+  return /* @__PURE__ */ jsx(
+    "a",
+    {
+      href,
+      target: "_blank",
+      rel: "noopener noreferrer",
+      className: `w-8 h-8 bg-white border-2 border-on-background rounded-lg flex items-center justify-center transition-all shadow-neo hover:translate-y-[-2px] hover:shadow-neo-lg ${color}`,
+      children: icon
+    }
+  );
+}
+function FooterList({ title, items }) {
+  return /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
+    /* @__PURE__ */ jsx("h4", { className: "font-headline font-black text-sm uppercase tracking-widest text-on-surface-variant italic", children: title }),
+    /* @__PURE__ */ jsx("ul", { className: "space-y-3", children: items.map((item) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, { to: item.to, className: "font-body font-bold text-sm text-on-background/70 hover:text-primary flex items-center gap-2 group", children: [
+      /* @__PURE__ */ jsx(ArrowRight, { className: "w-3 h-3 opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 transition-all transition-transform group-hover:translate-x-1" }),
+      item.label
+    ] }) }, item.label)) })
   ] });
 }
 const Layout$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -630,137 +631,214 @@ function Home() {
         schema
       }
     ),
-    /* @__PURE__ */ jsxs("div", { className: "mb-12 text-center max-w-3xl mx-auto space-y-4 px-4", children: [
-      /* @__PURE__ */ jsx("h1", { className: "font-headline font-black text-4xl sm:text-5xl md:text-7xl tracking-tight leading-[1.1] md:leading-[1.05]", children: pagePath === "/" ? /* @__PURE__ */ jsxs(Fragment, { children: [
-        "Every line of code",
-        " ",
-        /* @__PURE__ */ jsx("span", { className: "text-primary italic underline decoration-[8px] md:decoration-[12px] decoration-primary-container", children: "tells a story." })
-      ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
-        pageSeo.heading.split(" ").slice(0, -1).join(" "),
-        " ",
-        /* @__PURE__ */ jsx("span", { className: "text-primary italic underline decoration-[8px] md:decoration-[12px] decoration-primary-container", children: pageSeo.heading.split(" ").slice(-1) })
-      ] }) }),
-      /* @__PURE__ */ jsx("p", { className: "text-lg md:text-xl text-on-surface-variant font-bold max-w-2xl mx-auto", children: pageSeo.intro })
-    ] }),
-    /* @__PURE__ */ jsxs("div", { className: "grid lg:grid-cols-12 gap-10 items-start", children: [
-      /* @__PURE__ */ jsxs("section", { className: "lg:col-span-5 space-y-8", children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ jsx(Activity, { className: "text-primary w-10 h-10" }),
-          /* @__PURE__ */ jsx("h2", { className: "font-headline font-black text-4xl tracking-tighter uppercase italic", children: "The Lab" })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "relative group px-2 sm:px-0", children: [
-          /* @__PURE__ */ jsxs("div", { className: "bg-[#0f172a] rounded-3xl overflow-hidden border-4 border-on-background shadow-[8px_8px_0_#0f172a] sm:shadow-[12px_12px_0_#0f172a]", children: [
-            /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between px-4 py-3 bg-on-background/50 border-b-2 border-on-background/30", children: [
-              /* @__PURE__ */ jsxs("div", { className: "flex gap-2", children: [
-                /* @__PURE__ */ jsx("div", { className: "w-3 h-3 rounded-full bg-error" }),
-                /* @__PURE__ */ jsx("div", { className: "w-3 h-3 rounded-full bg-tertiary" }),
-                /* @__PURE__ */ jsx("div", { className: "w-3 h-3 rounded-full bg-primary-fixed-dim" })
-              ] }),
-              /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
-                /* @__PURE__ */ jsxs(
-                  "button",
-                  {
-                    onClick: handleCopy,
-                    className: "text-white hover:text-primary-fixed-dim transition-colors flex items-center gap-1 font-label text-[10px] sm:text-xs uppercase tracking-widest font-black bg-white/20 px-2 py-1 rounded-lg border border-white/20 cursor-pointer",
-                    title: "Copy Code",
-                    children: [
-                      copied ? /* @__PURE__ */ jsx(Check, { className: "w-3 h-3" }) : /* @__PURE__ */ jsx(Copy, { className: "w-3 h-3" }),
-                      copied ? "Copied" : "Copy"
-                    ]
-                  }
-                ),
-                /* @__PURE__ */ jsx("span", { className: "text-white/70 font-label text-[10px] sm:text-xs uppercase tracking-widest font-black", children: "your_code" })
-              ] })
-            ] }),
-            /* @__PURE__ */ jsx("div", { className: "bg-[#1d1f21] min-h-[250px] max-h-[400px] overflow-auto", children: isServer ? /* @__PURE__ */ jsx("pre", { className: "overflow-auto p-6 text-sm text-white", children: /* @__PURE__ */ jsx("code", { children: code }) }) : /* @__PURE__ */ jsx(
-              Editor,
-              {
-                value: code,
-                onValueChange: (code2) => setCode(code2),
-                highlight: (value) => Prism.highlight(value, Prism.languages.python, "python"),
-                padding: 24,
-                style: {
-                  fontFamily: '"JetBrains Mono", "Fira Code", monospace',
-                  fontSize: 14,
-                  backgroundColor: "transparent"
-                },
-                className: "text-white"
-              }
-            ) })
-          ] }),
-          hint && /* @__PURE__ */ jsxs("div", { className: "absolute -bottom-4 right-4 bg-tertiary-container text-on-tertiary-container px-4 py-2 rounded-lg font-label text-xs font-bold shadow-lg transform rotate-2 z-10", children: [
-            "💡 ",
-            hint
+    /* @__PURE__ */ jsxs("div", { className: "mb-16 text-center max-w-4xl mx-auto space-y-6 px-4", children: [
+      /* @__PURE__ */ jsx(
+        motion.h1,
+        {
+          initial: { opacity: 0, y: 30 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+          className: "font-headline font-black text-5xl sm:text-6xl md:text-8xl tracking-tight leading-[1] md:leading-[0.95]",
+          children: pagePath === "/" ? /* @__PURE__ */ jsxs(Fragment, { children: [
+            "Every line of code",
+            " ",
+            /* @__PURE__ */ jsx("span", { className: "modern-gradient-text italic underline decoration-8 md:decoration-[14px] decoration-primary/10 underline-offset-8", children: "tells a story." })
+          ] }) : /* @__PURE__ */ jsxs(Fragment, { children: [
+            pageSeo.heading.split(" ").slice(0, -1).join(" "),
+            " ",
+            /* @__PURE__ */ jsx("span", { className: "modern-gradient-text italic underline decoration-8 md:decoration-[14px] decoration-primary/10 underline-offset-8", children: pageSeo.heading.split(" ").slice(-1) })
           ] })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center gap-4 py-4", children: [
-          /* @__PURE__ */ jsxs(
-            "button",
-            {
-              onClick: handleAnalyze,
-              disabled: isAnalyzing,
-              className: "bg-primary text-white w-40 h-40 sm:w-52 sm:h-52 rounded-full flex flex-col items-center justify-center gap-2 border-4 sm:border-8 border-on-primary-container shadow-[0_8px_0_#064e3b] sm:shadow-[0_12px_0_#064e3b] hover:translate-y-1 hover:shadow-[0_6px_0_#064e3b] sm:hover:shadow-[0_8px_0_#064e3b] active:translate-y-3 active:shadow-none transition-all duration-150 group disabled:opacity-50 disabled:cursor-not-allowed",
-              children: [
-                /* @__PURE__ */ jsx(Zap, { className: `w-12 h-12 ${isAnalyzing ? "animate-pulse" : "group-hover:scale-110 transition-transform"}` }),
-                /* @__PURE__ */ jsx("span", { className: "font-headline font-extrabold text-center px-4 leading-tight uppercase", children: isAnalyzing ? "Analyzing..." : "Analyze Complexity" })
-              ]
-            }
-          ),
-          /* @__PURE__ */ jsx("p", { className: "font-label text-on-surface-variant text-sm font-bold tracking-wide italic", children: '"Push it. I dare you."' })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxs("section", { className: "lg:col-span-7 space-y-8", children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ jsx(BookOpen, { className: "text-tertiary w-10 h-10" }),
-          /* @__PURE__ */ jsx("h2", { className: "font-headline font-black text-4xl tracking-tighter uppercase italic", children: "The Story" })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "bg-white border-4 border-on-background rounded-3xl p-4 sm:p-8 shadow-[8px_8px_0_#0f172a] sm:shadow-[16px_16px_0_#0f172a] min-h-[400px] sm:min-h-[500px] flex flex-col relative overflow-hidden", children: [
-          /* @__PURE__ */ jsx("div", { className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/2 blur-[100px] rounded-full pointer-events-none" }),
-          !result && !isAnalyzing && /* @__PURE__ */ jsx("div", { className: "flex-grow flex items-center justify-center text-on-surface-variant font-headline text-lg italic", children: "Waiting for your code..." }),
-          isAnalyzing && /* @__PURE__ */ jsxs("div", { className: "flex-grow flex flex-col items-center justify-center gap-4", children: [
-            /* @__PURE__ */ jsx("div", { className: "w-16 h-16 border-8 border-primary border-t-transparent rounded-full animate-spin" }),
-            /* @__PURE__ */ jsx("p", { className: "font-headline font-bold text-primary animate-pulse", children: "Consulting the math wizards..." })
-          ] }),
-          result && /* @__PURE__ */ jsxs(Fragment, { children: [
-            /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center mb-6", children: [
-              /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
-                /* @__PURE__ */ jsx("span", { className: "font-label text-xs font-bold text-on-surface-variant uppercase tracking-tighter", children: "Growth Metric" }),
-                /* @__PURE__ */ jsx("span", { className: "font-headline font-bold text-lg", children: "Computational Velocity" })
-              ] }),
-              /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap gap-2 items-center justify-end", children: [
-                /* @__PURE__ */ jsxs("span", { className: "px-3 py-1 bg-surface-container rounded-full text-xs font-bold font-label", children: [
-                  "Time: ",
-                  result.complexity
+        }
+      ),
+      /* @__PURE__ */ jsx(
+        motion.p,
+        {
+          initial: { opacity: 0, y: 20 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] },
+          className: "text-lg md:text-2xl text-on-surface-variant font-bold max-w-3xl mx-auto leading-relaxed",
+          children: pageSeo.intro
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "grid lg:grid-cols-12 gap-12 items-start", children: [
+      /* @__PURE__ */ jsxs(
+        motion.section,
+        {
+          initial: { opacity: 0, x: -40 },
+          animate: { opacity: 1, x: 0 },
+          transition: { duration: 1, ease: [0.16, 1, 0.3, 1] },
+          className: "lg:col-span-5 space-y-8",
+          children: [
+            /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
+              /* @__PURE__ */ jsx("div", { className: "p-3 bg-primary-container rounded-2xl border-2 border-on-background shadow-neo", children: /* @__PURE__ */ jsx(Activity, { className: "text-primary w-8 h-8" }) }),
+              /* @__PURE__ */ jsx("h2", { className: "font-headline font-black text-3xl tracking-tighter uppercase italic", children: "The Lab" })
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "relative group px-1 sm:px-0", children: [
+              /* @__PURE__ */ jsxs("div", { className: "bg-[#0f172a] rounded-[2.5rem] overflow-hidden border-2 border-on-background shadow-neo-lg sm:shadow-neo-xl transition-all group-hover:shadow-neo group-hover:translate-x-1 group-hover:translate-y-1", children: [
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between px-6 py-4 bg-on-background/20 border-b border-white/10", children: [
+                  /* @__PURE__ */ jsxs("div", { className: "flex gap-2", children: [
+                    /* @__PURE__ */ jsx("div", { className: "w-3 h-3 rounded-full bg-error" }),
+                    /* @__PURE__ */ jsx("div", { className: "w-3 h-3 rounded-full bg-tertiary" }),
+                    /* @__PURE__ */ jsx("div", { className: "w-3 h-3 rounded-full bg-primary-fixed-dim" })
+                  ] }),
+                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
+                    /* @__PURE__ */ jsxs(
+                      "button",
+                      {
+                        onClick: handleCopy,
+                        className: "text-white hover:text-primary-fixed-dim transition-colors flex items-center gap-1 font-label text-[10px] sm:text-xs uppercase tracking-widest font-black bg-white/20 px-2 py-1 rounded-lg border border-white/20 cursor-pointer",
+                        title: "Copy Code",
+                        children: [
+                          copied ? /* @__PURE__ */ jsx(Check, { className: "w-3 h-3" }) : /* @__PURE__ */ jsx(Copy, { className: "w-3 h-3" }),
+                          copied ? "Copied" : "Copy"
+                        ]
+                      }
+                    ),
+                    /* @__PURE__ */ jsx("span", { className: "text-white/70 font-label text-[10px] sm:text-xs uppercase tracking-widest font-black", children: "your_code" })
+                  ] })
                 ] }),
-                /* @__PURE__ */ jsxs("span", { className: "px-3 py-1 bg-secondary-container rounded-full text-xs font-bold font-label text-on-secondary-container", children: [
-                  "Space: ",
-                  result.spaceComplexity
-                ] }),
-                /* @__PURE__ */ jsxs(
-                  "button",
+                /* @__PURE__ */ jsx("div", { className: "bg-[#1d1f21] min-h-[250px] max-h-[400px] overflow-auto", children: isServer ? /* @__PURE__ */ jsx("pre", { className: "overflow-auto p-6 text-sm text-white", children: /* @__PURE__ */ jsx("code", { children: code }) }) : /* @__PURE__ */ jsx(
+                  Editor,
                   {
-                    onClick: handleSaveAnalysis,
-                    disabled: isSaving || isSaved,
-                    className: "flex items-center gap-2 px-4 py-1.5 bg-primary text-on-primary rounded-full font-bold text-xs shadow hover:bg-primary/90 disabled:opacity-50 transition-all",
-                    children: [
-                      /* @__PURE__ */ jsx(Save, { className: "w-4 h-4" }),
-                      isSaving ? "Saving..." : isSaved ? "Saved!" : "Save Analysis"
-                    ]
+                    value: code,
+                    onValueChange: (code2) => setCode(code2),
+                    highlight: (value) => Prism.highlight(value, Prism.languages.python, "python"),
+                    padding: 24,
+                    style: {
+                      fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+                      fontSize: 14,
+                      backgroundColor: "transparent"
+                    },
+                    className: "text-white"
                   }
-                )
+                ) })
+              ] }),
+              hint && /* @__PURE__ */ jsxs("div", { className: "absolute -bottom-4 right-4 bg-tertiary-container text-on-tertiary-container px-4 py-2 rounded-lg font-label text-xs font-bold shadow-lg transform rotate-2 z-10", children: [
+                "💡 ",
+                hint
               ] })
             ] }),
-            /* @__PURE__ */ jsx("div", { className: "w-full", children: /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: result.complexityClass }) }),
-            /* @__PURE__ */ jsxs("div", { className: "mt-12 flex items-start gap-4 z-10", children: [
-              /* @__PURE__ */ jsx("div", { className: "w-20 h-20 rounded-2xl border-4 border-on-background bg-tertiary-container shadow-[6px_6px_0_#0f172a] flex items-center justify-center shrink-0", children: /* @__PURE__ */ jsx(Cpu, { className: "w-10 h-10 text-on-tertiary-container" }) }),
-              /* @__PURE__ */ jsxs("div", { className: "speech-bubble p-4 sm:p-8 rounded-3xl shadow-[6px_6px_0_#0f172a] sm:shadow-[8px_8px_0_#0f172a] bg-white w-full", children: [
-                /* @__PURE__ */ jsx("div", { className: "flex items-center gap-3 mb-4", children: /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-2xl text-primary", children: result.complexity }) }),
-                /* @__PURE__ */ jsx("ul", { className: "font-body text-on-surface leading-relaxed list-disc list-inside space-y-2", children: (_a = result.explanationPoints) == null ? void 0 : _a.map((point, index) => /* @__PURE__ */ jsx("li", { className: "text-sm", children: point }, index)) })
+            /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center gap-6 py-6", children: [
+              /* @__PURE__ */ jsxs(
+                motion.button,
+                {
+                  whileHover: { scale: 1.05 },
+                  whileTap: { scale: 0.95 },
+                  onClick: handleAnalyze,
+                  disabled: isAnalyzing,
+                  className: "bg-primary text-white w-44 h-44 sm:w-56 sm:h-56 rounded-[3rem] flex flex-col items-center justify-center gap-3 border-2 sm:border-4 border-on-primary-container shadow-neo-lg sm:shadow-neo-xl hover:translate-y-1 hover:shadow-neo active:translate-y-2 active:shadow-none transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden",
+                  children: [
+                    /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" }),
+                    /* @__PURE__ */ jsx(Zap, { className: `w-14 h-14 ${isAnalyzing ? "animate-bounce" : "group-hover:rotate-12 transition-transform"}` }),
+                    /* @__PURE__ */ jsx("span", { className: "font-headline font-black text-center px-4 leading-none uppercase text-sm sm:text-base tracking-tighter", children: isAnalyzing ? "Decoding..." : "Analyze Story" })
+                  ]
+                }
+              ),
+              /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 font-label text-on-surface-variant text-sm font-black tracking-widest uppercase italic opacity-60", children: [
+                /* @__PURE__ */ jsx(Sparkles, { className: "w-4 h-4" }),
+                /* @__PURE__ */ jsx("span", { children: "Push it. I dare you." })
               ] })
             ] })
-          ] })
-        ] })
-      ] })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxs(
+        motion.section,
+        {
+          initial: { opacity: 0, x: 40 },
+          animate: { opacity: 1, x: 0 },
+          transition: { duration: 1, ease: [0.16, 1, 0.3, 1] },
+          className: "lg:col-span-7 space-y-8",
+          children: [
+            /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4", children: [
+              /* @__PURE__ */ jsx("div", { className: "p-3 bg-secondary-container rounded-2xl border-2 border-on-background shadow-neo", children: /* @__PURE__ */ jsx(BookOpen, { className: "text-secondary w-8 h-8" }) }),
+              /* @__PURE__ */ jsx("h2", { className: "font-headline font-black text-3xl tracking-tighter uppercase italic", children: "The Story" })
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "bg-white border-2 border-on-background rounded-[2.5rem] p-5 sm:p-10 shadow-neo-lg sm:shadow-neo-xl min-h-[400px] sm:min-h-[500px] flex flex-col relative overflow-hidden group", children: [
+              /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] rounded-full pointer-events-none group-hover:bg-primary/10 transition-colors" }),
+              /* @__PURE__ */ jsx(AnimatePresence, { mode: "wait", children: !result && !isAnalyzing ? /* @__PURE__ */ jsxs(
+                motion.div,
+                {
+                  initial: { opacity: 0 },
+                  animate: { opacity: 1 },
+                  exit: { opacity: 0 },
+                  className: "flex-grow flex flex-col items-center justify-center text-on-surface-variant font-headline text-lg italic gap-4",
+                  children: [
+                    /* @__PURE__ */ jsx("div", { className: "p-4 bg-surface-container rounded-3xl opacity-20", children: /* @__PURE__ */ jsx(Sparkles, { className: "w-12 h-12" }) }),
+                    /* @__PURE__ */ jsx("span", { className: "opacity-40", children: `"Your code is a blank page. Let's write the story."` })
+                  ]
+                },
+                "empty"
+              ) : isAnalyzing ? /* @__PURE__ */ jsxs(
+                motion.div,
+                {
+                  initial: { opacity: 0 },
+                  animate: { opacity: 1 },
+                  exit: { opacity: 0 },
+                  className: "flex-grow flex flex-col items-center justify-center gap-6",
+                  children: [
+                    /* @__PURE__ */ jsxs("div", { className: "relative", children: [
+                      /* @__PURE__ */ jsx("div", { className: "w-20 h-20 border-4 border-primary/20 rounded-full" }),
+                      /* @__PURE__ */ jsx("div", { className: "absolute top-0 left-0 w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin" }),
+                      /* @__PURE__ */ jsx(Activity, { className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary w-8 h-8 animate-pulse" })
+                    ] }),
+                    /* @__PURE__ */ jsx("p", { className: "font-headline font-black text-primary uppercase tracking-tighter animate-pulse text-xl", children: "Consulting the math wizards..." })
+                  ]
+                },
+                "analyzing"
+              ) : result ? /* @__PURE__ */ jsxs(
+                motion.div,
+                {
+                  initial: { opacity: 0, scale: 0.98, y: 10 },
+                  animate: { opacity: 1, scale: 1, y: 0 },
+                  transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                  className: "flex-grow flex flex-col h-full",
+                  children: [
+                    /* @__PURE__ */ jsxs("div", { className: "flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8", children: [
+                      /* @__PURE__ */ jsxs("div", { className: "flex flex-col", children: [
+                        /* @__PURE__ */ jsx("span", { className: "font-label text-[10px] font-black text-on-surface-variant uppercase tracking-widest opacity-60", children: "Growth Metric" }),
+                        /* @__PURE__ */ jsx("span", { className: "font-headline font-black text-xl italic uppercase tracking-tighter", children: "Computational Velocity" })
+                      ] }),
+                      /* @__PURE__ */ jsxs("div", { className: "flex flex-wrap gap-3 items-center", children: [
+                        /* @__PURE__ */ jsxs("div", { className: "px-4 py-2 bg-primary-container border-2 border-on-background rounded-full text-xs font-black font-label shadow-neo", children: [
+                          "Time: ",
+                          result.complexityClass
+                        ] }),
+                        /* @__PURE__ */ jsxs(
+                          "button",
+                          {
+                            onClick: handleSaveAnalysis,
+                            disabled: isSaving || isSaved,
+                            className: "flex items-center gap-2 px-6 py-2 bg-tertiary text-white rounded-full font-black text-xs shadow-neo border-2 border-on-background hover:translate-y-0.5 hover:shadow-none transition-all disabled:opacity-50",
+                            children: [
+                              /* @__PURE__ */ jsx(Save, { className: "w-4 h-4" }),
+                              isSaving ? "Saving..." : isSaved ? "Saved!" : "Save Analysis"
+                            ]
+                          }
+                        )
+                      ] })
+                    ] }),
+                    /* @__PURE__ */ jsx("div", { className: "w-full mb-10", children: /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: result.complexityClass }) }),
+                    /* @__PURE__ */ jsxs("div", { className: "mt-auto flex flex-col sm:flex-row items-center sm:items-start gap-6 pt-8 border-t-2 border-on-background/5", children: [
+                      /* @__PURE__ */ jsx("div", { className: "w-20 h-20 rounded-3xl border-2 border-on-background bg-secondary-container shadow-neo flex items-center justify-center shrink-0", children: /* @__PURE__ */ jsx(Cpu, { className: "w-10 h-10 text-on-secondary-container" }) }),
+                      /* @__PURE__ */ jsxs("div", { className: "p-6 bg-surface-container-low border-2 border-on-background rounded-[2rem] shadow-neo w-full relative", children: [
+                        /* @__PURE__ */ jsx("div", { className: "absolute -top-3 -left-3 bg-primary text-white p-2 rounded-xl border-2 border-on-background shadow-neo rotate-[-6deg]", children: /* @__PURE__ */ jsx(Lightbulb, { className: "w-4 h-4" }) }),
+                        /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-2xl text-primary mb-4 italic uppercase tracking-tighter", children: result.complexity }),
+                        /* @__PURE__ */ jsx("ul", { className: "font-body text-on-surface leading-relaxed space-y-3 list-none", children: (_a = result.explanationPoints) == null ? void 0 : _a.map((point, index) => /* @__PURE__ */ jsxs("li", { className: "text-sm font-bold flex gap-3 items-start", children: [
+                          /* @__PURE__ */ jsx("span", { className: "text-primary mt-1 flex-shrink-0", children: "●" }),
+                          point
+                        ] }, index)) })
+                      ] })
+                    ] })
+                  ]
+                },
+                "result"
+              ) : null })
+            ] })
+          ]
+        }
+      )
     ] }),
     result && /* @__PURE__ */ jsxs("div", { className: "mt-20 grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 relative z-10 px-2 sm:px-4", children: [
       /* @__PURE__ */ jsxs("div", { className: "bg-white p-6 sm:p-10 rounded-3xl border-4 border-on-background shadow-[6px_6px_0_rgba(5,150,105,0.15)] sm:shadow-[8px_8px_0_rgba(5,150,105,0.15)] hover:shadow-[10px_10px_0_rgba(5,150,105,0.25)] transition-all group", children: [
@@ -779,244 +857,266 @@ function Home() {
       ] })
     ] }),
     /* @__PURE__ */ jsxs("section", { className: "mt-32 mb-16 px-4", children: [
-      /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row items-center justify-between mb-12 gap-6", children: [
-        /* @__PURE__ */ jsxs("div", { className: "max-w-xl text-center md:text-left", children: [
-          /* @__PURE__ */ jsx("h2", { className: "font-headline font-black text-4xl sm:text-5xl tracking-tighter uppercase italic mb-4", children: "Common Complexity Classes" }),
-          /* @__PURE__ */ jsx("p", { className: "text-lg text-on-surface-variant font-bold leading-relaxed", children: "Every algorithm has its own growth story. Here are the most common computational arcs you'll encounter." })
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "hidden lg:block w-24 h-24 bg-primary rounded-full border-4 border-on-background shadow-[6px_6px_0_#0f172a] animate-bounce" })
+      /* @__PURE__ */ jsxs("div", { className: "flex flex-col md:flex-row items-center justify-between mb-16 gap-8", children: [
+        /* @__PURE__ */ jsxs(
+          motion.div,
+          {
+            initial: { opacity: 0, scale: 0.95 },
+            whileInView: { opacity: 1, scale: 1 },
+            viewport: { once: true },
+            className: "max-w-2xl text-center md:text-left",
+            children: [
+              /* @__PURE__ */ jsxs("h2", { className: "font-headline font-black text-4xl sm:text-6xl tracking-tighter uppercase italic mb-6", children: [
+                "Common ",
+                /* @__PURE__ */ jsx("span", { className: "modern-gradient-text", children: "Complexity" }),
+                " Classes"
+              ] }),
+              /* @__PURE__ */ jsx("p", { className: "text-xl text-on-surface-variant font-bold leading-relaxed opacity-80", children: "Every algorithm has its own growth story. Here are the most common computational arcs you'll encounter in the wild." })
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          motion.div,
+          {
+            animate: {
+              y: [0, -20, 0],
+              rotate: [0, 5, -5, 0]
+            },
+            transition: {
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut"
+            },
+            className: "hidden lg:flex w-28 h-28 bg-primary rounded-[2rem] border-2 border-on-background shadow-neo-lg items-center justify-center",
+            children: /* @__PURE__ */ jsx(Sparkles, { className: "w-12 h-12 text-white animate-pulse" })
+          }
+        )
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8", children: [
-        { tag: "O(1)", title: "Constant", desc: "Array access, hash lookup", color: "bg-primary", accent: "#059669" },
-        { tag: "O(log n)", title: "Logarithmic", desc: "Binary search", color: "bg-secondary", accent: "#0284c7" },
-        { tag: "O(n)", title: "Linear", desc: "Single loop, linear search", color: "bg-[#f59e0b]", accent: "#f59e0b" },
-        { tag: "O(n log n)", title: "Linearithmic", desc: "Merge sort, quick sort", color: "bg-[#d97706]", accent: "#d97706" },
-        { tag: "O(n²)", title: "Quadratic", desc: "Nested loops, bubble sort", color: "bg-error", accent: "#dc2626" },
-        { tag: "O(2ⁿ)", title: "Exponential", desc: "Recursive Fibonacci", color: "bg-[#991b1b]", accent: "#991b1b" }
-      ].map((cls, idx) => /* @__PURE__ */ jsxs(
-        "div",
+      /* @__PURE__ */ jsx(
+        motion.div,
         {
-          className: `bg-white p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#0f172a] hover:-translate-y-2 transition-transform cursor-default group ${idx % 2 === 1 ? "lg:rotate-1" : "lg:-rotate-1"}`,
+          initial: "hidden",
+          whileInView: "show",
+          viewport: { once: true, margin: "-100px" },
+          variants: {
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1
+              }
+            }
+          },
+          className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8",
           children: [
-            /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-6", children: [
-              /* @__PURE__ */ jsx("span", { className: `${cls.color} text-white px-4 py-1.5 rounded-full font-headline font-black text-sm border-2 border-on-background shadow-[3px_3px_0_#0f172a] uppercase`, children: cls.tag }),
-              /* @__PURE__ */ jsx(Activity, { className: "w-6 h-6 text-on-surface-variant opacity-20 group-hover:opacity-100 transition-opacity" })
-            ] }),
-            /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-2xl mb-2 text-on-surface uppercase italic tracking-tighter", children: cls.title }),
-            /* @__PURE__ */ jsx("p", { className: "text-on-surface-variant text-sm font-bold leading-relaxed", children: cls.desc })
-          ]
-        },
-        idx
-      )) })
+            { tag: "O(1)", title: "Constant", desc: "Array access, hash lookup", color: "bg-primary" },
+            { tag: "O(log n)", title: "Logarithmic", desc: "Binary searching", color: "bg-secondary" },
+            { tag: "O(n)", title: "Linear", desc: "Single loop, linear search", color: "bg-[#f59e0b]" },
+            { tag: "O(n log n)", title: "Linearithmic", desc: "Merge sort, quick sort", color: "bg-[#d97706]" },
+            { tag: "O(n²)", title: "Quadratic", desc: "Nested loops, bubble sort", color: "bg-error" },
+            { tag: "O(2ⁿ)", title: "Exponential", desc: "Recursive Fibonacci", color: "bg-[#991b1b]" }
+          ].map((cls, idx) => /* @__PURE__ */ jsxs(
+            motion.div,
+            {
+              variants: {
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 }
+              },
+              whileHover: { y: -8, scale: 1.02 },
+              className: "bg-white p-10 rounded-[2.5rem] border-2 border-on-background shadow-neo-lg transition-all cursor-default group relative overflow-hidden",
+              children: [
+                /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 w-32 h-32 bg-on-background/5 blur-3xl rounded-full -mr-10 -mt-10 group-hover:bg-primary/5 transition-colors" }),
+                /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-8 relative z-10", children: [
+                  /* @__PURE__ */ jsx("span", { className: `${cls.color} text-white px-5 py-2 rounded-full font-headline font-black text-xs border-2 border-on-background shadow-neo uppercase tracking-tighter`, children: cls.tag }),
+                  /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center opacity-40 group-hover:opacity-100 transition-all border border-on-background/10", children: /* @__PURE__ */ jsx(Activity, { className: "w-5 h-5 text-on-surface-variant" }) })
+                ] }),
+                /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-2xl mb-3 text-on-surface uppercase italic tracking-tighter relative z-10 group-hover:text-primary transition-colors", children: cls.title }),
+                /* @__PURE__ */ jsx("p", { className: "text-on-surface-variant text-sm font-bold leading-relaxed opacity-70 relative z-10", children: cls.desc })
+              ]
+            },
+            idx
+          ))
+        }
+      )
     ] }),
-    /* @__PURE__ */ jsxs("section", { className: "mb-16 pt-16 border-t-4 border-on-background", children: [
+    /* @__PURE__ */ jsxs("section", { className: "mb-16 pt-16 border-t-2 border-on-background/10", children: [
       /* @__PURE__ */ jsxs("div", { className: "text-center mb-16 px-4", children: [
-        /* @__PURE__ */ jsxs("h2", { className: "font-headline text-4xl sm:text-5xl md:text-6xl font-black text-on-background mb-4 uppercase", children: [
+        /* @__PURE__ */ jsxs("h2", { className: "font-headline text-4xl sm:text-5xl md:text-6xl font-black text-on-background mb-4 uppercase italic tracking-tighter", children: [
           "The ",
-          /* @__PURE__ */ jsx("span", { className: "text-primary", children: "Free Time Complexity" }),
-          " Calculator"
+          /* @__PURE__ */ jsx("span", { className: "text-primary italic", children: "Free Complexity" }),
+          " Storyteller"
         ] }),
-        /* @__PURE__ */ jsx("p", { className: "text-xl text-on-surface-variant max-w-2xl mx-auto font-bold", children: "AlgoStory is the most powerful free Big O calculator available. Better than BigOCalc, more intuitive than manual analysis." })
+        /* @__PURE__ */ jsx("p", { className: "text-xl text-on-surface-variant max-w-2xl mx-auto font-bold opacity-80", children: "AlgoStory provides deep computational insights for free. Every algorithm deserves its narrative." })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-8 mb-16", children: [
-        /* @__PURE__ */ jsxs("div", { className: "bg-primary-container p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#064e3b]", children: [
-          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 mb-4", children: [
-            /* @__PURE__ */ jsx(Zap, { className: "w-8 h-8 text-primary" }),
-            /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-2xl text-on-background", children: "⚡ Time Complexity Analyzer" })
-          ] }),
-          /* @__PURE__ */ jsx("p", { className: "text-on-surface-variant font-bold", children: "Instantly analyze O(N), O(log N), O(N²) and more patterns in your code. Get Big O notation with AI explanations." })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "bg-secondary-container p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#0c4a6e]", children: [
-          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 mb-4", children: [
-            /* @__PURE__ */ jsx(Cpu, { className: "w-8 h-8 text-secondary" }),
-            /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-2xl text-on-background", children: "💾 Space Complexity Calculator" })
-          ] }),
-          /* @__PURE__ */ jsx("p", { className: "text-on-surface-variant font-bold", children: "Calculate auxiliary space and memory usage of your algorithms. Analyze O notation with AI-powered insights." })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "bg-tertiary-container p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#4c1d95]", children: [
-          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 mb-4", children: [
-            /* @__PURE__ */ jsx(Lightbulb, { className: "w-8 h-8 text-tertiary" }),
-            /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-2xl text-on-background", children: "🤖 AI-Powered Insights" })
-          ] }),
-          /* @__PURE__ */ jsx("p", { className: "text-on-surface-variant font-bold", children: "Get natural language explanations of complexity patterns. Understand algorithm efficiency in plain English." })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "bg-error-container p-8 rounded-3xl border-4 border-on-background shadow-[8px_8px_0_#7f1d1d]", children: [
-          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 mb-4", children: [
-            /* @__PURE__ */ jsx(BookOpen, { className: "w-8 h-8 text-error" }),
-            /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-2xl text-on-background", children: "📚 Learn Big O Notation" })
-          ] }),
-          /* @__PURE__ */ jsx("p", { className: "text-on-surface-variant font-bold", children: "Master algorithm complexity with 16+ interactive tutorials. From linear search to dynamic programming." })
-        ] })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs("section", { className: "mb-16 bg-secondary-container p-12 rounded-3xl border-4 border-on-background shadow-[12px_12px_0_#0c4a6e]", children: [
-      /* @__PURE__ */ jsx("h2", { className: "font-headline text-4xl font-black text-on-background text-center mb-12", children: "Why Choose AlgoStory Over BigOCalc?" }),
-      /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "w-full", children: [
-        /* @__PURE__ */ jsx("thead", { children: /* @__PURE__ */ jsxs("tr", { className: "border-b-4 border-on-background", children: [
-          /* @__PURE__ */ jsx("th", { className: "text-left p-4 font-headline font-black text-lg text-on-background", children: "Feature" }),
-          /* @__PURE__ */ jsx("th", { className: "text-center p-4 font-headline font-black text-lg text-on-background", children: "AlgoStory" }),
-          /* @__PURE__ */ jsx("th", { className: "text-center p-4 font-headline font-black text-lg text-on-background", children: "BigOCalc" }),
-          /* @__PURE__ */ jsx("th", { className: "text-center p-4 font-headline font-black text-lg text-on-background", children: "Manual" })
-        ] }) }),
-        /* @__PURE__ */ jsxs("tbody", { children: [
-          /* @__PURE__ */ jsxs("tr", { className: "border-b-2 border-on-background/30 hover:bg-on-background/5", children: [
-            /* @__PURE__ */ jsx("td", { className: "p-4 font-bold text-on-background", children: "Free Forever" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "✅" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "⚠️" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "✅" })
-          ] }),
-          /* @__PURE__ */ jsxs("tr", { className: "border-b-2 border-on-background/30 hover:bg-on-background/5", children: [
-            /* @__PURE__ */ jsx("td", { className: "p-4 font-bold text-on-background", children: "AI Explanations" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "✅" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "❌" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "❌" })
-          ] }),
-          /* @__PURE__ */ jsxs("tr", { className: "border-b-2 border-on-background/30 hover:bg-on-background/5", children: [
-            /* @__PURE__ */ jsx("td", { className: "p-4 font-bold text-on-background", children: "Space Complexity" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "✅" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "⚠️" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "❌" })
-          ] }),
-          /* @__PURE__ */ jsxs("tr", { className: "border-b-2 border-on-background/30 hover:bg-on-background/5", children: [
-            /* @__PURE__ */ jsx("td", { className: "p-4 font-bold text-on-background", children: "16+ Tutorials" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "✅" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "❌" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "❌" })
-          ] }),
-          /* @__PURE__ */ jsxs("tr", { className: "hover:bg-on-background/5", children: [
-            /* @__PURE__ */ jsx("td", { className: "p-4 font-bold text-on-background", children: "Step-by-Step Breakdown" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "✅" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "❌" }),
-            /* @__PURE__ */ jsx("td", { className: "text-center p-4 text-2xl", children: "❌" })
-          ] })
-        ] })
-      ] }) }),
-      /* @__PURE__ */ jsxs("p", { className: "text-center text-on-background font-bold text-lg mt-8", children: [
-        "Get started now with our ",
-        /* @__PURE__ */ jsx("strong", { children: "Free Time Complexity Calculator" }),
-        " - No signup, no limits, no ads."
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs("section", { className: "mb-16 bg-surface-container-low p-12 rounded-3xl", children: [
-      /* @__PURE__ */ jsx("h2", { className: "font-headline text-4xl font-black text-on-background mb-12 text-center", children: "How Our Complexity Calculator Works" }),
-      /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex gap-6 items-start", children: [
-          /* @__PURE__ */ jsx("div", { className: "shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full bg-primary text-white font-headline font-black text-xl flex items-center justify-center border-2 border-on-background", children: "1" }) }),
-          /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-xl text-on-background mb-2", children: "Paste Your Code" }),
-            /* @__PURE__ */ jsx("p", { className: "text-on-surface-variant font-bold", children: "Paste any Python, Java, JavaScript, C++ or other language code into our Big O calculator" })
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "flex gap-6 items-start", children: [
-          /* @__PURE__ */ jsx("div", { className: "shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full bg-secondary text-white font-headline font-black text-xl flex items-center justify-center border-2 border-on-background", children: "2" }) }),
-          /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-xl text-on-background mb-2", children: "AI Analyzes Complexity" }),
-            /* @__PURE__ */ jsx("p", { className: "text-on-surface-variant font-bold", children: "Our AI examines your code and calculates time complexity, space complexity, and identifies optimization opportunities" })
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "flex gap-6 items-start", children: [
-          /* @__PURE__ */ jsx("div", { className: "shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full bg-tertiary text-white font-headline font-black text-xl flex items-center justify-center border-2 border-on-background", children: "3" }) }),
-          /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-xl text-on-background mb-2", children: "Get Big O Analysis" }),
-            /* @__PURE__ */ jsx("p", { className: "text-on-surface-variant font-bold", children: "Receive instant O(N) notation with natural language explanations of why your algorithm has that complexity" })
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "flex gap-6 items-start", children: [
-          /* @__PURE__ */ jsx("div", { className: "shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-full bg-error text-white font-headline font-black text-xl flex items-center justify-center border-2 border-on-background", children: "4" }) }),
-          /* @__PURE__ */ jsxs("div", { children: [
-            /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-xl text-on-background mb-2", children: "Learn & Improve" }),
-            /* @__PURE__ */ jsx("p", { className: "text-on-surface-variant font-bold", children: "Use our 16+ algorithm tutorials to understand complexity patterns and optimize your code for better performance" })
-          ] })
-        ] })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs("section", { className: "mb-16 rounded-[2rem] border-4 border-on-background bg-white px-6 py-10 shadow-[12px_12px_0_#0f172a] sm:px-10", children: [
-      /* @__PURE__ */ jsx("div", { className: "mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between", children: /* @__PURE__ */ jsxs("div", { className: "max-w-2xl", children: [
-        /* @__PURE__ */ jsx("h2", { className: "mb-3 font-headline text-4xl font-black uppercase italic tracking-tighter", children: "Learn The Patterns Behind The Output" }),
-        /* @__PURE__ */ jsx("p", { className: "text-base font-bold leading-relaxed text-on-surface-variant sm:text-lg", children: "Strong SEO pages need strong internal linking. These guides connect the calculator to specific algorithm topics users actually search for." })
-      ] }) }),
-      /* @__PURE__ */ jsxs("div", { className: "grid gap-6 md:grid-cols-3", children: [
-        /* @__PURE__ */ jsxs(
-          Link,
+        /* @__PURE__ */ jsx(
+          FeatureItem,
           {
-            to: "/tutorials",
-            className: "rounded-3xl border-4 border-on-background bg-primary-container p-6 shadow-[8px_8px_0_#0f172a] transition-transform hover:-translate-y-1",
-            children: [
-              /* @__PURE__ */ jsx(BookOpen, { className: "mb-5 h-10 w-10 text-primary" }),
-              /* @__PURE__ */ jsx("h3", { className: "mb-3 font-headline text-2xl font-black", children: "Algorithm Tutorials" }),
-              /* @__PURE__ */ jsx("p", { className: "mb-5 text-sm font-bold leading-relaxed text-on-surface-variant", children: "Crawlable guides on binary search, merge sort, graphs, dynamic programming, and more." }),
-              /* @__PURE__ */ jsxs("span", { className: "inline-flex items-center gap-2 text-sm font-black text-primary", children: [
-                "Browse Tutorials",
-                /* @__PURE__ */ jsx(ArrowRight, { className: "h-4 w-4" })
-              ] })
-            ]
+            icon: /* @__PURE__ */ jsx(Zap, { className: "w-8 h-8 text-primary" }),
+            title: "Time Complexity Analyzer",
+            desc: "Instantly analyze O(N), O(log N), O(N²) and more patterns in your code. Get Big O notation with AI explanations.",
+            color: "bg-primary-container"
           }
         ),
-        /* @__PURE__ */ jsxs(
-          Link,
+        /* @__PURE__ */ jsx(
+          FeatureItem,
           {
-            to: "/inside-math",
-            className: "rounded-3xl border-4 border-on-background bg-secondary-container p-6 shadow-[8px_8px_0_#0f172a] transition-transform hover:-translate-y-1",
-            children: [
-              /* @__PURE__ */ jsx(Cpu, { className: "mb-5 h-10 w-10 text-secondary" }),
-              /* @__PURE__ */ jsx("h3", { className: "mb-3 font-headline text-2xl font-black", children: "Line-By-Line Breakdowns" }),
-              /* @__PURE__ */ jsx("p", { className: "mb-5 text-sm font-bold leading-relaxed text-on-surface-variant", children: "Use the step-by-step analyzer to understand where each complexity term comes from." }),
-              /* @__PURE__ */ jsxs("span", { className: "inline-flex items-center gap-2 text-sm font-black text-secondary", children: [
-                "Open Complexity Lab",
-                /* @__PURE__ */ jsx(ArrowRight, { className: "h-4 w-4" })
-              ] })
-            ]
+            icon: /* @__PURE__ */ jsx(Cpu, { className: "w-8 h-8 text-secondary" }),
+            title: "Space Complexity Calculator",
+            desc: "Calculate auxiliary space and memory usage of your algorithms. Analyze O notation with AI-powered insights.",
+            color: "bg-secondary-container"
           }
         ),
-        /* @__PURE__ */ jsxs(
-          Link,
+        /* @__PURE__ */ jsx(
+          FeatureItem,
           {
-            to: "/blog",
-            className: "rounded-3xl border-4 border-on-background bg-tertiary-container p-6 shadow-[8px_8px_0_#0f172a] transition-transform hover:-translate-y-1",
-            children: [
-              /* @__PURE__ */ jsx(Activity, { className: "mb-5 h-10 w-10 text-tertiary" }),
-              /* @__PURE__ */ jsx("h3", { className: "mb-3 font-headline text-2xl font-black", children: "Big O Articles" }),
-              /* @__PURE__ */ jsx("p", { className: "mb-5 text-sm font-bold leading-relaxed text-on-surface-variant", children: "Read focused explainers on Big O notation, Bubble Sort, and Merge Sort complexity." }),
-              /* @__PURE__ */ jsxs("span", { className: "inline-flex items-center gap-2 text-sm font-black text-tertiary", children: [
-                "Read The Blog",
-                /* @__PURE__ */ jsx(ArrowRight, { className: "h-4 w-4" })
-              ] })
-            ]
+            icon: /* @__PURE__ */ jsx(Lightbulb, { className: "w-8 h-8 text-tertiary" }),
+            title: "AI-Powered Insights",
+            desc: "Get natural language explanations of complexity patterns. Understand algorithm efficiency in plain English.",
+            color: "bg-tertiary-container"
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          FeatureItem,
+          {
+            icon: /* @__PURE__ */ jsx(BookOpen, { className: "w-8 h-8 text-error" }),
+            title: "Master Big O Notation",
+            desc: "Master algorithm complexity with 16+ interactive tutorials. From linear search to dynamic programming.",
+            color: "bg-error-container"
           }
         )
       ] })
     ] }),
-    /* @__PURE__ */ jsxs("section", { className: "mb-10 px-4", children: [
-      /* @__PURE__ */ jsxs("div", { className: "mb-8 max-w-3xl", children: [
-        /* @__PURE__ */ jsx("h2", { className: "mb-4 font-headline text-4xl font-black uppercase italic tracking-tighter", children: "Complexity Calculator FAQ" }),
-        /* @__PURE__ */ jsx("p", { className: "text-lg font-bold leading-relaxed text-on-surface-variant", children: "This extra explanatory content helps users and search engines understand what the tool does, which queries it serves, and when to use each experience." })
+    /* @__PURE__ */ jsxs("section", { className: "mb-24 glass-panel p-8 sm:p-16 rounded-[3rem] border-2 border-on-background shadow-neo-xl", children: [
+      /* @__PURE__ */ jsxs("h2", { className: "font-headline text-3xl sm:text-5xl font-black text-on-background text-center mb-16 italic uppercase tracking-tighter", children: [
+        "Why Choose ",
+        /* @__PURE__ */ jsx("span", { className: "modern-gradient-text", children: "AlgoStory" }),
+        "?"
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "grid gap-6 md:grid-cols-3", children: [
+      /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "w-full", children: [
+        /* @__PURE__ */ jsx("thead", { children: /* @__PURE__ */ jsxs("tr", { className: "border-b-2 border-on-background/10", children: [
+          /* @__PURE__ */ jsx("th", { className: "text-left p-6 font-headline font-black text-xl text-on-background uppercase tracking-tight", children: "Feature" }),
+          /* @__PURE__ */ jsx("th", { className: "text-center p-6 font-headline font-black text-xl text-primary bg-primary/5 rounded-t-3xl", children: "AlgoStory" }),
+          /* @__PURE__ */ jsx("th", { className: "text-center p-6 font-headline font-black text-xl text-on-surface-variant opacity-40 italic", children: "Others" })
+        ] }) }),
+        /* @__PURE__ */ jsx("tbody", { className: "font-body font-bold text-base", children: [
+          { f: "AI-Powered Explanations", val: true },
+          { f: "Space Complexity Labs", val: true },
+          { f: "16+ Deep-Dive Tutorials", val: true },
+          { f: "Step-by-Step Breakdowns", val: true },
+          { f: "Free & Clean UI", val: true }
+        ].map((row, i) => /* @__PURE__ */ jsxs("tr", { className: "border-b border-on-background/5 hover:bg-on-background/[0.02] transition-colors", children: [
+          /* @__PURE__ */ jsx("td", { className: "p-6 text-on-background", children: row.f }),
+          /* @__PURE__ */ jsx("td", { className: "text-center p-6 bg-primary/[0.02]", children: /* @__PURE__ */ jsx(Check, { className: "mx-auto text-primary w-6 h-6" }) }),
+          /* @__PURE__ */ jsx("td", { className: "text-center p-6 opacity-20", children: "---" })
+        ] }, i)) })
+      ] }) })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-24 rounded-[3rem] border-2 border-on-background bg-white px-8 py-16 shadow-neo-xl relative overflow-hidden group", children: [
+      /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 w-96 h-96 bg-tertiary/5 blur-[120px] rounded-full pointer-events-none group-hover:bg-tertiary/10 transition-colors" }),
+      /* @__PURE__ */ jsx("div", { className: "mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between relative z-10", children: /* @__PURE__ */ jsxs("div", { className: "max-w-2xl", children: [
+        /* @__PURE__ */ jsx("h2", { className: "mb-4 font-headline text-4xl sm:text-6xl font-black uppercase italic tracking-tighter", children: "Learn The Patterns" }),
+        /* @__PURE__ */ jsx("p", { className: "text-lg font-bold leading-relaxed text-on-surface-variant opacity-80", children: "Go beyond the calculator. These deep-dive guides connect theory to the lines of code you write every day." })
+      ] }) }),
+      /* @__PURE__ */ jsxs("div", { className: "grid gap-8 md:grid-cols-3 relative z-10", children: [
+        /* @__PURE__ */ jsx(
+          LinkCard,
+          {
+            to: "/tutorials",
+            icon: /* @__PURE__ */ jsx(BookOpen, { className: "w-10 h-10 text-primary" }),
+            title: "Tutorials",
+            desc: "Crawlable guides on binary search, merge sort, graphs, and dynamic programming.",
+            color: "bg-primary-container",
+            action: "Browse Guides"
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          LinkCard,
+          {
+            to: "/inside-math",
+            icon: /* @__PURE__ */ jsx(Cpu, { className: "w-10 h-10 text-secondary" }),
+            title: "Math Lab",
+            desc: "Use the step-by-step analyzer to understand where each complexity term comes from.",
+            color: "bg-secondary-container",
+            action: "Enter Lab"
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          LinkCard,
+          {
+            to: "/blog",
+            icon: /* @__PURE__ */ jsx(Activity, { className: "w-10 h-10 text-tertiary" }),
+            title: "The Blog",
+            desc: "Read focused explainers on Big O notation, Bubble Sort, and Merge Sort theory.",
+            color: "bg-tertiary-container",
+            action: "Read Articles"
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "mb-20 px-4", children: [
+      /* @__PURE__ */ jsxs("div", { className: "mb-12 max-w-3xl", children: [
+        /* @__PURE__ */ jsx("h2", { className: "mb-4 font-headline text-4xl font-black uppercase italic tracking-tighter", children: "Complexity FAQ" }),
+        /* @__PURE__ */ jsx("p", { className: "text-lg font-bold text-on-surface-variant opacity-80", children: "Answers to common questions about algorithmic complexity and how to use our toolkit." })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "grid gap-8 md:grid-cols-3", children: [
         {
-          question: "When should I use the time complexity calculator?",
-          answer: "Use it when you want to estimate how runtime changes as input size grows, especially for loops, nested loops, and recursive code."
+          q: "When to use the Time Analyzer?",
+          a: "Use it when you want to estimate how runtime changes as input size grows, especially for loops and recursion.",
+          icon: /* @__PURE__ */ jsx(Zap, { className: "w-5 h-5" })
         },
         {
-          question: "When should I use the space complexity calculator?",
-          answer: "Use it when memory growth matters, including recursion stack depth, temporary arrays, hash maps, and auxiliary storage."
+          q: "When to use the Space Lab?",
+          a: "Use it when memory growth matters, including recursion stack depth and temporary data structures.",
+          icon: /* @__PURE__ */ jsx(Cpu, { className: "w-5 h-5" })
         },
         {
-          question: "Can I learn Big O from this site?",
-          answer: "Yes. The calculator is paired with tutorials, articles, and a line-by-line lab so users can move from quick answers to deeper understanding."
+          q: "Can I learn Big O here?",
+          a: "Yes. The toolkit is paired with tutorials and a step-by-step lab to move you from answers to understanding.",
+          icon: /* @__PURE__ */ jsx(Lightbulb, { className: "w-5 h-5" })
         }
-      ].map((item) => /* @__PURE__ */ jsxs(
-        "article",
+      ].map((item, idx) => /* @__PURE__ */ jsxs(
+        motion.article,
         {
-          className: "rounded-3xl border-4 border-on-background bg-white p-6 shadow-[8px_8px_0_#0f172a]",
+          whileHover: { y: -5 },
+          className: "rounded-[2.5rem] border-2 border-on-background bg-white p-8 shadow-neo-lg",
           children: [
-            /* @__PURE__ */ jsx("h3", { className: "mb-3 font-headline text-2xl font-black leading-tight", children: item.question }),
-            /* @__PURE__ */ jsx("p", { className: "text-sm font-bold leading-relaxed text-on-surface-variant", children: item.answer })
+            /* @__PURE__ */ jsx("div", { className: "w-10 h-10 bg-surface-container rounded-xl flex items-center justify-center mb-6 border border-on-background/5 shadow-neo text-primary", children: item.icon }),
+            /* @__PURE__ */ jsx("h3", { className: "mb-4 font-headline text-2xl font-black leading-tight tracking-tight uppercase italic", children: item.q }),
+            /* @__PURE__ */ jsx("p", { className: "text-sm font-bold leading-relaxed text-on-surface-variant opacity-70", children: item.a })
           ]
         },
-        item.question
+        idx
       )) })
     ] })
   ] });
+}
+function FeatureItem({ icon, title, desc, color }) {
+  return /* @__PURE__ */ jsxs("div", { className: `${color} p-8 rounded-[2.5rem] border-2 border-on-background shadow-neo-lg hover:shadow-neo transition-all group`, children: [
+    /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 mb-4", children: [
+      /* @__PURE__ */ jsx("div", { className: "p-3 bg-white border-2 border-on-background rounded-2xl shadow-neo group-hover:scale-110 transition-transform", children: icon }),
+      /* @__PURE__ */ jsx("h3", { className: "font-headline font-black text-xl text-on-background tracking-tight italic uppercase", children: title })
+    ] }),
+    /* @__PURE__ */ jsx("p", { className: "text-on-surface-variant font-bold opacity-80 leading-relaxed", children: desc })
+  ] });
+}
+function LinkCard({ to, icon, title, desc, color, action }) {
+  return /* @__PURE__ */ jsxs(
+    Link,
+    {
+      to,
+      className: `${color} rounded-[2.5rem] border-2 border-on-background p-8 shadow-neo-lg transition-all hover:translate-y-[-4px] hover:shadow-neo-xl group`,
+      children: [
+        /* @__PURE__ */ jsx("div", { className: "mb-6 h-14 w-14 bg-white border-2 border-on-background rounded-2xl flex items-center justify-center shadow-neo group-hover:rotate-6 transition-transform", children: icon }),
+        /* @__PURE__ */ jsx("h3", { className: "mb-3 font-headline text-3xl font-black italic uppercase tracking-tighter", children: title }),
+        /* @__PURE__ */ jsx("p", { className: "mb-6 text-sm font-bold leading-relaxed text-on-surface-variant opacity-80", children: desc }),
+        /* @__PURE__ */ jsxs("span", { className: "inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-on-background group-hover:text-primary transition-colors", children: [
+          action,
+          /* @__PURE__ */ jsx(ArrowRight, { className: "h-4 w-4 transform group-hover:translate-x-1 transition-transform" })
+        ] })
+      ]
+    }
+  );
 }
 const Home$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,

@@ -12,8 +12,12 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 export function LoadingFallback() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-16 h-16 border-8 border-primary border-t-transparent rounded-full animate-spin"></div>
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
+      <div className="relative">
+        <div className="w-16 h-16 border-4 border-primary/10 rounded-full"></div>
+        <div className="absolute top-0 left-0 w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+      <p className="font-headline font-black text-primary uppercase tracking-tighter animate-pulse text-sm">Loading Story...</p>
     </div>
   );
 }
