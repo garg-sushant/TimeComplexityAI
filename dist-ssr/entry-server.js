@@ -4,7 +4,7 @@ import { renderToPipeableStream } from "react-dom/server";
 import { Link, NavLink, Outlet, useLocation, useParams, Routes, Route, Navigate, MemoryRouter } from "react-router-dom";
 import { H as Helmet, a as HelmetProvider } from "./assets/vendor-BbfjqPYt.js";
 import { PassThrough } from "stream";
-import { User, LogOut, LogIn, Github, Linkedin, Twitter, ArrowRight, Mail, Activity, Check, Copy, Zap, BookOpen, Save, Cpu, Lightbulb, Search, Layers, Network, Brain, ListOrdered, ArrowRightLeft, Maximize, Repeat, Hash, Link2, Box, Trees, BarChart3, Home as Home$2, ChevronRight, Ghost, Calculator, AlertTriangle } from "lucide-react";
+import { User, LogOut, LogIn, Github, Linkedin, ArrowRight, Mail, Activity, Check, Copy, Zap, BookOpen, Save, Cpu, Lightbulb, Search, Layers, Network, Brain, ListOrdered, ArrowRightLeft, Maximize, Repeat, Hash, Link2, Box, Trees, BarChart3, Home as Home$2, ChevronRight, Ghost, Calculator, AlertTriangle } from "lucide-react";
 import Editor from "react-simple-code-editor";
 import { P as Prism } from "./assets/prism-OM6GymsZ.js";
 import { r as reactKatexExports } from "./assets/math-DRdIFewa.js";
@@ -99,19 +99,30 @@ function Layout() {
       /* @__PURE__ */ jsx("div", { className: "absolute inset-0 opacity-[0.03] pointer-events-none graph-paper" }),
       /* @__PURE__ */ jsxs("div", { className: "max-w-7xl mx-auto px-6 py-20 relative z-10", children: [
         /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16", children: [
-          /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
+          /* @__PURE__ */ jsxs("div", { className: "space-y-8 lg:col-span-2", children: [
             /* @__PURE__ */ jsxs(Link, { to: "/", className: "text-3xl font-black text-primary italic font-headline flex items-center gap-3", children: [
               /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white border-4 border-on-background shadow-[4px_4px_0_#0f172a]", children: "A" }),
               "AlgoStory"
             ] }),
-            /* @__PURE__ */ jsx("p", { className: "font-body text-on-surface-variant font-bold leading-relaxed max-w-xs", children: "Empowering developers to visualize algorithms and master code complexity through the art of storytelling." }),
-            /* @__PURE__ */ jsxs("div", { className: "flex gap-4", children: [
-              /* @__PURE__ */ jsx("a", { href: "https://github.com/garg-sushant", target: "_blank", rel: "noopener noreferrer", className: "w-10 h-10 bg-white border-4 border-on-background rounded-xl flex items-center justify-center hover:bg-primary-container transition-colors shadow-[4px_4px_0_#0f172a] hover:translate-y-[-2px]", children: /* @__PURE__ */ jsx(Github, { className: "w-5 h-5" }) }),
-              /* @__PURE__ */ jsx("a", { href: "https://www.linkedin.com/in/sushant-garg-4b0a37284/", target: "_blank", rel: "noopener noreferrer", className: "w-10 h-10 bg-white border-4 border-on-background rounded-xl flex items-center justify-center hover:bg-tertiary-container transition-colors shadow-[4px_4px_0_#0f172a] hover:translate-y-[-2px]", children: /* @__PURE__ */ jsx(Linkedin, { className: "w-5 h-5" }) }),
-              /* @__PURE__ */ jsxs("a", { href: "https://discordapp.com/users/1181611562277011611", target: "_blank", rel: "noopener noreferrer", className: "w-10 h-10 bg-white border-4 border-on-background rounded-xl flex items-center justify-center hover:bg-secondary-container transition-colors shadow-[4px_4px_0_#0f172a] hover:translate-y-[-2px]", children: [
-                /* @__PURE__ */ jsx(Twitter, { className: "w-5 h-5 flex-shrink-0", fill: "currentColor" }),
-                /* @__PURE__ */ jsx("span", { className: "sr-only", children: "Discord: sushantgarg." })
-              ] })
+            /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
+              /* @__PURE__ */ jsx("h4", { className: "font-headline font-black text-xl uppercase tracking-tighter text-secondary italic underline decoration-secondary decoration-4 underline-offset-4", children: "Developed By" }),
+              /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-8", children: [
+                /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+                  /* @__PURE__ */ jsx("div", { className: "font-headline font-black text-lg text-on-background uppercase tracking-tight", children: "Sushant Garg" }),
+                  /* @__PURE__ */ jsxs("div", { className: "flex gap-3", children: [
+                    /* @__PURE__ */ jsx("a", { href: "https://github.com/garg-sushant", target: "_blank", rel: "noopener noreferrer", className: "w-9 h-9 bg-white border-2 border-on-background rounded-lg flex items-center justify-center hover:bg-primary-container transition-colors shadow-[3px_3px_0_#0f172a] hover:translate-y-[-2px]", children: /* @__PURE__ */ jsx(Github, { className: "w-4 h-4" }) }),
+                    /* @__PURE__ */ jsx("a", { href: "https://www.linkedin.com/in/sushant-garg-4b0a37284/", target: "_blank", rel: "noopener noreferrer", className: "w-9 h-9 bg-white border-2 border-on-background rounded-lg flex items-center justify-center hover:bg-tertiary-container transition-colors shadow-[3px_3px_0_#0f172a] hover:translate-y-[-2px]", children: /* @__PURE__ */ jsx(Linkedin, { className: "w-4 h-4" }) })
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxs("div", { className: "space-y-4", children: [
+                  /* @__PURE__ */ jsx("div", { className: "font-headline font-black text-lg text-on-background uppercase tracking-tight", children: "Akshat Aggarwal" }),
+                  /* @__PURE__ */ jsxs("div", { className: "flex gap-3", children: [
+                    /* @__PURE__ */ jsx("a", { href: "https://github.com/akshat-chd", target: "_blank", rel: "noopener noreferrer", className: "w-9 h-9 bg-white border-2 border-on-background rounded-lg flex items-center justify-center hover:bg-primary-container transition-colors shadow-[3px_3px_0_#0f172a] hover:translate-y-[-2px]", children: /* @__PURE__ */ jsx(Github, { className: "w-4 h-4" }) }),
+                    /* @__PURE__ */ jsx("a", { href: "https://www.linkedin.com/in/akshat-aggarwal-10bbba301/", target: "_blank", rel: "noopener noreferrer", className: "w-9 h-9 bg-white border-2 border-on-background rounded-lg flex items-center justify-center hover:bg-tertiary-container transition-colors shadow-[3px_3px_0_#0f172a] hover:translate-y-[-2px]", children: /* @__PURE__ */ jsx(Linkedin, { className: "w-4 h-4" }) })
+                  ] })
+                ] })
+              ] }),
+              /* @__PURE__ */ jsx("p", { className: "font-body text-on-surface-variant font-bold leading-relaxed max-w-sm mt-8", children: "Empowering developers to visualize algorithms and master code complexity through the art of storytelling." })
             ] })
           ] }),
           /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
@@ -145,10 +156,6 @@ function Layout() {
               /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, { to: "/blog", className: "font-body font-bold text-on-surface-variant hover:text-secondary flex items-center gap-2 group", children: [
                 /* @__PURE__ */ jsx(ArrowRight, { className: "w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" }),
                 " Blog"
-              ] }) }),
-              /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs("a", { href: "https://discordapp.com/users/1181611562277011611", target: "_blank", rel: "noopener noreferrer", className: "font-body font-bold text-on-surface-variant hover:text-secondary flex items-center gap-2 group", children: [
-                /* @__PURE__ */ jsx(ArrowRight, { className: "w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" }),
-                " Discord (sushantgarg.)"
               ] }) })
             ] })
           ] }),

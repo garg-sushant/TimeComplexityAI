@@ -1,6 +1,6 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogIn, LogOut, User, Github, Twitter, Linkedin, Mail, ArrowRight } from 'lucide-react';
+import { LogIn, LogOut, User, Github, Linkedin, Mail, ArrowRight } from 'lucide-react';
 
 export default function Layout() {
   const { user } = useAuth();
@@ -110,28 +110,49 @@ export default function Layout() {
 
         <div className="max-w-7xl mx-auto px-6 py-20 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
-            {/* Column 1: Brand */}
-            <div className="space-y-6">
+            {/* Column 1: Brand & Developed By */}
+            <div className="space-y-8 lg:col-span-2">
               <Link to="/" className="text-3xl font-black text-primary italic font-headline flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white border-4 border-on-background shadow-[4px_4px_0_#0f172a]">A</div>
                 AlgoStory
               </Link>
-              <p className="font-body text-on-surface-variant font-bold leading-relaxed max-w-xs">
+
+              <div className="space-y-6">
+                <h4 className="font-headline font-black text-xl uppercase tracking-tighter text-secondary italic underline decoration-secondary decoration-4 underline-offset-4">Developed By</h4>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                {/* Developer 1: User */}
+                <div className="space-y-4">
+                  <div className="font-headline font-black text-lg text-on-background uppercase tracking-tight">Sushant Garg</div>
+                  <div className="flex gap-3">
+                    <a href="https://github.com/garg-sushant" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white border-2 border-on-background rounded-lg flex items-center justify-center hover:bg-primary-container transition-colors shadow-[3px_3px_0_#0f172a] hover:translate-y-[-2px]">
+                      <Github className="w-4 h-4" />
+                    </a>
+                    <a href="https://www.linkedin.com/in/sushant-garg-4b0a37284/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white border-2 border-on-background rounded-lg flex items-center justify-center hover:bg-tertiary-container transition-colors shadow-[3px_3px_0_#0f172a] hover:translate-y-[-2px]">
+                      <Linkedin className="w-4 h-4" />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Developer 2: Teammate */}
+                <div className="space-y-4">
+                  <div className="font-headline font-black text-lg text-on-background uppercase tracking-tight">Akshat Aggarwal</div>
+                  <div className="flex gap-3">
+                    <a href="https://github.com/akshat-chd" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white border-2 border-on-background rounded-lg flex items-center justify-center hover:bg-primary-container transition-colors shadow-[3px_3px_0_#0f172a] hover:translate-y-[-2px]">
+                      <Github className="w-4 h-4" />
+                    </a>
+                    <a href="https://www.linkedin.com/in/akshat-aggarwal-10bbba301/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white border-2 border-on-background rounded-lg flex items-center justify-center hover:bg-tertiary-container transition-colors shadow-[3px_3px_0_#0f172a] hover:translate-y-[-2px]">
+                      <Linkedin className="w-4 h-4" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <p className="font-body text-on-surface-variant font-bold leading-relaxed max-w-sm mt-8">
                 Empowering developers to visualize algorithms and master code complexity through the art of storytelling.
               </p>
-              <div className="flex gap-4">
-                <a href="https://github.com/garg-sushant" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white border-4 border-on-background rounded-xl flex items-center justify-center hover:bg-primary-container transition-colors shadow-[4px_4px_0_#0f172a] hover:translate-y-[-2px]">
-                  <Github className="w-5 h-5" />
-                </a>
-                <a href="https://www.linkedin.com/in/sushant-garg-4b0a37284/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white border-4 border-on-background rounded-xl flex items-center justify-center hover:bg-tertiary-container transition-colors shadow-[4px_4px_0_#0f172a] hover:translate-y-[-2px]">
-                  <Linkedin className="w-5 h-5" />
-                </a>
-                <a href="https://discordapp.com/users/1181611562277011611" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white border-4 border-on-background rounded-xl flex items-center justify-center hover:bg-secondary-container transition-colors shadow-[4px_4px_0_#0f172a] hover:translate-y-[-2px]">
-                  <Twitter className="w-5 h-5 flex-shrink-0" fill="currentColor" />
-                  <span className="sr-only">Discord: sushantgarg.</span>
-                </a>
-              </div>
             </div>
+          </div>
 
             {/* Column 2: Product */}
             <div className="space-y-6">
@@ -150,7 +171,6 @@ export default function Layout() {
               <ul className="space-y-4">
                 <li><Link to="/tutorials" className="font-body font-bold text-on-surface-variant hover:text-secondary flex items-center gap-2 group"><ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" /> Docs</Link></li>
                 <li><Link to="/blog" className="font-body font-bold text-on-surface-variant hover:text-secondary flex items-center gap-2 group"><ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" /> Blog</Link></li>
-                <li><a href="https://discordapp.com/users/1181611562277011611" target="_blank" rel="noopener noreferrer" className="font-body font-bold text-on-surface-variant hover:text-secondary flex items-center gap-2 group"><ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 -ml-6 group-hover:ml-0 transition-all" /> Discord (sushantgarg.)</a></li>
               </ul>
             </div>
 
