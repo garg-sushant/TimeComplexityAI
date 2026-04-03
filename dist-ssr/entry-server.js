@@ -502,7 +502,7 @@ function Home() {
     const timer = setTimeout(async () => {
       if (code.trim().length > 10) {
         try {
-          const { fastCodeHint } = await import("./assets/ai-DpwmODyS.js");
+          const { fastCodeHint } = await import("./assets/ai-DH9lL5ZI.js");
           const quickHint = await fastCodeHint(code);
           if (!cancelled) {
             setHint(quickHint);
@@ -523,7 +523,7 @@ function Home() {
     setResult(null);
     setIsSaved(false);
     try {
-      const { analyzeCodeComplexity } = await import("./assets/ai-DpwmODyS.js");
+      const { analyzeCodeComplexity } = await import("./assets/ai-DH9lL5ZI.js");
       const res = await analyzeCodeComplexity(code);
       setResult(res);
       setAnalyzedCode(code);
@@ -1948,7 +1948,7 @@ function Tutorials() {
     setIsSearching(true);
     setSearchResult("");
     try {
-      const { searchTutorials } = await import("./assets/ai-DpwmODyS.js");
+      const { searchTutorials } = await import("./assets/ai-DH9lL5ZI.js");
       const result = await searchTutorials(query);
       setSearchResult(result);
     } catch (error) {
@@ -2299,7 +2299,7 @@ function InsideMath() {
     setIsAnalyzing(true);
     setResult(null);
     try {
-      const { analyzeCodeStepByStep } = await import("./assets/ai-DpwmODyS.js");
+      const { analyzeCodeStepByStep } = await import("./assets/ai-DH9lL5ZI.js");
       const res = await analyzeCodeStepByStep(code);
       setResult(res);
     } catch (error) {

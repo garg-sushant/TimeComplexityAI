@@ -4,6 +4,18 @@ import { getEnv } from '../utils/env';
 import { AnalysisResult, StepByStepAnalysis } from '../types';
 
 /**
+ * 🧹 Logical Code Normalizer
+ * Standardizes code by removing comments and collapsing whitespaces.
+ * This ensures that logically identical code snippets resulted in consistent cache hits.
+ */
+function normalizeCode(code: string): string {
+  return code
+    .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '') // Remove all comments
+    .replace(/\s+/g, ' ')                   // Collapse all whitespace to single spaces
+    .trim();                                // Trim edges
+}
+
+/**
  * 🗝️ Universal Provider Interface
  */
 interface AIProvider {
@@ -12,6 +24,107 @@ interface AIProvider {
   analyzeStepByStep(code: string): Promise<StepByStepAnalysis>;
   getHint(code: string): Promise<string>;
   searchTutorials(query: string): Promise<string>;
+}
+
+/**
+ * 🏠 Offline Rule-Based Provider (Heuristics)
+ * Handles trivial code patterns without hitting the API.
+ */
+class OfflineProvider implements AIProvider {
+  name = 'Local Engine';
+
+  async analyzeComplexity(code: string): Promise<AnalysisResult> {
+    const cleaned = normalizeCode(code);
+    
+    // Pattern: Standard Library Methods (Fixed complexity)
+    // - O(N log N): .sort()
+    if (cleaned.includes('.sort(')) {
+      return {
+        complexity: 'O(N log N)',
+        complexityClass: 'O(N log N)',
+        spaceComplexity: 'O(log N)',
+        explanationPoints: [
+          'Detected a standard sorting method (usually Timsort or Quicksort).',
+          'Standard comparison-based sorting has a time complexity of O(N log N).',
+          'Space complexity is O(log N) for the recursion stack in most modern implementations.'
+        ]
+      };
+    }
+
+    // - O(N): .map(), .filter(), .reduce(), .find(), .includes()
+    const linearMethods = ['.map(', '.filter(', '.reduce(', '.find(', '.includes(', '.forEach(', '.every(', '.some('];
+    if (linearMethods.some(m => cleaned.includes(m))) {
+      return {
+        complexity: 'O(N)',
+        complexityClass: 'O(N)',
+        spaceComplexity: 'O(1)', // Usually O(1) unless the callback creates new data structures
+        explanationPoints: [
+          'Detected a standard linear iteration method.',
+          'These methods visit each element of the collection exactly once.',
+          'Time complexity scales linearly with the size of the input (N).'
+        ]
+      };
+    }
+
+    // Pattern: O(1) - Constant Time (no loops, no recursion)
+    if (!cleaned.includes('for') && !cleaned.includes('while')) {
+      return {
+        complexity: 'O(1)',
+        complexityClass: 'O(1)',
+        spaceComplexity: 'O(1)',
+        explanationPoints: [
+          'The code contains only basic operations with no looping constructs.',
+          'Execution time is independent of the input size.',
+          'No additional space proportional to input is allocated.'
+        ]
+      };
+    }
+
+    // Pattern: O(N) - Linear Time (single loop)
+    const loopCount = (cleaned.match(/\bfor\b|\bwhile\b/g) || []).length;
+    if (loopCount === 1 && !cleaned.includes('nested')) {
+      return {
+        complexity: 'O(N)',
+        complexityClass: 'O(N)',
+        spaceComplexity: 'O(1)',
+        explanationPoints: [
+          'The code contains a single linear loop over the input.',
+          'The number of operations scales directly with the size of the input (N).',
+          'Space complexity remains O(1) as no dynamic memory is allocated based on input size.'
+        ]
+      };
+    }
+
+    // Pattern: O(N^2) - Quadratic Time (nested loops)
+    if (loopCount === 2 && (cleaned.includes('for') && cleaned.match(/for.*for/s))) {
+      return {
+        complexity: 'O(N^2)',
+        complexityClass: 'O(N^2)',
+        spaceComplexity: 'O(1)',
+        explanationPoints: [
+          'Detected a nested loop structure where an inner loop runs for every iteration of an outer loop.',
+          'The total number of operations is approximately proportional to N * N.',
+          'Typical for algorithms like Bubble Sort or processing 2D grids.'
+        ]
+      };
+    }
+
+    throw new Error('Pattern too complex for local analysis.');
+  }
+
+  async analyzeStepByStep(code: string): Promise<StepByStepAnalysis> {
+    throw new Error('Step-by-step analysis requires AI reasoning.');
+  }
+
+  async getHint(code: string): Promise<string> {
+    const res = await this.analyzeComplexity(code).catch(() => null);
+    if (!res) return 'This one looks a bit complex for a quick guess!';
+    return `Local analysis suggests this is ${res.complexityClass}. Fast and efficient!`;
+  }
+
+  async searchTutorials(): Promise<string> {
+    throw new Error('Search requires live API access.');
+  }
 }
 
 /**
@@ -93,9 +206,6 @@ class GeminiProvider implements AIProvider {
     }
   }
 
-  /**
-   * Gemini SDK specific: Uses ai.models.generateContent to support various versions smoothly.
-   */
   private async callWithFallback(promptText: string, config: any = {}): Promise<string> {
     const models = ['gemini-2.0-flash', 'gemini-1.5-flash'];
     let lastError: any;
@@ -183,6 +293,42 @@ class GroqProvider implements AIProvider {
 }
 
 /**
+ * 📦 Persistent Cache Layer
+ */
+class PersistentCache {
+  private static PREFIX = 'algostory_cache_';
+  
+  private static hash(str: string): string {
+    const normalized = normalizeCode(str); // Normalize BEFORE hashing
+    let hash = 0;
+    for (let i = 0; i < normalized.length; i++) {
+      const char = normalized.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(16);
+  }
+
+  static get<T>(key: string, type: string): T | null {
+    if (typeof window === 'undefined') return null;
+    const fullKey = `${this.PREFIX}${type}_${this.hash(key)}`;
+    const stored = localStorage.getItem(fullKey);
+    if (!stored) return null;
+    try {
+      return JSON.parse(stored) as T;
+    } catch {
+      return null;
+    }
+  }
+
+  static set(key: string, type: string, value: any) {
+    if (typeof window === 'undefined') return;
+    const fullKey = `${this.PREFIX}${type}_${this.hash(key)}`;
+    localStorage.setItem(fullKey, JSON.stringify(value));
+  }
+}
+
+/**
  * 🔄 Key Manager & Orchestrator
  */
 class AIOrchestrator {
@@ -191,6 +337,7 @@ class AIOrchestrator {
   private groqKeys: string[] = [];
   private currentGroqIndex = 0;
   private cooldowns: Map<string, number> = new Map();
+  private localEngine = new OfflineProvider();
 
   constructor() {
     const gKeys = getEnv('VITE_GEMINI_API_KEY');
@@ -202,15 +349,35 @@ class AIOrchestrator {
       this.groqKeys = qKeys.split(',').map(k => k.trim()).filter(Boolean);
     }
 
-    // 🪵 Diagnostic Logging (Helpful for troubleshooting production issues)
-    console.log(`[AIOrchestrator] 🚀 Initialized with ${this.geminiKeys.length} Gemini keys and ${this.groqKeys.length} Groq keys.`);
-    if (this.geminiKeys.length === 0 && this.groqKeys.length === 0) {
-      console.error('[AIOrchestrator] ❌ CRITICAL: No API keys found! Analysis will fail.');
+    if (typeof window !== 'undefined') {
+      console.log(`[AIOrchestrator] 🚀 Initialized with ${this.geminiKeys.length} Gemini keys and ${this.groqKeys.length} Groq keys.`);
+      if (this.geminiKeys.length === 0 && this.groqKeys.length === 0) {
+        console.error('[AIOrchestrator] ❌ CRITICAL: No API keys found! Analysis will fail.');
+      }
     }
   }
 
-  async runAction<T>(action: (provider: AIProvider) => Promise<T>): Promise<T> {
-    // 1. Try Gemini pool first
+  async runAction<T>(type: string, input: string, action: (provider: AIProvider) => Promise<T>): Promise<T> {
+    // 1. Try Local Engine first (Rules)
+    if (type === 'complexity' || type === 'hint') {
+      try {
+        const localResult = await action(this.localEngine);
+        console.log('[AI] 🏠 Local match found!');
+        return localResult;
+      } catch {
+        // Continue to cache
+      }
+    }
+
+    // 2. Try Cache
+    const cached = PersistentCache.get<T>(input, type);
+    if (cached) {
+      console.log(`[AI] 📦 Cache hit for ${type}!`);
+      return cached;
+    }
+
+    // 3. Try Gemini pool
+    let result: T | null = null;
     if (this.geminiKeys.length > 0) {
       for (let i = 0; i < this.geminiKeys.length; i++) {
         const idx = (this.currentGeminiIndex + i) % this.geminiKeys.length;
@@ -221,9 +388,9 @@ class AIOrchestrator {
         try {
           const ai = new GoogleGenAI({ apiKey: key, apiVersion: 'v1beta' });
           const provider = new GeminiProvider(ai);
-          const result = await action(provider);
+          result = await action(provider);
           this.currentGeminiIndex = (idx + 1) % this.geminiKeys.length;
-          return result;
+          break;
         } catch (err: any) {
           console.warn(`[AI] Gemini key [${idx}] failed. Error: ${err.message}`);
           if (this.isQuotaError(err)) {
@@ -236,8 +403,8 @@ class AIOrchestrator {
       }
     }
 
-    // 2. Try Groq pool as fallback
-    if (this.groqKeys.length > 0) {
+    // 4. Try Groq pool as fallback
+    if (!result && this.groqKeys.length > 0) {
       for (let i = 0; i < this.groqKeys.length; i++) {
         const idx = (this.currentGroqIndex + i) % this.groqKeys.length;
         const key = this.groqKeys[idx];
@@ -252,9 +419,9 @@ class AIOrchestrator {
             dangerouslyAllowBrowser: true 
           });
           const provider = new GroqProvider(client);
-          const result = await action(provider);
+          result = await action(provider);
           this.currentGroqIndex = (idx + 1) % this.groqKeys.length;
-          return result;
+          break;
         } catch (err: any) {
           console.warn(`[AI] Groq key [${idx}] failed: ${err.message}`);
           if (this.isQuotaError(err)) {
@@ -265,6 +432,11 @@ class AIOrchestrator {
           throw err;
         }
       }
+    }
+
+    if (result) {
+      PersistentCache.set(input, type, result);
+      return result;
     }
 
     throw new Error('All AI providers exhausted or unavailable. Please check your API quotas.');
@@ -309,13 +481,13 @@ function normalizeResult(res: AnalysisResult): AnalysisResult {
 }
 
 export const analyzeCodeComplexity = async (code: string) => 
-  orchestrator.runAction(async (p) => normalizeResult(await p.analyzeComplexity(code)));
+  orchestrator.runAction('complexity', code, async (p) => normalizeResult(await p.analyzeComplexity(code)));
 
 export const analyzeCodeStepByStep = async (code: string) => 
-  orchestrator.runAction(async (p) => await p.analyzeStepByStep(code));
+  orchestrator.runAction('step', code, async (p) => await p.analyzeStepByStep(code));
 
 export const fastCodeHint = async (code: string) => 
-  orchestrator.runAction(async (p) => await p.getHint(code));
+  orchestrator.runAction('hint', code, async (p) => await p.getHint(code));
 
 export const searchTutorials = async (query: string) => 
-  orchestrator.runAction(async (p) => await p.searchTutorials(query));
+  orchestrator.runAction('search', query, async (p) => await p.searchTutorials(query));

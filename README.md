@@ -1,112 +1,106 @@
-# 📖 AlgoStory: AI-Powered Code Complexity Visualizer
+# 📖 AlgoStory: The Premium AI Code Complexity Architect
 
-[![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-black.svg?style=for-the-badge&logo=vercel)](https://algostory-pi.vercel.app/)
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white)](https://firebase.google.com/)
+[![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-000000.svg?style=for-the-badge&logo=vercel)](https://algostory-pi.vercel.app/)
+[![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Groq Llama 3.3](https://img.shields.io/badge/Groq_Fallback-Llama_3.3_70B-orange?style=for-the-badge)](https://groq.com/)
+[![Gemini 2.0](https://img.shields.io/badge/Primary_AI-Gemini_2.0_Flash-blue?style=for-the-badge)](https://ai.google.dev/)
 
-**AlgoStory** is a premium developer tool designed to transform the dry world of Big O notation into engaging narratives. Using the power of Google's Gemini AI, we analyze your code to determine its time and space complexity, providing 100% mathematical accuracy alongside a line-by-line breakdown of how your algorithms scale.
-
----
-
-## ✨ Features
-
-- **🚀 AI Complexity Lab**: Analyze raw code snippets for instantaneous Big O results.
-- **🧬 Line-by-Line Breakdown**: Get a "Story" of your code where every loop, recursion, and condition is explained mathematically.
-- **🎓 Knowledge Vault**: Explore interactive tutorials on everything from Logarithmic growth to Dynamic Programming.
-- **📊 Virtualized Performance**: Visualize how different complexity classes $(O(N), O(N^2), etc.)$ perform as data grows.
-- **🎨 Emerald Neobrutalist UI**: A high-contrast, premium aesthetic designed for clarity and a tactile feel.
+**AlgoStory** is an elite developer platform that transforms the abstract world of Big O notation into high-fidelity, interactive narratives. Engineered with a **Multi-Provider AI Fallback Architecture**, it ensures 100% service uptime by cycling through an elastic pool of Gemini and Groq (Llama 3.3 70B) engines to provide mathematically precise algorithm analysis.
 
 ---
 
-## 🛠️ Tech Stack
+## ✨ Cutting-Edge Features
 
-- **Frontend**: [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) (Custom Neobrutalist Utility System)
-- **Backend & Auth**: [Firebase](https://firebase.google.com/) (Authentication & Firestore)
-- **AI Engine**: [Google Gemini 2.0 Flash](https://ai.google.dev/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **SEO & Metadata**: [React Helmet Async](https://github.com/staylor/react-helmet-async)
+- **🚀 Hybrid AI Orchestrator**: Uses a primary Gemini key rotation pool with ultra-fast Groq/Llama fallbacks to guarantee uninterrupted analysis.
+- **🏠 Adaptive Local Engine**: Built-in heuristic analyzer identifies O(1), O(N), and O(N log N) patterns instantly without hitting your API quota.
+- **📦 Intelligent Persistent Caching**: Deterministic code hashing and `localStorage` integration ensure re-analyzing the same code is instantaneous (0.1ms).
+- **🎨 Emerald Neobrutalist UI**: A premium, high-contrast aesthetic built with Framer Motion for a fluid, tactile development experience.
+- **⚡ SEO-Optimized SSR**: Robust Server-Side Rendering and Prerendering pipeline for near-instant first-contentful paint.
+- **🧬 Deep-Trace Step-by-Step**: Mathematically rigorous breakdowns of time and space complexity with line-level granularity.
 
 ---
 
-## 🚀 Getting Started
+## 🛠️ Performance Tech Stack
+
+- **Core**: [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/)
+- **AI Infrastructure**: 
+  - [Google Gemini 2.0 Flash](https://ai.google.dev/) (Primary Engine)
+  - [Groq / Llama 3.3 70B](https://groq.com/) (High-Speed Fallback)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **State & Identity**: [Firebase](https://firebase.google.com/) (Auth & Security)
+- **Styling**: Vanilla CSS (Custom Emerald Neobrutalist Tokens)
+- **Deployment**: SSR-optimized [Vercel](https://vercel.com/) Build Pipeline
+
+---
+
+## 🚀 Pro Setup
 
 ### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v18 or higher)
-- [npm](https://www.npmjs.com/)
+- Node.js (v18+)
+- npm / pnpm
 
 ### Installation
 
-1. **Clone the repository:**
+1. **Clone & Initialize:**
    ```bash
    git clone https://github.com/garg-sushant/algostory.git
    cd algostory
-   ```
-
-2. **Install dependencies:**
-   ```bash
    npm install
    ```
 
-3. **Configure Environment Variables:**
-   Create a `.env` file in the root directory and add your keys:
+2. **Environment Configuration:**
+   Create a `.env` in the root and configure your elite provider pools:
    ```env
-   VITE_FIREBASE_API_KEY="your_api_key"
-   VITE_FIREBASE_AUTH_DOMAIN="your_auth_domain"
-   VITE_FIREBASE_PROJECT_ID="your_project_id"
-   VITE_FIREBASE_STORAGE_BUCKET="your_storage_bucket"
-   VITE_FIREBASE_MESSAGING_SENDER_ID="your_sender_id"
-   VITE_FIREBASE_APP_ID="your_app_id"
-   VITE_GEMINI_API_KEY="your_gemini_api_key"
+   # Firebase Identity
+   VITE_FIREBASE_API_KEY="..."
+   VITE_FIREBASE_AUTH_DOMAIN="..."
+   VITE_FIREBASE_PROJECT_ID="..."
+   VITE_FIREBASE_STORAGE_BUCKET="..."
+   VITE_FIREBASE_MESSAGING_SENDER_ID="..."
+   VITE_FIREBASE_APP_ID="..."
+
+   # AI Provider Pools (Comma-separated for auto-rotation)
+   VITE_GEMINI_API_KEY="key1,key2,key3"
+   VITE_GROQ_API_KEY="groq_key1,groq_key2"
    ```
 
-4. **Run Development Server:**
+3. **Development Boot:**
    ```bash
    npm run dev
    ```
 
----
-
-## 📂 Project Structure
-
-```text
-src/
-├── components/   # Reusable UI components (Calculator, Layout, etc.)
-├── contexts/     # Auth & State management
-├── data/         # Static tutorial content
-├── lib/          # Service initializations (Firebase, Gemini)
-├── pages/        # Main application views
-├── types/        # TypeScript interfaces
-└── utils/        # Helper functions
+### Verification Suite
+Verify your provider health anytime:
+```bash
+npx tsx scripts/check-keys.ts
 ```
 
 ---
 
-## 🔗 Deployment
+## 📂 Architecture
 
-This project is optimized for deployment on **Vercel**. 
-
-1. Push your code to GitHub.
-2. Connect your repo to Vercel.
-3. Add the **Environment Variables** in the Vercel dashboard.
-4. **Deploy!**
+```text
+src/
+├── components/   # Neobrutalist UI & Interaction Layers
+├── lib/          # AI Orchestrator, Multi-Provider Logic & Persistence
+├── pages/        # Complexity Lab, Knowledge Vault & Visualizers
+├── utils/        # SSR-Safe Env Management & Hashing
+└── assets/       # High-Fidelity Design Tokens
+```
 
 ---
 
-## 👨‍💻 Author
+## 👨‍💻 Engineering Team
 
 **Sushant Garg**  
-- GitHub: [@garg-sushant](https://github.com/garg-sushant)  
-- LinkedIn: [Sushant Garg](https://www.linkedin.com/in/sushant-garg-4b0a37284/)  
-- Discord: `sushantgarg.`  
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/garg-sushant)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sushant-garg-4b0a37284/)
+
+**Akshat Aggarwal**  
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/akshat-chd)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/akshat-aggarwal-10bbba301/)
 
 ---
 
-**Akshat Aggarwal**  
-- GitHub: [@akshat-chd](https://github.com/akshat-chd)  
-- LinkedIn: [Akshat Aggarwal](https://www.linkedin.com/in/akshat-aggarwal-10bbba301/)  
 ## 📄 License
-
-This project is licensed under the MIT License.
+Licensed under the [MIT License](LICENSE).
