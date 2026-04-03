@@ -201,6 +201,12 @@ class AIOrchestrator {
     if (qKeys) {
       this.groqKeys = qKeys.split(',').map(k => k.trim()).filter(Boolean);
     }
+
+    // 🪵 Diagnostic Logging (Helpful for troubleshooting production issues)
+    console.log(`[AIOrchestrator] 🚀 Initialized with ${this.geminiKeys.length} Gemini keys and ${this.groqKeys.length} Groq keys.`);
+    if (this.geminiKeys.length === 0 && this.groqKeys.length === 0) {
+      console.error('[AIOrchestrator] ❌ CRITICAL: No API keys found! Analysis will fail.');
+    }
   }
 
   async runAction<T>(action: (provider: AIProvider) => Promise<T>): Promise<T> {
@@ -219,8 +225,9 @@ class AIOrchestrator {
           this.currentGeminiIndex = (idx + 1) % this.geminiKeys.length;
           return result;
         } catch (err: any) {
-          console.warn(`[AI] Gemini key ${idx} failed. Error: ${err.message}`);
+          console.warn(`[AI] Gemini key [${idx}] failed. Error: ${err.message}`);
           if (this.isQuotaError(err)) {
+            console.error(`[AI] ⛔ Gemini key [${idx}] quota reached. Putting on cooldown...`);
             this.setCooldown(key);
             continue;
           }
@@ -238,7 +245,7 @@ class AIOrchestrator {
         if (this.isCooldown(key)) continue;
 
         try {
-          console.log(`[AI] Attempting Groq rotation (key ${idx})...`);
+          console.log(`[AI] Attempting Groq fallback (key ${idx})...`);
           const client = new OpenAI({ 
             apiKey: key, 
             baseURL: 'https://api.groq.com/openai/v1',
@@ -249,8 +256,9 @@ class AIOrchestrator {
           this.currentGroqIndex = (idx + 1) % this.groqKeys.length;
           return result;
         } catch (err: any) {
-          console.warn(`[AI] Groq key ${idx} failed:`, err.message);
+          console.warn(`[AI] Groq key [${idx}] failed: ${err.message}`);
           if (this.isQuotaError(err)) {
+            console.error(`[AI] ⛔ Groq key [${idx}] quota reached. Putting on cooldown...`);
             this.setCooldown(key);
             continue;
           }
@@ -259,7 +267,7 @@ class AIOrchestrator {
       }
     }
 
-    throw new Error('All AI providers exhausted or unavailable.');
+    throw new Error('All AI providers exhausted or unavailable. Please check your API quotas.');
   }
 
   private isQuotaError(err: any): boolean {
