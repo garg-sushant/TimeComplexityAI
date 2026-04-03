@@ -494,7 +494,7 @@ function Home() {
     const timer = setTimeout(async () => {
       if (code.trim().length > 10) {
         try {
-          const { fastCodeHint } = await import("./assets/gemini-BmqvVhXt.js");
+          const { fastCodeHint } = await import("./assets/gemini-z3KVUO2H.js");
           const quickHint = await fastCodeHint(code);
           if (!cancelled) {
             setHint(quickHint);
@@ -515,7 +515,7 @@ function Home() {
     setResult(null);
     setIsSaved(false);
     try {
-      const { analyzeCodeComplexity } = await import("./assets/gemini-BmqvVhXt.js");
+      const { analyzeCodeComplexity } = await import("./assets/gemini-z3KVUO2H.js");
       const res = await analyzeCodeComplexity(code);
       setResult(res);
       setAnalyzedCode(code);
@@ -1841,7 +1841,7 @@ function Tutorials() {
     setIsSearching(true);
     setSearchResult("");
     try {
-      const { searchTutorials } = await import("./assets/gemini-BmqvVhXt.js");
+      const { searchTutorials } = await import("./assets/gemini-z3KVUO2H.js");
       const result = await searchTutorials(query);
       setSearchResult(result);
     } catch (error) {
@@ -2192,7 +2192,7 @@ function InsideMath() {
     setIsAnalyzing(true);
     setResult(null);
     try {
-      const { analyzeCodeStepByStep } = await import("./assets/gemini-BmqvVhXt.js");
+      const { analyzeCodeStepByStep } = await import("./assets/gemini-z3KVUO2H.js");
       const res = await analyzeCodeStepByStep(code);
       setResult(res);
     } catch (error) {

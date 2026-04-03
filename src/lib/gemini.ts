@@ -104,6 +104,47 @@ class KeyManager {
 
 const keyManager = new KeyManager();
 
+const COMPLEXITY_CLASS_ALIASES: Record<string, string> = {
+  'constant': 'O(1)',
+  'o(1)': 'O(1)',
+  'logarithmic': 'O(log N)',
+  'o(log n)': 'O(log N)',
+  'linear': 'O(N)',
+  'o(n)': 'O(N)',
+  'linearithmic': 'O(N log N)',
+  'o(n log n)': 'O(N log N)',
+  'quadratic': 'O(N^2)',
+  'o(n^2)': 'O(N^2)',
+  'exponential': 'O(2^N)',
+  'o(2^n)': 'O(2^N)',
+  'factorial': 'O(N!)',
+  'o(n!)': 'O(N!)',
+  'unknown': 'Unknown',
+};
+
+function normalizeComplexityClass(value: unknown): string {
+  if (typeof value !== 'string') return 'Unknown';
+
+  const normalized = value
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/²/g, '^2')
+    .replace(/ⁿ/g, '^N')
+    .toLowerCase();
+
+  return COMPLEXITY_CLASS_ALIASES[normalized] ?? value.trim();
+}
+
+function normalizeAnalysisResult(result: AnalysisResult): AnalysisResult {
+  return {
+    ...result,
+    complexityClass: normalizeComplexityClass(result.complexityClass),
+    explanationPoints: Array.isArray(result.explanationPoints)
+      ? result.explanationPoints.filter((point): point is string => typeof point === 'string' && point.trim().length > 0)
+      : [],
+  };
+}
+
 /**
  * 🔄 withRetry: A high-order wrapper that handles key rotation on failure (Rate Limit/Exhaustion).
  */
@@ -236,7 +277,7 @@ export const analyzeCodeComplexity = async (code: string): Promise<AnalysisResul
     const response = await callWithFallback(ai, promptText, config);
     const text = response.text;
     if (!text) throw new Error('No response from Gemini');
-    return JSON.parse(text) as AnalysisResult;
+    return normalizeAnalysisResult(JSON.parse(text) as AnalysisResult);
   });
 };
 
