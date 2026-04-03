@@ -1,18 +1,18 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
-import React, { lazy, useContext, createContext, Suspense, useState, useEffect } from "react";
+import React__default, { lazy, useContext, createContext, Suspense, useState, useEffect } from "react";
 import { renderToPipeableStream } from "react-dom/server";
 import { Link, NavLink, Outlet, useLocation, useParams, Routes, Route, Navigate, MemoryRouter } from "react-router-dom";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import { H as Helmet, a as HelmetProvider } from "./assets/vendor-BbfjqPYt.js";
 import { PassThrough } from "stream";
 import { User, LogOut, LogIn, Github, Linkedin, Twitter, ArrowRight, Mail, Activity, Check, Copy, Zap, BookOpen, Save, Cpu, Lightbulb, Search, Layers, Network, Brain, ListOrdered, ArrowRightLeft, Maximize, Repeat, Hash, Link2, Box, Trees, BarChart3, Home as Home$2, ChevronRight, Ghost, Calculator, AlertTriangle } from "lucide-react";
 import Editor from "react-simple-code-editor";
-import Prism from "prismjs";
-import "prismjs/components/prism-python.js";
-import "prismjs/components/prism-javascript.js";
-import "prismjs/components/prism-java.js";
-import "prismjs/components/prism-c.js";
-import "prismjs/components/prism-cpp.js";
-import * as ReactKatex from "react-katex";
+import { P as Prism } from "./assets/prism-OM6GymsZ.js";
+import { r as reactKatexExports } from "./assets/math-DRdIFewa.js";
+import "react-fast-compare";
+import "invariant";
+import "shallowequal";
+import "prop-types";
+import "katex";
 lazy(() => Promise.resolve().then(() => Home$1));
 lazy(() => Promise.resolve().then(() => Tutorials$1));
 lazy(() => Promise.resolve().then(() => TutorialPost$1));
@@ -29,11 +29,11 @@ const useAuth = () => useContext(AuthContext);
 function Layout() {
   const { user } = useAuth();
   const handleSignIn = async () => {
-    const { signInWithGoogle } = await import("./assets/firebase-CmI-T6GR.js");
+    const { signInWithGoogle } = await import("./assets/firebase-DDh2ZTZn.js");
     await signInWithGoogle();
   };
   const handleSignOut = async () => {
-    const { logOut } = await import("./assets/firebase-CmI-T6GR.js");
+    const { logOut } = await import("./assets/firebase-DDh2ZTZn.js");
     await logOut();
   };
   return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-background font-body text-on-background selection:bg-primary selection:text-white flex flex-col", children: [
@@ -188,7 +188,7 @@ const Layout$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProp
   default: Layout
 }, Symbol.toStringTag, { value: "Module" }));
 const ComplexityCalculator = lazy(async () => {
-  const module = await import("./assets/ComplexityCalculator-CTdOiU0y.js");
+  const module = await import("./assets/ComplexityCalculator-sUYB1x2x.js");
   return { default: module.ComplexityCalculator };
 });
 function LazyComplexityCalculator({ complexityClass }) {
@@ -494,7 +494,7 @@ function Home() {
     const timer = setTimeout(async () => {
       if (code.trim().length > 10) {
         try {
-          const { fastCodeHint } = await import("./assets/gemini-CpzluuG5.js");
+          const { fastCodeHint } = await import("./assets/gemini-BmqvVhXt.js");
           const quickHint = await fastCodeHint(code);
           if (!cancelled) {
             setHint(quickHint);
@@ -510,23 +510,26 @@ function Home() {
     };
   }, [code]);
   const handleAnalyze = async () => {
-    var _a2;
     if (!code.trim()) return;
     setIsAnalyzing(true);
     setResult(null);
     setIsSaved(false);
     try {
-      const { analyzeCodeComplexity } = await import("./assets/gemini-CpzluuG5.js");
+      const { analyzeCodeComplexity } = await import("./assets/gemini-BmqvVhXt.js");
       const res = await analyzeCodeComplexity(code);
       setResult(res);
       setAnalyzedCode(code);
     } catch (error) {
       console.error("Analysis failed:", error);
-      if ((_a2 = error == null ? void 0 : error.message) == null ? void 0 : _a2.includes("429")) {
-        alert("Wait a second! The AI wizards are overwhelmed. Please wait a minute and try again (Quota Exceeded).");
-      } else {
-        alert("Failed to analyze code. The gremlins are acting up!");
+      const msg = ((error == null ? void 0 : error.message) || "").toLowerCase();
+      const isQuotaLike = msg.includes("429") || msg.includes("quota") || msg.includes("rate limit") || msg.includes("exhausted");
+      if (isQuotaLike) {
+        alert("Wait a second! The AI wizards are overwhelmed. Please wait a minute and try again (quota/rate limit).");
+        return;
       }
+      const status = (error == null ? void 0 : error.status) ? `(${error.status}) ` : "";
+      const message = (error == null ? void 0 : error.message) || "Unknown error";
+      alert(`Failed to analyze code. ${status}${message.substring(0, 100)}${message.length > 100 ? "..." : ""}`);
     } finally {
       setIsAnalyzing(false);
     }
@@ -540,7 +543,7 @@ function Home() {
     setIsSaving(true);
     try {
       const [{ db }, firestore] = await Promise.all([
-        import("./assets/firebase-CmI-T6GR.js"),
+        import("./assets/firebase-DDh2ZTZn.js"),
         import("firebase/firestore")
       ]);
       await firestore.addDoc(firestore.collection(db, "users", user.uid, "analyses"), {
@@ -1069,12 +1072,12 @@ const tutorialsData = [
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Theory" }),
       /* @__PURE__ */ jsx("p", { className: "mb-4", children: "Imagine looking for a word in a dictionary. You don't read page by page. You open it to the middle, check if your word comes before or after, and then repeat the process on the remaining half. That's Binary Search." }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(\\log_2 N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(1) \\text{ (Iterative)}" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(\\log_2 N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(1) \\text{ (Iterative)}" })
       ] }),
       /* @__PURE__ */ jsxs("p", { className: "mb-4", children: [
         "Because the search space is halved with each step, the maximum number of steps required is the logarithm (base 2) of the array size ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "N" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "N" }),
         "."
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(log N)" }),
@@ -1110,16 +1113,16 @@ const tutorialsData = [
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Theory" }),
       /* @__PURE__ */ jsx("p", { className: "mb-4", children: "The algorithm continuously divides the array in half until it cannot be further divided (i.e., the array has only one element). Then, it repeatedly merges the sublists to produce new sorted sublists until there is only one sorted list remaining." }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(N \\log N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(N)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(N \\log N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(N)" })
       ] }),
       /* @__PURE__ */ jsxs("p", { className: "mb-4", children: [
         "The dividing step takes ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "\\mathcal{O}(\\log N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "\\mathcal{O}(\\log N)" }),
         " time, and the merging step takes ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "\\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "\\mathcal{O}(N)" }),
         " time at each level of the recursion tree. Thus, the total time complexity is ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "\\mathcal{O}(N \\log N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "\\mathcal{O}(N \\log N)" }),
         "."
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(N log N)" }),
@@ -1168,14 +1171,14 @@ const tutorialsData = [
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Theory" }),
       /* @__PURE__ */ jsx("p", { className: "mb-4", children: "The algorithm maintains a set of unvisited nodes and calculates a tentative distance from the source node to every other node. It greedily selects the unvisited node with the smallest tentative distance, visits it, and updates the distances of its neighbors." }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}((V + E) \\log V)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(V)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}((V + E) \\log V)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(V)" })
       ] }),
       /* @__PURE__ */ jsxs("p", { className: "mb-4", children: [
         "Where ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "V" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "V" }),
         " is the number of vertices and ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "E" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "E" }),
         " is the number of edges. The use of a Priority Queue (Min-Heap) allows us to efficiently extract the node with the minimum distance."
       ] }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python)" }),
@@ -1213,19 +1216,19 @@ def dijkstra(graph, start):
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Theory" }),
       /* @__PURE__ */ jsxs("p", { className: "mb-4", children: [
         "A naive solution is to consider all subsets of items and calculate the total weight and value of all subsets. This takes ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "\\mathcal{O}(2^N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "\\mathcal{O}(2^N)" }),
         " time. Dynamic Programming solves this by breaking it down into overlapping subproblems and storing the results in a table."
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "DP[i][w] = \\max(DP[i-1][w], DP[i-1][w-wt[i]] + val[i])" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(N \\times W)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(N \\times W)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "DP[i][w] = \\max(DP[i-1][w], DP[i-1][w-wt[i]] + val[i])" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(N \\times W)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(N \\times W)" })
       ] }),
       /* @__PURE__ */ jsxs("p", { className: "mb-4", children: [
         "Where ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "N" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "N" }),
         " is the number of items and ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "W" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "W" }),
         " is the capacity of the knapsack."
       ] }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python)" }),
@@ -1256,13 +1259,13 @@ def dijkstra(graph, start):
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Theory" }),
       /* @__PURE__ */ jsxs("p", { className: "mb-4", children: [
         "Quicksort partitions an array and then calls itself recursively twice to sort the two resulting subarrays. This algorithm is quite efficient for large-sized data sets as its average and best-case complexity are ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "\\mathcal{O}(N \\log N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "\\mathcal{O}(N \\log N)" }),
         "."
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Best/Average Time: } \\mathcal{O}(N \\log N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Worst Time: } \\mathcal{O}(N^2)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(\\log N)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Best/Average Time: } \\mathcal{O}(N \\log N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Worst Time: } \\mathcal{O}(N^2)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(\\log N)" })
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(N log N)" }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python)" }),
@@ -1303,8 +1306,8 @@ def quick_sort(arr, low, high):
         " data structure to keep track of the nodes to visit next. It guarantees that the shortest path (in terms of number of edges) is found first in unweighted graphs."
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(V + E)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(V)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(V + E)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(V)" })
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(N)" }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python)" }),
@@ -1340,8 +1343,8 @@ def bfs(graph, start):
         " (often implicitly via recursion) to remember where it should go back to when it reaches a dead end."
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(V + E)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(V)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(V + E)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(V)" })
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(N)" }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python)" }),
@@ -1370,14 +1373,14 @@ def bfs(graph, start):
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Theory" }),
       /* @__PURE__ */ jsxs("p", { className: "mb-4", children: [
         "This technique is particularly useful for problems involving sorted arrays (like finding pairs that sum to a target) or linked lists (like finding the middle or detecting cycles). It often reduces time complexity from ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "\\mathcal{O}(N^2)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "\\mathcal{O}(N^2)" }),
         " to ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "\\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "\\mathcal{O}(N)" }),
         "."
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(1)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(1)" })
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(N)" }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python - Two Sum Sorted)" }),
@@ -1408,8 +1411,8 @@ def bfs(graph, start):
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Theory" }),
       /* @__PURE__ */ jsx("p", { className: "mb-4", children: "Instead of recalculating the sum (or other property) of a subarray from scratch, you subtract the element leaving the window and add the element entering the window. This reduces nested loops to a single loop." }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(1)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(1)" })
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(N)" }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python - Max Sum Subarray of Size K)" }),
@@ -1437,9 +1440,9 @@ def bfs(graph, start):
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Theory" }),
       /* @__PURE__ */ jsx("p", { className: "mb-4", children: `The algorithm is named for the way smaller elements "bubble" to the top of the list. It's not efficient for large datasets but is great for learning and understanding sorting concepts.` }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Best Time: } \\mathcal{O}(N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Average/Worst Time: } \\mathcal{O}(N^2)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(1)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Best Time: } \\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Average/Worst Time: } \\mathcal{O}(N^2)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(1)" })
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(N²)" }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python)" }),
@@ -1478,9 +1481,9 @@ def bfs(graph, start):
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Theory" }),
       /* @__PURE__ */ jsx("p", { className: "mb-4", children: "Imagine sorting playing cards in your hands. You start with an empty left hand and the cards in your right hand. Then you remove one card at a time from your right hand and insert it into the correct position in your left hand. To find the correct position for a card, you compare it with each of the cards already in your hand, from right to left, until you find the right place." }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Best Time: } \\mathcal{O}(N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Average/Worst Time: } \\mathcal{O}(N^2)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(1)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Best Time: } \\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Average/Worst Time: } \\mathcal{O}(N^2)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(1)" })
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(N²)" }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python)" }),
@@ -1513,15 +1516,15 @@ def bfs(graph, start):
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Theory" }),
       /* @__PURE__ */ jsxs("p", { className: "mb-4", children: [
         "Linear search is useful when working with unsorted data or small datasets. It's straightforward to implement but scales poorly as the dataset grows. Each comparison has an equal probability of being the right one, so the average case is ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "\\mathcal{O}(N/2)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "\\mathcal{O}(N/2)" }),
         " which simplifies to ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "\\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "\\mathcal{O}(N)" }),
         "."
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Best Time: } \\mathcal{O}(1)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Average Time: } \\mathcal{O}(N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Worst Time: } \\mathcal{O}(N)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Best Time: } \\mathcal{O}(1)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Average Time: } \\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Worst Time: } \\mathcal{O}(N)" })
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(N)" }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python)" }),
@@ -1559,9 +1562,9 @@ print(f"Element found at index: {result}")` })
         " occurs. Common collision resolution techniques include chaining (using linked lists) and open addressing (finding another empty slot)."
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Average Search: } \\mathcal{O}(1)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Worst Search: } \\mathcal{O}(N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(N)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Average Search: } \\mathcal{O}(1)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Worst Search: } \\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(N)" })
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(1)" }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python - Dictionary/HashMap)" }),
@@ -1607,9 +1610,9 @@ print(f"Element found at index: {result}")` })
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Theory" }),
       /* @__PURE__ */ jsx("p", { className: "mb-4", children: "Singly linked lists have one pointer per node (to the next node), while doubly linked lists have two pointers (to next and previous). This dynamic memory allocation comes with the cost of extra memory for pointers and slower random access compared to arrays." }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Access: } \\mathcal{O}(N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Insertion/Deletion (if position known): } \\mathcal{O}(1)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Search: } \\mathcal{O}(N)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Access: } \\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Insertion/Deletion (if position known): } \\mathcal{O}(1)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Search: } \\mathcal{O}(N)" })
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(N)" }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python)" }),
@@ -1673,9 +1676,9 @@ class LinkedList:
         " The first element added is the first one to be removed. Like a line at a grocery store."
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Stack/Queue Push/Pop: } \\mathcal{O}(1)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Stack/Queue Peek: } \\mathcal{O}(1)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(N)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Stack/Queue Push/Pop: } \\mathcal{O}(1)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Stack/Queue Peek: } \\mathcal{O}(1)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(N)" })
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(1)" }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python)" }),
@@ -1721,8 +1724,8 @@ queue2.pop(0)      # Remove from front` })
         " Useful for deletion and evaluation of expressions."
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(H)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Time Complexity: } \\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(H)" })
       ] }),
       /* @__PURE__ */ jsx("p", { className: "text-sm text-on-surface-variant mb-4", children: "Where H is the height of the tree (O(N) worst case for skewed trees)" }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(N)" }),
@@ -1769,15 +1772,15 @@ def postorder(root, result=[]):
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Theory" }),
       /* @__PURE__ */ jsxs("p", { className: "mb-4", children: [
         "This ordering property allows for efficient searching, insertion, and deletion. In a balanced BST, operations run in ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "\\mathcal{O}(\\log N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "\\mathcal{O}(\\log N)" }),
         " time. However, if the tree becomes skewed (like a linked list), performance degrades to ",
-        /* @__PURE__ */ jsx(ReactKatex.InlineMath, { math: "\\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.InlineMath, { math: "\\mathcal{O}(N)" }),
         "."
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "my-6", children: [
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Balanced BST Search: } \\mathcal{O}(\\log N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Unbalanced BST Search: } \\mathcal{O}(N)" }),
-        /* @__PURE__ */ jsx(ReactKatex.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(H)" })
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Balanced BST Search: } \\mathcal{O}(\\log N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Unbalanced BST Search: } \\mathcal{O}(N)" }),
+        /* @__PURE__ */ jsx(reactKatexExports.BlockMath, { math: "\\text{Space Complexity: } \\mathcal{O}(H)" })
       ] }),
       /* @__PURE__ */ jsx(LazyComplexityCalculator, { complexityClass: "O(log N)" }),
       /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold mt-8 mb-4", children: "The Code (Python)" }),
@@ -1838,7 +1841,7 @@ function Tutorials() {
     setIsSearching(true);
     setSearchResult("");
     try {
-      const { searchTutorials } = await import("./assets/gemini-CpzluuG5.js");
+      const { searchTutorials } = await import("./assets/gemini-BmqvVhXt.js");
       const result = await searchTutorials(query);
       setSearchResult(result);
     } catch (error) {
@@ -2189,7 +2192,7 @@ function InsideMath() {
     setIsAnalyzing(true);
     setResult(null);
     try {
-      const { analyzeCodeStepByStep } = await import("./assets/gemini-CpzluuG5.js");
+      const { analyzeCodeStepByStep } = await import("./assets/gemini-BmqvVhXt.js");
       const res = await analyzeCodeStepByStep(code);
       setResult(res);
     } catch (error) {
@@ -2832,7 +2835,7 @@ function AppRoutesServer() {
     /* @__PURE__ */ jsx(Route, { path: "*", element: /* @__PURE__ */ jsx(NotFound, {}) })
   ] }) });
 }
-class ErrorBoundary extends React.Component {
+class ErrorBoundary extends React__default.Component {
   constructor() {
     super(...arguments);
     this.state = {

@@ -78,11 +78,21 @@ export default function Home() {
       setAnalyzedCode(code);
     } catch (error: any) {
       console.error("Analysis failed:", error);
-      if (error?.message?.includes('429')) {
-        alert("Wait a second! The AI wizards are overwhelmed. Please wait a minute and try again (Quota Exceeded).");
-      } else {
-        alert("Failed to analyze code. The gremlins are acting up!");
+      const msg = (error?.message || '').toLowerCase();
+      const isQuotaLike =
+        msg.includes('429') ||
+        msg.includes('quota') ||
+        msg.includes('rate limit') ||
+        msg.includes('exhausted');
+
+      if (isQuotaLike) {
+        alert("Wait a second! The AI wizards are overwhelmed. Please wait a minute and try again (quota/rate limit).");
+        return;
       }
+
+      const status = error?.status ? `(${error.status}) ` : '';
+      const message = error?.message || 'Unknown error';
+      alert(`Failed to analyze code. ${status}${message.substring(0, 100)}${message.length > 100 ? '...' : ''}`);
     } finally {
       setIsAnalyzing(false);
     }

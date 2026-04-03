@@ -18,11 +18,20 @@ const firebaseConfig = {
   appId: getEnv('VITE_FIREBASE_APP_ID'),
 };
 
-const app = initializeApp(firebaseConfig);
+// ✅ SSR-safe initialization: Only initialize if this is running in a browser!
+const isBrowser = typeof window !== 'undefined';
 
-// ✅ Initialize services
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+let app;
+let auth: any;
+let db: any;
+
+if (isBrowser) {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+}
+
+export { auth, db };
 
 // ✅ Create provider once
 const provider = new GoogleAuthProvider();

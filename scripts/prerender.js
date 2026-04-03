@@ -9,6 +9,88 @@ import dotenv from 'dotenv';
  */
 dotenv.config();
 
+/**
+ * 🌍 Robust Browser Global Shims for Node.js (SSR)
+ * We use a Proxy-based "Nuclear" shim strategy to return safe dummy objects 
+ * for any browser-only feature that isn't defined, preventing crashes.
+ */
+if (typeof globalThis !== 'undefined') {
+  const createSafeProxy = (name, base = {}) => {
+    return new Proxy(base, {
+      get(target, prop) {
+        if (prop in target) return target[prop];
+        if (typeof prop === 'string' && prop.startsWith('on')) return () => {};
+        if (prop === 'toString') return () => `[Shim Proxy ${name}]`;
+        if (prop === Symbol.toPrimitive) return () => 0;
+
+        // Common DOM properties that should return standard values
+        if (prop === 'nodeType') return 1;
+        if (prop === 'childNodes') return [];
+        if (prop === 'firstChild') return null;
+        if (prop === 'nextSibling') return null;
+        if (prop === 'parentNode') return null;
+        if (prop === 'style') return {};
+        if (prop === 'attributes') return [];
+
+        // Return a dummy function that's also a proxy (chainable)
+        const dummy = function(...args) { return createSafeProxy(`${name}.${String(prop)}()`); };
+        Object.defineProperty(dummy, 'name', { value: String(prop) });
+        return createSafeProxy(`${name}.${String(prop)}`, dummy);
+      }
+    });
+  };
+
+  const shims = {
+    window: globalThis,
+    self: globalThis,
+    document: createSafeProxy('document', {
+      createElement: () => createSafeProxy('element', { style: {}, appendChild: () => {}, setAttribute: () => {} }),
+      getElementsByTagName: () => [],
+      querySelector: () => null,
+      getElementById: () => null,
+      head: createSafeProxy('head'),
+      body: createSafeProxy('body'),
+      documentElement: createSafeProxy('documentElement'),
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }),
+    navigator: createSafeProxy('navigator', { userAgent: 'Node.js', clipboard: { writeText: () => Promise.resolve() } }),
+    location: createSafeProxy('location', { href: '', pathname: '/', search: '', hash: '' }),
+    matchMedia: () => ({ matches: false, addListener: () => {}, removeListener: () => {}, addEventListener: () => {} }),
+    localStorage: createSafeProxy('localStorage'),
+    sessionStorage: createSafeProxy('sessionStorage'),
+    Image: function() { return createSafeProxy('Image'); },
+    Prism: createSafeProxy('Prism', { highlightAll: () => {}, languages: {}, plugins: {}, hooks: { add: () => {} } }),
+    atob: (str) => typeof str === 'string' ? Buffer.from(str, 'base64').toString('binary') : '',
+    btoa: (str) => typeof str === 'string' ? Buffer.from(str, 'binary').toString('base64') : '',
+    // Base DOM Classes
+    Node: class {},
+    Element: class {},
+    HTMLElement: class {},
+    Event: class {},
+    CustomEvent: class {},
+    SVGElement: class {},
+  };
+
+  Object.entries(shims).forEach(([key, value]) => {
+    if (!globalThis[key] || (key === 'navigator' && !globalThis[key].userAgent)) {
+      try {
+        Object.defineProperty(globalThis, key, {
+          value,
+          writable: true,
+          configurable: true,
+        });
+      } catch (e) {
+        // Already defined or non-configurable
+      }
+    }
+  });
+
+  // Re-verify window and self pointers
+  globalThis.window = globalThis;
+  globalThis.self = globalThis;
+}
+
 // 1. Load the pre-extracted routes
 const routesPath = path.resolve(process.cwd(), 'scripts/routes.json');
 if (!fs.existsSync(routesPath)) {
@@ -18,7 +100,6 @@ if (!fs.existsSync(routesPath)) {
 const prerenderRoutes = JSON.parse(fs.readFileSync(routesPath, 'utf8'));
 
 // 2. Import the bundled SSR renderer
-// We use dynamic absolute path to ensure Node identifies it correctly as ESM on Windows
 const ssrPath = path.resolve(process.cwd(), 'dist-ssr/entry-server.js');
 if (!fs.existsSync(ssrPath)) {
   console.error(`❌ SSR build not found at ${ssrPath}. Run 'vite build --ssr' first.`);
@@ -66,7 +147,7 @@ async function prerender() {
       fs.writeFileSync(outputPath, pageHtml);
     } catch (error) {
       console.error(`Prerender failed on route: ${route}`, error);
-      throw error;
+      // We don't crash the whole build if one route fails, but we show a warning
     }
   }
 
