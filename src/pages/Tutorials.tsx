@@ -16,7 +16,7 @@ export default function Tutorials() {
     setIsSearching(true);
     setSearchResult('');
     try {
-      const { searchTutorials } = await import('../lib/gemini');
+      const { searchTutorials } = await import('../lib/ai');
       const result = await searchTutorials(query);
       setSearchResult(result);
     } catch (error) {

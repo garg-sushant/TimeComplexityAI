@@ -50,7 +50,7 @@ export default function Home() {
     const timer = setTimeout(async () => {
       if (code.trim().length > 10) {
         try {
-          const { fastCodeHint } = await import('../lib/gemini');
+          const { fastCodeHint } = await import('../lib/ai');
           const quickHint = await fastCodeHint(code);
           if (!cancelled) {
             setHint(quickHint);
@@ -73,7 +73,7 @@ export default function Home() {
     setResult(null);
     setIsSaved(false);
     try {
-      const { analyzeCodeComplexity } = await import('../lib/gemini');
+      const { analyzeCodeComplexity } = await import('../lib/ai');
       const res = await analyzeCodeComplexity(code);
       setResult(res);
       setAnalyzedCode(code);

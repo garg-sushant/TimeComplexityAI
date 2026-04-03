@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { GoogleGenAI, Type } from '@google/genai';
+import { OpenAI } from 'openai';
 
 dotenv.config();
 
@@ -13,9 +14,12 @@ const singleKeys = (process.env.VITE_GEMINI_API_KEY || '')
   .map((key) => key.trim())
   .filter(Boolean);
 
-const keys = [...new Set([...multiKeys, ...singleKeys])];
+const geminiKeys = [...new Set([...multiKeys, ...singleKeys])];
+const groqKeys = (process.env.VITE_GROQ_API_KEY || '')
+  .split(',')
+  .map((k) => k.trim())
+  .filter(Boolean);
 
-const models = ['gemini-3.1-flash', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 const sampleCode = `function sum(arr) {
   let total = 0;
   for (const value of arr) {
@@ -24,63 +28,72 @@ const sampleCode = `function sum(arr) {
   return total;
 }`;
 
-async function testKey(index: number) {
-  const key = keys[index];
-  if (!key) {
-    console.log(`KEY_${index + 1}: missing`);
-    return;
-  }
-
-  console.log(`\nKEY_${index + 1}: ${key.slice(0, 8)}...`);
-
+async function testGemini(key: string, index: number) {
+  console.log(`\n[GEMINI] Key ${index + 1}: ${key.slice(0, 8)}...`);
   const ai = new GoogleGenAI({ apiKey: key, apiVersion: 'v1beta' });
-
-  for (const model of models) {
-    try {
-      const response = await ai.models.generateContent({
-        model,
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              {
-                text:
-                  `Analyze the following code and return strict JSON with keys complexity, complexityClass, spaceComplexity, explanationPoints.\n\n` +
-                  `Code:\n${sampleCode}`,
-              },
-            ],
+  const model = 'gemini-1.5-flash';
+  
+  try {
+    const result = await (ai as any).models.generateContent({
+      model,
+      contents: [{ role: 'user', parts: [{ text: `Analyze strict JSON:\n${sampleCode}` }] }],
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            complexity: { type: Type.STRING },
+            complexityClass: { type: Type.STRING },
+            spaceComplexity: { type: Type.STRING },
+            explanationPoints: { type: Type.ARRAY, items: { type: Type.STRING } },
           },
-        ],
-        config: {
-          responseMimeType: 'application/json',
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              complexity: { type: Type.STRING },
-              complexityClass: { type: Type.STRING },
-              spaceComplexity: { type: Type.STRING },
-              explanationPoints: {
-                type: Type.ARRAY,
-                items: { type: Type.STRING },
-              },
-            },
-            required: ['complexity', 'complexityClass', 'spaceComplexity', 'explanationPoints'],
-          },
+          required: ['complexity', 'complexityClass', 'spaceComplexity', 'explanationPoints'],
         },
-      });
+      },
+    });
 
-      console.log(`MODEL ${model}: SUCCESS`);
-      console.log(String(response.text).slice(0, 400));
-      return;
-    } catch (error: any) {
-      const status = error?.status ?? error?.statusCode ?? error?.response?.status ?? 'NA';
-      const message = String(error?.message || '').slice(0, 300);
-      console.log(`MODEL ${model}: FAIL ${status} ${message}`);
-    }
+    console.log(`[GEMINI] SUCCESS: ${result.text?.slice(0, 100)}...`);
+  } catch (error: any) {
+    console.log(`[GEMINI] FAIL: ${error.message?.slice(0, 200)}`);
   }
-
-  console.log(`KEY_${index + 1}: no model succeeded`);
 }
 
-await testKey(1);
-await testKey(2);
+async function testGroq(key: string, index: number) {
+  console.log(`\n[GROQ] Key ${index + 1}: ${key.slice(0, 8)}...`);
+  const client = new OpenAI({ 
+    apiKey: key, 
+    baseURL: 'https://api.groq.com/openai/v1' 
+  });
+  
+  try {
+    const response = await client.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ 
+        role: 'user', 
+        content: `Analyze the following code and return its time/space complexity in strict JSON.
+        JSON Structure: { "complexity": string, "complexityClass": string, "spaceComplexity": string, "explanationPoints": string[] }
+        
+        Code:
+        ${sampleCode}`
+      }],
+      response_format: { type: 'json_object' }
+    });
+    console.log(`[GROQ] SUCCESS: ${response.choices[0].message.content?.slice(0, 100)}...`);
+  } catch (error: any) {
+    console.log(`[GROQ] FAIL: ${error.message?.slice(0, 200)}`);
+  }
+}
+
+console.log('🚀 Starting AI Provider Diagnostics...');
+
+for (let i = 0; i < geminiKeys.length; i++) {
+  await testGemini(geminiKeys[i], i);
+}
+
+if (groqKeys.length > 0) {
+  for (let i = 0; i < groqKeys.length; i++) {
+    await testGroq(groqKeys[i], i);
+  }
+} else {
+  console.log('\n[GROQ] Skip: No Groq keys found.');
+}

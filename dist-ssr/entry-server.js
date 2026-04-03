@@ -37,11 +37,11 @@ function Layout() {
   const { user } = useAuth();
   const location = useLocation();
   const handleSignIn = async () => {
-    const { signInWithGoogle } = await import("./assets/firebase-DDh2ZTZn.js");
+    const { signInWithGoogle } = await import("./assets/firebase-Ck3d1Tst.js");
     await signInWithGoogle();
   };
   const handleSignOut = async () => {
-    const { logOut } = await import("./assets/firebase-DDh2ZTZn.js");
+    const { logOut } = await import("./assets/firebase-Ck3d1Tst.js");
     await logOut();
   };
   return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-background font-body text-on-background selection:bg-primary selection:text-white flex flex-col", children: [
@@ -502,7 +502,7 @@ function Home() {
     const timer = setTimeout(async () => {
       if (code.trim().length > 10) {
         try {
-          const { fastCodeHint } = await import("./assets/gemini-z3KVUO2H.js");
+          const { fastCodeHint } = await import("./assets/ai-DpwmODyS.js");
           const quickHint = await fastCodeHint(code);
           if (!cancelled) {
             setHint(quickHint);
@@ -523,7 +523,7 @@ function Home() {
     setResult(null);
     setIsSaved(false);
     try {
-      const { analyzeCodeComplexity } = await import("./assets/gemini-z3KVUO2H.js");
+      const { analyzeCodeComplexity } = await import("./assets/ai-DpwmODyS.js");
       const res = await analyzeCodeComplexity(code);
       setResult(res);
       setAnalyzedCode(code);
@@ -551,7 +551,7 @@ function Home() {
     setIsSaving(true);
     try {
       const [{ db }, firestore] = await Promise.all([
-        import("./assets/firebase-DDh2ZTZn.js"),
+        import("./assets/firebase-Ck3d1Tst.js"),
         import("firebase/firestore")
       ]);
       await firestore.addDoc(firestore.collection(db, "users", user.uid, "analyses"), {
@@ -1948,7 +1948,7 @@ function Tutorials() {
     setIsSearching(true);
     setSearchResult("");
     try {
-      const { searchTutorials } = await import("./assets/gemini-z3KVUO2H.js");
+      const { searchTutorials } = await import("./assets/ai-DpwmODyS.js");
       const result = await searchTutorials(query);
       setSearchResult(result);
     } catch (error) {
@@ -2299,7 +2299,7 @@ function InsideMath() {
     setIsAnalyzing(true);
     setResult(null);
     try {
-      const { analyzeCodeStepByStep } = await import("./assets/gemini-z3KVUO2H.js");
+      const { analyzeCodeStepByStep } = await import("./assets/ai-DpwmODyS.js");
       const res = await analyzeCodeStepByStep(code);
       setResult(res);
     } catch (error) {

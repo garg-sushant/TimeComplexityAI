@@ -37,7 +37,7 @@ export default function InsideMath() {
     setIsAnalyzing(true);
     setResult(null);
     try {
-      const { analyzeCodeStepByStep } = await import('../lib/gemini');
+      const { analyzeCodeStepByStep } = await import('../lib/ai');
       const res = await analyzeCodeStepByStep(code);
       setResult(res);
     } catch (error: any) {
