@@ -13,7 +13,7 @@
 
 | Metric | Current | Target |
 |--------|---------|--------|
-| **Brand Name** | AlgoStory ✅ | Keep it |
+| **Brand Name** | TimeComplexityAI ✅ | Keep it |
 | **Search Ranking** | Not tracking | Track with GSC |
 | **Keyword Mentions** | Few | Many (in content) |
 | **Content Optimization** | Medium | High |
@@ -42,7 +42,7 @@ Add 4 keyword-rich sections to `Home.tsx`:
 - Highlights: Time analysis, Space analysis, AI, Tutorials
 - Keywords: "time complexity calculator", "big o calculator", "code analyzer"
 
-**Section 2:** "Why Choose AlgoStory Over BigOCalc?" (Comparison Table)
+**Section 2:** "Why Choose TimeComplexityAI Over BigOCalc?" (Comparison Table)
 - Direct comparison with competitor
 - Emphasizes advantages
 - Keywords: "bigocalc alternative", "complexity calculator"
@@ -53,7 +53,7 @@ Add 4 keyword-rich sections to `Home.tsx`:
 
 **Section 4:** FAQs (Q&A Section)
 - Answers common search queries
-- Keywords: "what is time complexity", "is algostory better than bigocalc"
+- Keywords: "what is time complexity", "is TimeComplexityAI better than bigocalc"
 
 **Estimated Impact:** +300-500 organic search visibility points
 
@@ -85,7 +85,7 @@ Create 5-10 blog posts targeting keywords:
    - Link to calculator
    - Include examples with O(1), O(N), O(log N), etc.
 
-2. **"BigOCalc vs AlgoStory: Which Complexity Calculator Is Better?"**
+2. **"BigOCalc vs TimeComplexityAI: Which Complexity Calculator Is Better?"**
    - Keywords: "bigocalc alternative", "best complexity calculator"
    - Neutral comparison
    - Honest assessment of both tools
@@ -103,7 +103,7 @@ Create 5-10 blog posts targeting keywords:
 5. **"Best Online Complexity Analyzers: 2026 Review"**
    - Keywords: "code complexity analyzer", "best tool for analyzing complexity"
    - Review multiple tools
-   - Position AlgoStory as top choice
+   - Position TimeComplexityAI as top choice
 
 ---
 
@@ -333,10 +333,10 @@ complexity notation
 
 ## ✨ Final Thoughts
 
-Your AlgoStory is genuinely a better tool than BigOCalc. The SEO strategy isn't about deceiving Google - it's about helping Google understand what you've built.
+Your TimeComplexityAI is genuinely a better tool than BigOCalc. The SEO strategy isn't about deceiving Google - it's about helping Google understand what you've built.
 
 **The formula is simple:**
-1. Good product ✅ (AlgoStory is great)
+1. Good product ✅ (TimeComplexityAI is great)
 2. Good content ✅ (Create keyword-rich content)
 3. Good signals ✅ (User engagement, backlinks)
 4. Time ✅ (3-6 months minimum)
