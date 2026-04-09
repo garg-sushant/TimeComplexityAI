@@ -25,11 +25,11 @@ export default function BlogPost() {
       description: post.description,
       author: {
         '@type': 'Organization',
-        name: 'AlgoStory',
+        name: 'TimeComplexityAI',
       },
       publisher: {
         '@type': 'Organization',
-        name: 'AlgoStory',
+        name: 'TimeComplexityAI',
         logo: {
           '@type': 'ImageObject',
           url: `${SITE_URL}/favicon.png`,
@@ -46,7 +46,7 @@ export default function BlogPost() {
   return (
     <div className="max-w-4xl mx-auto py-8">
       <Seo
-        title={`${post.title} | AlgoStory Blog`}
+        title={`${post.title} | TimeComplexityAI Blog`}
         description={post.description}
         path={`/blog/${slug}`}
         type="article"

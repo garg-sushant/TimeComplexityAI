@@ -67,13 +67,18 @@ class OfflineProvider implements AIProvider {
     }
 
     // Pattern: O(1) - Constant Time (no loops, no recursion)
-    if (!cleaned.includes('for') && !cleaned.includes('while')) {
+    // We only call it O(1) if it's truly trivial to avoid mislabeling recursive functions.
+    const hasLoops = cleaned.includes('for') || cleaned.includes('while');
+    const hasFunctionCalls = (cleaned.match(/[a-zA-Z_]\w*\(/g) || [])
+      .filter(m => !linearMethods.includes(m) && !m.startsWith('print(') && !m.startsWith('console.')).length > 0;
+
+    if (!hasLoops && !hasFunctionCalls) {
       return {
         complexity: 'O(1)',
         complexityClass: 'O(1)',
         spaceComplexity: 'O(1)',
         explanationPoints: [
-          'The code contains only basic operations with no looping constructs.',
+          'The code contains only basic operations with no looping or recursive constructs.',
           'Execution time is independent of the input size.',
           'No additional space proportional to input is allocated.'
         ]
@@ -195,11 +200,9 @@ class GeminiProvider implements AIProvider {
       const resp = await (this.ai as any).models.generateContent({
         model: 'gemini-1.5-flash',
         contents: [{ role: 'user', parts: [{ text: `Search for the latest information and tutorials about: ${query}. Provide a short, engaging summary and list 3 key concepts to learn.` }] }],
-        config: {
-          tools: [{ googleSearch: {} } as any]
-        }
+        tools: [{ googleSearch: {} } as any]
       });
-      return resp.text || 'Could not find tutorials.';
+      return (resp as any).text || 'Could not find tutorials.';
     } catch (e: any) {
       console.warn('[Gemini] Search tool failed, trying standard call...');
       return await this.callWithFallback(`Explain ${query} with 3 key concepts.`);
@@ -216,7 +219,7 @@ class GeminiProvider implements AIProvider {
           contents: [{ role: 'user', parts: [{ text: promptText }] }],
           config,
         });
-        return result.text || '';
+        return (result as any).text || '';
       } catch (err: any) {
         lastError = err;
         const msg = (err.message || '').toLowerCase();
@@ -296,7 +299,7 @@ class GroqProvider implements AIProvider {
  * 📦 Persistent Cache Layer
  */
 class PersistentCache {
-  private static PREFIX = 'algostory_cache_';
+  private static PREFIX = 'TimeComplexityAI_cache_';
   
   private static hash(str: string): string {
     const normalized = normalizeCode(str); // Normalize BEFORE hashing

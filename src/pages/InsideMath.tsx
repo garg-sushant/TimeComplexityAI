@@ -59,14 +59,14 @@ export default function InsideMath() {
   return (
     <div className="min-h-screen max-w-7xl mx-auto px-4 py-12">
       <Seo
-        title="Complexity Lab: Line-By-Line Code Analysis | AlgoStory"
+        title="Complexity Lab: Line-By-Line Code Analysis | TimeComplexityAI"
         description="Analyze your algorithms step-by-step. Get a mathematical breakdown of loops, recursion, and Big O notation."
         path="/inside-math"
         keywords="big o breakdown, line by line complexity analysis, recursion analysis, algorithm math"
         schema={{
           '@context': 'https://schema.org',
           '@type': 'WebApplication',
-          name: 'AlgoStory Complexity Lab',
+          name: 'TimeComplexityAI Complexity Lab',
           description: 'Step-by-step mathematical breakdown of time and space complexity.',
           url: `${SITE_URL}/inside-math`,
         }}

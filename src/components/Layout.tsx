@@ -1,6 +1,6 @@
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogIn, LogOut, User, Github, Linkedin, Mail, ArrowRight } from 'lucide-react';
+import { LogIn, LogOut, User, Github, Linkedin, Mail, ArrowRight, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Layout() {
@@ -24,8 +24,10 @@ export default function Layout() {
         <nav className="glass-header w-full max-w-5xl rounded-[2.5rem] px-6 h-16 flex justify-between items-center shadow-floating">
           <div className="flex items-center gap-6">
             <Link to="/" className="text-lg sm:text-xl font-black text-primary italic font-headline flex items-center gap-2 hover:scale-105 transition-transform active:scale-95">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white border-2 border-on-background shadow-neo">A</div>
-              <span className="hidden sm:inline">AlgoStory</span>
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white border-2 border-on-background shadow-neo">
+                <Zap className="w-4 h-4 fill-white text-white" />
+              </div>
+              <span className="hidden sm:inline">TimeComplexityAI</span>
             </Link>
             
             <div className="hidden md:flex items-center gap-4">
@@ -100,8 +102,10 @@ export default function Layout() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
             <div className="space-y-8 lg:col-span-2">
               <Link to="/" className="text-2xl font-black text-primary italic font-headline flex items-center gap-3 group">
-                <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white border-2 border-on-background shadow-neo group-hover:shadow-neo-lg transition-all">A</div>
-                AlgoStory
+                <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white border-2 border-on-background shadow-neo group-hover:shadow-neo-lg transition-all">
+                  <Zap className="w-5 h-5 fill-white text-white" />
+                </div>
+                TimeComplexityAI
               </Link>
 
               <div className="space-y-6">
@@ -146,7 +150,7 @@ export default function Layout() {
           </div>
 
           <div className="mt-16 pt-8 border-t-2 border-on-background/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-on-surface-variant">
-            <p>© 2026 AlgoStory. Every line of code tells a story. 📖</p>
+            <p>© 2026 TimeComplexityAI. Every line of code tells a story. 📖</p>
             <div className="flex gap-6">
               <Link to="/time-complexity-calculator" className="hover:text-primary transition-colors">Time Calculator</Link>
               <Link to="/blog" className="hover:text-primary transition-colors">Blog</Link>

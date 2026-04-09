@@ -143,13 +143,13 @@ export default function Home() {
     ? 'Useful for queries like space complexity calc, auxiliary space calculator, and memory complexity analyzer.'
     : isTimeCalculator
       ? 'Useful if you are searching for a time complexity calc, Big O calculator, runtime complexity analyzer, or code complexity calculator.'
-      : 'Use AlgoStory as a learning hub for calculators, Big O explainers, tutorials, and algorithm breakdowns.';
+      : 'Use TimeComplexityAI as a learning hub for calculators, Big O explainers, tutorials, and algorithm breakdowns.';
 
   const processTitle = isSpaceCalculator
     ? 'How This Space Complexity Calculator Works'
     : isTimeCalculator
       ? 'How This Time Complexity Calculator Works'
-      : 'How AlgoStory Helps You Learn Complexity';
+      : 'How TimeComplexityAI Helps You Learn Complexity';
   const processIntro = isSpaceCalculator
     ? 'Estimate auxiliary memory growth, recursion stack usage, and temporary storage from real code.'
     : isTimeCalculator
@@ -257,7 +257,7 @@ export default function Home() {
           },
           {
             q: 'Can I learn Big O here as well?',
-            a: 'Yes. AlgoStory combines calculators with tutorials, blog explainers, and a step-by-step lab so you can move from answer to understanding.',
+            a: 'Yes. TimeComplexityAI combines calculators with tutorials, blog explainers, and a step-by-step lab so you can move from answer to understanding.',
             icon: <Lightbulb className="w-5 h-5" />,
           },
         ];
@@ -267,10 +267,10 @@ export default function Home() {
       '@context': 'https://schema.org',
       '@type': 'SoftwareApplication',
       name: isSpaceCalculator
-        ? 'AlgoStory Space Complexity Calculator'
+        ? 'TimeComplexityAI Space Complexity Calculator'
         : isTimeCalculator
-          ? 'AlgoStory Time Complexity Calculator'
-          : 'AlgoStory Code Complexity Analyzer',
+          ? 'TimeComplexityAI Time Complexity Calculator'
+          : 'TimeComplexityAI Code Complexity Analyzer',
       applicationCategory: 'EducationalApplication',
       operatingSystem: 'Any',
       url: `${SITE_URL}${pagePath === '/' ? '' : pagePath}`,
@@ -305,7 +305,7 @@ export default function Home() {
             ? 'space complexity calculator, space complexity calc, auxiliary space calculator, memory complexity analyzer, big o space complexity'
             : isTimeCalculator
               ? 'time complexity calculator, time complexity calc, big o calculator, big o calc, runtime complexity analyzer, code complexity calculator'
-              : 'algostory, code complexity analyzer, big o notation, algorithm tutorials, time complexity calculator, space complexity calculator'
+              : 'TimeComplexityAI, code complexity analyzer, big o notation, algorithm tutorials, time complexity calculator, space complexity calculator'
         }
         schema={schema}
       />
@@ -730,7 +730,7 @@ export default function Home() {
               ? 'Estimate memory growth, auxiliary storage, and recursion stack usage without signing up.'
               : isTimeCalculator
                 ? 'Estimate runtime growth, compare Big O classes, and understand why the code scales the way it does.'
-                : 'AlgoStory provides deep computational insights for free. Every algorithm deserves its narrative.'}
+                : 'TimeComplexityAI provides deep computational insights for free. Every algorithm deserves its narrative.'}
           </p>
         </div>
 
@@ -764,7 +764,7 @@ export default function Home() {
 
       <section className="mb-24 glass-panel p-8 sm:p-16 rounded-[3rem] border-2 border-on-background shadow-neo-xl">
         <h2 className="font-headline text-3xl sm:text-5xl font-black text-on-background text-center mb-16 italic uppercase tracking-tighter">
-          Why Choose <span className="modern-gradient-text">AlgoStory</span>?
+          Why Choose <span className="modern-gradient-text">TimeComplexityAI</span>?
         </h2>
         
         <div className="overflow-x-auto">
@@ -772,7 +772,7 @@ export default function Home() {
             <thead>
               <tr className="border-b-2 border-on-background/10">
                 <th className="text-left p-6 font-headline font-black text-xl text-on-background uppercase tracking-tight">Feature</th>
-                <th className="text-center p-6 font-headline font-black text-xl text-primary bg-primary/5 rounded-t-3xl">AlgoStory</th>
+                <th className="text-center p-6 font-headline font-black text-xl text-primary bg-primary/5 rounded-t-3xl">TimeComplexityAI</th>
                 <th className="text-center p-6 font-headline font-black text-xl text-on-surface-variant opacity-40 italic">Others</th>
               </tr>
             </thead>

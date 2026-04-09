@@ -33,12 +33,12 @@ export default function TutorialPost() {
       datePublished: '2024-01-01',
       author: {
         '@type': 'Organization',
-        name: 'AlgoStory',
+        name: 'TimeComplexityAI',
         url: SITE_URL,
       },
       publisher: {
         '@type': 'Organization',
-        name: 'AlgoStory',
+        name: 'TimeComplexityAI',
         logo: {
           '@type': 'ImageObject',
           url: `${SITE_URL}/favicon.png`,
@@ -57,7 +57,7 @@ export default function TutorialPost() {
   return (
     <div className="mx-auto max-w-5xl py-8">
       <Seo
-        title={`${tutorial.title} | AlgoStory Tutorials`}
+        title={`${tutorial.title} | TimeComplexityAI Tutorials`}
         description={tutorial.description}
         path={`/tutorials/${tutorial.id}`}
         keywords={`${tutorial.title}, ${tutorial.category}, algorithm tutorial, big o, time complexity, space complexity`}

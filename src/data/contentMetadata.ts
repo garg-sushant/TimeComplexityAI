@@ -9,11 +9,11 @@ function normalizeSiteUrl(url: string) {
 export const SITE_URL = normalizeSiteUrl(
   getEnv('VITE_SITE_URL') || getEnv('APP_URL') || DEFAULT_SITE_URL,
 );
-export const SITE_NAME = 'AlgoStory';
+export const SITE_NAME = 'TimeComplexityAI';
 
 export const homeRouteMetadata = {
   '/': {
-    title: 'AlgoStory | Time Complexity Calculator, Big O Guides, and Algorithm Tutorials',
+    title: 'TimeComplexityAI | Time Complexity Calculator, Big O Guides, and Algorithm Tutorials',
     description:
       'Learn Big O notation, analyze code complexity, and explore algorithm tutorials. Use the free time complexity calculator, space complexity calculator, and step-by-step complexity lab.',
     heading: 'Every line of code tells a story.',
@@ -21,7 +21,7 @@ export const homeRouteMetadata = {
       'Use the calculator for quick answers, then go deeper with Big O guides, tutorials, and line-by-line explanations.',
   },
   '/time-complexity-calculator': {
-    title: 'Time Complexity Calculator & Big O Calculator | Free Code Analyzer | AlgoStory',
+    title: 'Time Complexity Calculator & Big O Calculator | Free Code Analyzer | TimeComplexityAI',
     description:
       'Free time complexity calculator and Big O calculator for Python, JavaScript, Java, C, and C++. Paste code to estimate runtime complexity and get AI explanations.',
     heading: 'Time complexity calculator',
@@ -29,7 +29,7 @@ export const homeRouteMetadata = {
       'Paste code and get an AI-assisted breakdown of runtime growth, loop nesting, recursion, and Big O behavior.',
   },
   '/space-complexity-calculator': {
-    title: 'Space Complexity Calculator | Free Memory Complexity Analyzer | AlgoStory',
+    title: 'Space Complexity Calculator | Free Memory Complexity Analyzer | TimeComplexityAI',
     description:
       'Free space complexity calculator to estimate auxiliary memory, recursion stack usage, and memory growth for Python, JavaScript, Java, C, and C++.',
     heading: 'Space complexity calculator',

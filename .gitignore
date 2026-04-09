@@ -131,11 +131,9 @@ junit.xml
 # API Diagnostics & Temporary Test Scripts
 *.txt
 testFix.js
-testModels.js
-scripts/diagnose-rotation.ts
-scripts/diagnose-keys.js
-test-fix-results.txt
-rotation-results.txt
+testThinking.js
+firebase-applet-config.json
+firebase-blueprint.json
 build_error.txt
 build-full.txt
 build-full-final.txt

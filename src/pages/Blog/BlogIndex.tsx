@@ -8,7 +8,7 @@ export default function BlogIndex() {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'AlgoStory Blog',
+    name: 'TimeComplexityAI Blog',
     description:
       'Algorithm explainers covering Big O notation, sorting complexity, and practical code analysis.',
     url: `${SITE_URL}/blog`,
@@ -26,7 +26,7 @@ export default function BlogIndex() {
   return (
     <div className="min-h-screen">
       <Seo
-        title="AlgoStory Blog: Big O Guides, Sorting Analysis, and Algorithm Articles"
+        title="TimeComplexityAI Blog: Big O Guides, Sorting Analysis, and Algorithm Articles"
         description="Read algorithm explainers on Big O notation, Bubble Sort, Merge Sort, and practical code complexity analysis."
         path="/blog"
         keywords="big o notation, algorithm blog, sorting algorithms, complexity analysis, interview preparation"
@@ -38,7 +38,7 @@ export default function BlogIndex() {
           SEO CONTENT HUB
         </div>
         <h1 className="font-headline text-4xl font-black uppercase italic tracking-tighter sm:text-6xl">
-          The AlgoStory Blog
+          The TimeComplexityAI Blog
         </h1>
         <p className="mx-auto max-w-3xl text-lg font-bold text-on-surface-variant">
           Practical guides on Big O notation, algorithm design, and the runtime patterns that show

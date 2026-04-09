@@ -37,7 +37,7 @@ export default function Tutorials() {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'AlgoStory Tutorials',
+    name: 'TimeComplexityAI Tutorials',
     description:
       'Master Big O notation, data structures, graph algorithms, and sorting patterns with crawlable algorithm tutorials.',
     url: `${SITE_URL}/tutorials`,
@@ -56,7 +56,7 @@ export default function Tutorials() {
   return (
     <div className="min-h-screen">
       <Seo
-        title="Knowledge Vault: Master Big O, Algorithms, and Data Structures | AlgoStory"
+        title="Knowledge Vault: Master Big O, Algorithms, and Data Structures | TimeComplexityAI"
         description="Master Big O notation, dynamic programming, graph traversal, and sorting with crawlable algorithm stories and interactive guides."
         path="/tutorials"
         keywords="algorithm tutorials, big o notation guide, binary search tutorial, merge sort tutorial, data structures"

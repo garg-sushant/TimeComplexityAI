@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
       <Seo
-        title="404 - Page Not Found | AlgoStory"
+        title="404 - Page Not Found | TimeComplexityAI"
         description="The page you are looking for has been moved or doesn't exist."
         path="/404"
         robots="noindex, follow"

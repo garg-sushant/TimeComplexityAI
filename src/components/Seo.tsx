@@ -1,4 +1,6 @@
-import { Helmet } from 'react-helmet-async';
+import * as HelmetPkg from 'react-helmet-async';
+const Helmet = (HelmetPkg as any).Helmet || (HelmetPkg as any).default?.Helmet || (HelmetPkg as any).default;
+
 import { SITE_NAME, SITE_URL } from '../data/contentMetadata';
 
 type StructuredData = Record<string, unknown>;

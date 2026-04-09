@@ -2,9 +2,9 @@ import { jsxs, jsx, Fragment } from "react/jsx-runtime";
 import React__default, { lazy, useContext, createContext, Suspense, useState, useEffect } from "react";
 import { renderToPipeableStream } from "react-dom/server";
 import { useLocation, Link, NavLink, Outlet, useParams, Routes, Route, Navigate, MemoryRouter } from "react-router-dom";
-import { H as Helmet, a as HelmetProvider } from "./assets/vendor-BbfjqPYt.js";
+import { H as Helmet$1, a as HelmetProvider } from "./assets/vendor-BbfjqPYt.js";
 import { PassThrough } from "stream";
-import { User, LogOut, LogIn, Github, Linkedin, ArrowRight, Activity, Check, Copy, Zap, Sparkles, BookOpen, Save, Cpu, Lightbulb, Search, Layers, Network, Brain, ListOrdered, ArrowRightLeft, Maximize, Repeat, Hash, Link2, Box, Trees, BarChart3, Home as Home$2, ChevronRight, Ghost, Calculator, AlertTriangle } from "lucide-react";
+import { Zap, User, LogOut, LogIn, Github, Linkedin, ArrowRight, Activity, Check, Copy, Sparkles, BookOpen, Save, Cpu, Lightbulb, Search, Layers, Network, Brain, ListOrdered, ArrowRightLeft, Maximize, Repeat, Hash, Link2, Box, Trees, BarChart3, Home as Home$2, ChevronRight, Ghost, Calculator, AlertTriangle } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import EditorModule from "react-simple-code-editor";
 import { P as Prism } from "./assets/prism-OM6GymsZ.js";
@@ -48,8 +48,8 @@ function Layout() {
     /* @__PURE__ */ jsx("header", { className: "fixed top-6 left-0 right-0 z-50 flex justify-center px-4", children: /* @__PURE__ */ jsxs("nav", { className: "glass-header w-full max-w-5xl rounded-[2.5rem] px-6 h-16 flex justify-between items-center shadow-floating", children: [
       /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-6", children: [
         /* @__PURE__ */ jsxs(Link, { to: "/", className: "text-lg sm:text-xl font-black text-primary italic font-headline flex items-center gap-2 hover:scale-105 transition-transform active:scale-95", children: [
-          /* @__PURE__ */ jsx("div", { className: "w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white border-2 border-on-background shadow-neo", children: "A" }),
-          /* @__PURE__ */ jsx("span", { className: "hidden sm:inline", children: "AlgoStory" })
+          /* @__PURE__ */ jsx("div", { className: "w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white border-2 border-on-background shadow-neo", children: /* @__PURE__ */ jsx(Zap, { className: "w-4 h-4 fill-white text-white" }) }),
+          /* @__PURE__ */ jsx("span", { className: "hidden sm:inline", children: "TimeComplexityAI" })
         ] }),
         /* @__PURE__ */ jsx("div", { className: "hidden md:flex items-center gap-4", children: [
           { to: "/time-complexity-calculator", label: "Time Calculator" },
@@ -104,8 +104,8 @@ function Layout() {
         /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12", children: [
           /* @__PURE__ */ jsxs("div", { className: "space-y-8 lg:col-span-2", children: [
             /* @__PURE__ */ jsxs(Link, { to: "/", className: "text-2xl font-black text-primary italic font-headline flex items-center gap-3 group", children: [
-              /* @__PURE__ */ jsx("div", { className: "w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white border-2 border-on-background shadow-neo group-hover:shadow-neo-lg transition-all", children: "A" }),
-              "AlgoStory"
+              /* @__PURE__ */ jsx("div", { className: "w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white border-2 border-on-background shadow-neo group-hover:shadow-neo-lg transition-all", children: /* @__PURE__ */ jsx(Zap, { className: "w-5 h-5 fill-white text-white" }) }),
+              "TimeComplexityAI"
             ] }),
             /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
               /* @__PURE__ */ jsx("h4", { className: "font-headline font-black text-sm uppercase tracking-widest text-on-surface-variant italic", children: "Developed By" }),
@@ -152,7 +152,7 @@ function Layout() {
           ] })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "mt-16 pt-8 border-t-2 border-on-background/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-on-surface-variant", children: [
-          /* @__PURE__ */ jsx("p", { children: "© 2026 AlgoStory. Every line of code tells a story. 📖" }),
+          /* @__PURE__ */ jsx("p", { children: "© 2026 TimeComplexityAI. Every line of code tells a story. 📖" }),
           /* @__PURE__ */ jsxs("div", { className: "flex gap-6", children: [
             /* @__PURE__ */ jsx(Link, { to: "/time-complexity-calculator", className: "hover:text-primary transition-colors", children: "Time Calculator" }),
             /* @__PURE__ */ jsx(Link, { to: "/blog", className: "hover:text-primary transition-colors", children: "Blog" }),
@@ -212,10 +212,18 @@ function LazyComplexityCalculator({ complexityClass }) {
   }
   return /* @__PURE__ */ jsx(Suspense, { fallback, children: /* @__PURE__ */ jsx(ComplexityCalculator, { complexityClass }) });
 }
-const __vite_import_meta_env__ = { "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SSR": true };
+const __vite_import_meta_env__ = { "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "SSR": true, "VITE_FIREBASE_API_KEY": "AIzaSyBsBscJEt83Y2G39zM6201Lc6iXlELwVU0", "VITE_FIREBASE_APP_ID": "1:501144877493:web:f6c7479fdd1d1a2d43c1fc", "VITE_FIREBASE_AUTH_DOMAIN": "algo-story.firebaseapp.com", "VITE_FIREBASE_MESSAGING_SENDER_ID": "501144877493", "VITE_FIREBASE_PROJECT_ID": "algo-story", "VITE_FIREBASE_STORAGE_BUCKET": "algo-story.firebasestorage.app", "VITE_GEMINI_API_KEY": "AIzaSyDDkWQ2CpfoFml2T0G9aPaj4mo6qkkiS_A,AIzaSyAxM5lR7UjmS2TGidC-ZS1KsYPtm3xQ4Og,AIzaSyBGSZVUMmyHiOA4JHI7rTAYP1cTdmnibFk", "VITE_GROQ_API_KEY": "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,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" };
 const getEnv = (name) => {
   try {
     if (typeof import.meta !== "undefined" && __vite_import_meta_env__) {
+      if (name === "VITE_GEMINI_API_KEY") return "AIzaSyDDkWQ2CpfoFml2T0G9aPaj4mo6qkkiS_A,AIzaSyAxM5lR7UjmS2TGidC-ZS1KsYPtm3xQ4Og,AIzaSyBGSZVUMmyHiOA4JHI7rTAYP1cTdmnibFk";
+      if (name === "VITE_GROQ_API_KEY") return "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,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";
+      if (name === "VITE_FIREBASE_API_KEY") return "AIzaSyBsBscJEt83Y2G39zM6201Lc6iXlELwVU0";
+      if (name === "VITE_FIREBASE_AUTH_DOMAIN") return "algo-story.firebaseapp.com";
+      if (name === "VITE_FIREBASE_PROJECT_ID") return "algo-story";
+      if (name === "VITE_FIREBASE_STORAGE_BUCKET") return "algo-story.firebasestorage.app";
+      if (name === "VITE_FIREBASE_MESSAGING_SENDER_ID") return "501144877493";
+      if (name === "VITE_FIREBASE_APP_ID") return "1:501144877493:web:f6c7479fdd1d1a2d43c1fc";
       const value = __vite_import_meta_env__[name];
       if (value !== void 0) return value;
     }
@@ -233,22 +241,22 @@ function normalizeSiteUrl(url) {
 const SITE_URL = normalizeSiteUrl(
   getEnv("VITE_SITE_URL") || getEnv("APP_URL") || DEFAULT_SITE_URL
 );
-const SITE_NAME = "AlgoStory";
+const SITE_NAME = "TimeComplexityAI";
 const homeRouteMetadata = {
   "/": {
-    title: "AlgoStory | Time Complexity Calculator, Big O Guides, and Algorithm Tutorials",
+    title: "TimeComplexityAI | Time Complexity Calculator, Big O Guides, and Algorithm Tutorials",
     description: "Learn Big O notation, analyze code complexity, and explore algorithm tutorials. Use the free time complexity calculator, space complexity calculator, and step-by-step complexity lab.",
     heading: "Every line of code tells a story.",
     intro: "Use the calculator for quick answers, then go deeper with Big O guides, tutorials, and line-by-line explanations."
   },
   "/time-complexity-calculator": {
-    title: "Time Complexity Calculator & Big O Calculator | Free Code Analyzer | AlgoStory",
+    title: "Time Complexity Calculator & Big O Calculator | Free Code Analyzer | TimeComplexityAI",
     description: "Free time complexity calculator and Big O calculator for Python, JavaScript, Java, C, and C++. Paste code to estimate runtime complexity and get AI explanations.",
     heading: "Time complexity calculator",
     intro: "Paste code and get an AI-assisted breakdown of runtime growth, loop nesting, recursion, and Big O behavior."
   },
   "/space-complexity-calculator": {
-    title: "Space Complexity Calculator | Free Memory Complexity Analyzer | AlgoStory",
+    title: "Space Complexity Calculator | Free Memory Complexity Analyzer | TimeComplexityAI",
     description: "Free space complexity calculator to estimate auxiliary memory, recursion stack usage, and memory growth for Python, JavaScript, Java, C, and C++.",
     heading: "Space complexity calculator",
     intro: "Paste your code and get an AI-assisted explanation of memory growth, auxiliary storage, and recursion stack usage."
@@ -453,6 +461,7 @@ const blogMetadata = Object.entries(blogMetadataBySlug).map(([slug, value]) => (
   "/blog",
   ...blogMetadata.map((post) => `/blog/${post.slug}`)
 ];
+const Helmet = Helmet$1 || void 0 || void 0;
 function toAbsoluteUrl(path) {
   if (path.startsWith("http://") || path.startsWith("https://")) {
     return path;
@@ -530,7 +539,7 @@ function Home() {
     const timer = setTimeout(async () => {
       if (code.trim().length > 10) {
         try {
-          const { fastCodeHint } = await import("./assets/ai-bEQ-Dx_S.js");
+          const { fastCodeHint } = await import("./assets/ai-BPFm9c63.js");
           const quickHint = await fastCodeHint(code);
           if (!cancelled) {
             setHint(quickHint);
@@ -551,7 +560,7 @@ function Home() {
     setResult(null);
     setIsSaved(false);
     try {
-      const { analyzeCodeComplexity } = await import("./assets/ai-bEQ-Dx_S.js");
+      const { analyzeCodeComplexity } = await import("./assets/ai-BPFm9c63.js");
       const res = await analyzeCodeComplexity(code);
       setResult(res);
       setAnalyzedCode(code);
@@ -603,8 +612,8 @@ function Home() {
   const isTimeCalculator = pagePath === "/time-complexity-calculator";
   const isSpaceCalculator = pagePath === "/space-complexity-calculator";
   const isServer = typeof window === "undefined";
-  const pageLead = isSpaceCalculator ? "Useful for queries like space complexity calc, auxiliary space calculator, and memory complexity analyzer." : isTimeCalculator ? "Useful if you are searching for a time complexity calc, Big O calculator, runtime complexity analyzer, or code complexity calculator." : "Use AlgoStory as a learning hub for calculators, Big O explainers, tutorials, and algorithm breakdowns.";
-  const processTitle = isSpaceCalculator ? "How This Space Complexity Calculator Works" : isTimeCalculator ? "How This Time Complexity Calculator Works" : "How AlgoStory Helps You Learn Complexity";
+  const pageLead = isSpaceCalculator ? "Useful for queries like space complexity calc, auxiliary space calculator, and memory complexity analyzer." : isTimeCalculator ? "Useful if you are searching for a time complexity calc, Big O calculator, runtime complexity analyzer, or code complexity calculator." : "Use TimeComplexityAI as a learning hub for calculators, Big O explainers, tutorials, and algorithm breakdowns.";
+  const processTitle = isSpaceCalculator ? "How This Space Complexity Calculator Works" : isTimeCalculator ? "How This Time Complexity Calculator Works" : "How TimeComplexityAI Helps You Learn Complexity";
   const processIntro = isSpaceCalculator ? "Estimate auxiliary memory growth, recursion stack usage, and temporary storage from real code." : isTimeCalculator ? "Paste code, inspect loops and recursion, and turn runtime growth into a readable Big O explanation." : "Move from quick answers to deeper understanding with calculators, articles, and guided tutorials.";
   const processSteps = isSpaceCalculator ? [
     {
@@ -700,7 +709,7 @@ function Home() {
     },
     {
       q: "Can I learn Big O here as well?",
-      a: "Yes. AlgoStory combines calculators with tutorials, blog explainers, and a step-by-step lab so you can move from answer to understanding.",
+      a: "Yes. TimeComplexityAI combines calculators with tutorials, blog explainers, and a step-by-step lab so you can move from answer to understanding.",
       icon: /* @__PURE__ */ jsx(Lightbulb, { className: "w-5 h-5" })
     }
   ];
@@ -708,7 +717,7 @@ function Home() {
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      name: isSpaceCalculator ? "AlgoStory Space Complexity Calculator" : isTimeCalculator ? "AlgoStory Time Complexity Calculator" : "AlgoStory Code Complexity Analyzer",
+      name: isSpaceCalculator ? "TimeComplexityAI Space Complexity Calculator" : isTimeCalculator ? "TimeComplexityAI Time Complexity Calculator" : "TimeComplexityAI Code Complexity Analyzer",
       applicationCategory: "EducationalApplication",
       operatingSystem: "Any",
       url: `${SITE_URL}${pagePath === "/" ? "" : pagePath}`,
@@ -738,7 +747,7 @@ function Home() {
         title: pageSeo.title,
         description: pageSeo.description,
         path: pagePath,
-        keywords: isSpaceCalculator ? "space complexity calculator, space complexity calc, auxiliary space calculator, memory complexity analyzer, big o space complexity" : isTimeCalculator ? "time complexity calculator, time complexity calc, big o calculator, big o calc, runtime complexity analyzer, code complexity calculator" : "algostory, code complexity analyzer, big o notation, algorithm tutorials, time complexity calculator, space complexity calculator",
+        keywords: isSpaceCalculator ? "space complexity calculator, space complexity calc, auxiliary space calculator, memory complexity analyzer, big o space complexity" : isTimeCalculator ? "time complexity calculator, time complexity calc, big o calculator, big o calc, runtime complexity analyzer, code complexity calculator" : "TimeComplexityAI, code complexity analyzer, big o notation, algorithm tutorials, time complexity calculator, space complexity calculator",
         schema
       }
     ),
@@ -1110,7 +1119,7 @@ function Home() {
           " ",
           isSpaceCalculator ? "Calculator" : isTimeCalculator ? "Calculator" : "Storyteller"
         ] }),
-        /* @__PURE__ */ jsx("p", { className: "text-xl text-on-surface-variant max-w-2xl mx-auto font-bold opacity-80", children: isSpaceCalculator ? "Estimate memory growth, auxiliary storage, and recursion stack usage without signing up." : isTimeCalculator ? "Estimate runtime growth, compare Big O classes, and understand why the code scales the way it does." : "AlgoStory provides deep computational insights for free. Every algorithm deserves its narrative." })
+        /* @__PURE__ */ jsx("p", { className: "text-xl text-on-surface-variant max-w-2xl mx-auto font-bold opacity-80", children: isSpaceCalculator ? "Estimate memory growth, auxiliary storage, and recursion stack usage without signing up." : isTimeCalculator ? "Estimate runtime growth, compare Big O classes, and understand why the code scales the way it does." : "TimeComplexityAI provides deep computational insights for free. Every algorithm deserves its narrative." })
       ] }),
       /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-8 mb-16", children: [
         /* @__PURE__ */ jsx(
@@ -1154,13 +1163,13 @@ function Home() {
     /* @__PURE__ */ jsxs("section", { className: "mb-24 glass-panel p-8 sm:p-16 rounded-[3rem] border-2 border-on-background shadow-neo-xl", children: [
       /* @__PURE__ */ jsxs("h2", { className: "font-headline text-3xl sm:text-5xl font-black text-on-background text-center mb-16 italic uppercase tracking-tighter", children: [
         "Why Choose ",
-        /* @__PURE__ */ jsx("span", { className: "modern-gradient-text", children: "AlgoStory" }),
+        /* @__PURE__ */ jsx("span", { className: "modern-gradient-text", children: "TimeComplexityAI" }),
         "?"
       ] }),
       /* @__PURE__ */ jsx("div", { className: "overflow-x-auto", children: /* @__PURE__ */ jsxs("table", { className: "w-full", children: [
         /* @__PURE__ */ jsx("thead", { children: /* @__PURE__ */ jsxs("tr", { className: "border-b-2 border-on-background/10", children: [
           /* @__PURE__ */ jsx("th", { className: "text-left p-6 font-headline font-black text-xl text-on-background uppercase tracking-tight", children: "Feature" }),
-          /* @__PURE__ */ jsx("th", { className: "text-center p-6 font-headline font-black text-xl text-primary bg-primary/5 rounded-t-3xl", children: "AlgoStory" }),
+          /* @__PURE__ */ jsx("th", { className: "text-center p-6 font-headline font-black text-xl text-primary bg-primary/5 rounded-t-3xl", children: "TimeComplexityAI" }),
           /* @__PURE__ */ jsx("th", { className: "text-center p-6 font-headline font-black text-xl text-on-surface-variant opacity-40 italic", children: "Others" })
         ] }) }),
         /* @__PURE__ */ jsx("tbody", { className: "font-body font-bold text-base", children: [
@@ -2096,7 +2105,7 @@ function Tutorials() {
     setIsSearching(true);
     setSearchResult("");
     try {
-      const { searchTutorials } = await import("./assets/ai-bEQ-Dx_S.js");
+      const { searchTutorials } = await import("./assets/ai-BPFm9c63.js");
       const result = await searchTutorials(query);
       setSearchResult(result);
     } catch (error) {
@@ -2111,7 +2120,7 @@ function Tutorials() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "AlgoStory Tutorials",
+    name: "TimeComplexityAI Tutorials",
     description: "Master Big O notation, data structures, graph algorithms, and sorting patterns with crawlable algorithm tutorials.",
     url: `${SITE_URL}/tutorials`,
     mainEntity: {
@@ -2129,7 +2138,7 @@ function Tutorials() {
     /* @__PURE__ */ jsx(
       Seo,
       {
-        title: "Knowledge Vault: Master Big O, Algorithms, and Data Structures | AlgoStory",
+        title: "Knowledge Vault: Master Big O, Algorithms, and Data Structures | TimeComplexityAI",
         description: "Master Big O notation, dynamic programming, graph traversal, and sorting with crawlable algorithm stories and interactive guides.",
         path: "/tutorials",
         keywords: "algorithm tutorials, big o notation guide, binary search tutorial, merge sort tutorial, data structures",
@@ -2294,7 +2303,7 @@ function Breadcrumbs() {
     ]
   };
   return /* @__PURE__ */ jsxs(Fragment, { children: [
-    /* @__PURE__ */ jsx(Helmet, { children: /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify(schema) }) }),
+    /* @__PURE__ */ jsx(Helmet$1, { children: /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify(schema) }) }),
     /* @__PURE__ */ jsxs("nav", { "aria-label": "Breadcrumb", className: "mb-6 flex items-center gap-2 px-4 text-sm font-medium text-on-surface-variant", children: [
       /* @__PURE__ */ jsxs(Link, { to: "/", className: "flex items-center hover:text-primary transition-colors", children: [
         /* @__PURE__ */ jsx(Home$2, { className: "mr-1 h-4 w-4" }),
@@ -2315,7 +2324,7 @@ function NotFound() {
     /* @__PURE__ */ jsx(
       Seo,
       {
-        title: "404 - Page Not Found | AlgoStory",
+        title: "404 - Page Not Found | TimeComplexityAI",
         description: "The page you are looking for has been moved or doesn't exist.",
         path: "/404",
         robots: "noindex, follow"
@@ -2375,12 +2384,12 @@ function TutorialPost() {
       datePublished: "2024-01-01",
       author: {
         "@type": "Organization",
-        name: "AlgoStory",
+        name: "TimeComplexityAI",
         url: SITE_URL
       },
       publisher: {
         "@type": "Organization",
-        name: "AlgoStory",
+        name: "TimeComplexityAI",
         logo: {
           "@type": "ImageObject",
           url: `${SITE_URL}/favicon.png`
@@ -2399,7 +2408,7 @@ function TutorialPost() {
     /* @__PURE__ */ jsx(
       Seo,
       {
-        title: `${tutorial.title} | AlgoStory Tutorials`,
+        title: `${tutorial.title} | TimeComplexityAI Tutorials`,
         description: tutorial.description,
         path: `/tutorials/${tutorial.id}`,
         keywords: `${tutorial.title}, ${tutorial.category}, algorithm tutorial, big o, time complexity, space complexity`,
@@ -2495,7 +2504,7 @@ function InsideMath() {
     setIsAnalyzing(true);
     setResult(null);
     try {
-      const { analyzeCodeStepByStep } = await import("./assets/ai-bEQ-Dx_S.js");
+      const { analyzeCodeStepByStep } = await import("./assets/ai-BPFm9c63.js");
       const res = await analyzeCodeStepByStep(code);
       setResult(res);
     } catch (error) {
@@ -2513,14 +2522,14 @@ function InsideMath() {
     /* @__PURE__ */ jsx(
       Seo,
       {
-        title: "Complexity Lab: Line-By-Line Code Analysis | AlgoStory",
+        title: "Complexity Lab: Line-By-Line Code Analysis | TimeComplexityAI",
         description: "Analyze your algorithms step-by-step. Get a mathematical breakdown of loops, recursion, and Big O notation.",
         path: "/inside-math",
         keywords: "big o breakdown, line by line complexity analysis, recursion analysis, algorithm math",
         schema: {
           "@context": "https://schema.org",
           "@type": "WebApplication",
-          name: "AlgoStory Complexity Lab",
+          name: "TimeComplexityAI Complexity Lab",
           description: "Step-by-step mathematical breakdown of time and space complexity.",
           url: `${SITE_URL}/inside-math`
         }
@@ -2828,7 +2837,7 @@ const blogPosts = [
       /* @__PURE__ */ jsx("p", { children: "Constant time stays flat. Logarithmic time grows slowly. Linear time grows in proportion to the input. Quadratic time appears when one pass is nested inside another. Exponential growth is usually a sign that brute force or repeated recursion needs to be replaced." }),
       /* @__PURE__ */ jsx("h2", { children: "How To Read It In Real Code" }),
       /* @__PURE__ */ jsx("p", { children: "Start by counting the loops, recursion depth, and any extra data structures. Then ask how those parts depend on input size. If you repeatedly halve the search space, you are likely looking at logarithmic growth. If every element compares with every other element, the runtime is probably quadratic." }),
-      /* @__PURE__ */ jsx("p", { children: "AlgoStory is useful here because it translates the code into a readable explanation instead of making you infer every cost manually." })
+      /* @__PURE__ */ jsx("p", { children: "TimeComplexityAI is useful here because it translates the code into a readable explanation instead of making you infer every cost manually." })
     ] })
   },
   {
@@ -2995,7 +3004,7 @@ function BlogIndex() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "AlgoStory Blog",
+    name: "TimeComplexityAI Blog",
     description: "Algorithm explainers covering Big O notation, sorting complexity, and practical code analysis.",
     url: `${SITE_URL}/blog`,
     mainEntity: {
@@ -3012,7 +3021,7 @@ function BlogIndex() {
     /* @__PURE__ */ jsx(
       Seo,
       {
-        title: "AlgoStory Blog: Big O Guides, Sorting Analysis, and Algorithm Articles",
+        title: "TimeComplexityAI Blog: Big O Guides, Sorting Analysis, and Algorithm Articles",
         description: "Read algorithm explainers on Big O notation, Bubble Sort, Merge Sort, and practical code complexity analysis.",
         path: "/blog",
         keywords: "big o notation, algorithm blog, sorting algorithms, complexity analysis, interview preparation",
@@ -3021,7 +3030,7 @@ function BlogIndex() {
     ),
     /* @__PURE__ */ jsxs("section", { className: "mb-14 flex flex-col gap-6 text-center", children: [
       /* @__PURE__ */ jsx("div", { className: "mx-auto w-fit rounded-full border-2 border-on-background bg-primary px-4 py-1 font-label text-xs font-black text-white shadow-[3px_3px_0_#064e3b]", children: "SEO CONTENT HUB" }),
-      /* @__PURE__ */ jsx("h1", { className: "font-headline text-4xl font-black uppercase italic tracking-tighter sm:text-6xl", children: "The AlgoStory Blog" }),
+      /* @__PURE__ */ jsx("h1", { className: "font-headline text-4xl font-black uppercase italic tracking-tighter sm:text-6xl", children: "The TimeComplexityAI Blog" }),
       /* @__PURE__ */ jsx("p", { className: "mx-auto max-w-3xl text-lg font-bold text-on-surface-variant", children: "Practical guides on Big O notation, algorithm design, and the runtime patterns that show up again and again in interviews and production code." })
     ] }),
     /* @__PURE__ */ jsxs("section", { className: "mb-14 rounded-[2.5rem] border-4 border-on-background bg-white p-8 shadow-[10px_10px_0_#0f172a]", children: [
@@ -3104,11 +3113,11 @@ function BlogPost() {
       description: post.description,
       author: {
         "@type": "Organization",
-        name: "AlgoStory"
+        name: "TimeComplexityAI"
       },
       publisher: {
         "@type": "Organization",
-        name: "AlgoStory",
+        name: "TimeComplexityAI",
         logo: {
           "@type": "ImageObject",
           url: `${SITE_URL}/favicon.png`
@@ -3125,7 +3134,7 @@ function BlogPost() {
     /* @__PURE__ */ jsx(
       Seo,
       {
-        title: `${post.title} | AlgoStory Blog`,
+        title: `${post.title} | TimeComplexityAI Blog`,
         description: post.description,
         path: `/blog/${slug}`,
         type: "article",

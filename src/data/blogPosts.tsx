@@ -250,7 +250,7 @@ export const blogPosts: BlogPostData[] = [
           runtime is probably quadratic.
         </p>
         <p>
-          AlgoStory is useful here because it translates the code into a readable explanation
+          TimeComplexityAI is useful here because it translates the code into a readable explanation
           instead of making you infer every cost manually.
         </p>
       </article>
