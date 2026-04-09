@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Search, BookOpen, ArrowRight } from 'lucide-react';
 import { tutorialsData } from '../data/tutorials';
 import Seo from '../components/Seo';
+import { SITE_URL } from '../data/contentMetadata';
 
 export default function Tutorials() {
   const [query, setQuery] = useState('');
@@ -39,14 +40,14 @@ export default function Tutorials() {
     name: 'AlgoStory Tutorials',
     description:
       'Master Big O notation, data structures, graph algorithms, and sorting patterns with crawlable algorithm tutorials.',
-    url: 'https://algostory.com/tutorials',
+    url: `${SITE_URL}/tutorials`,
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: tutorialsData.map((tutorial, index) => ({
         '@type': 'ListItem',
         position: index + 1,
         name: tutorial.title,
-        url: `https://algostory.com/tutorials/${tutorial.id}`,
+        url: `${SITE_URL}/tutorials/${tutorial.id}`,
         description: tutorial.description,
       })),
     },
@@ -104,6 +105,33 @@ export default function Tutorials() {
           </div>
         </div>
       )}
+
+      <section className="mb-16 rounded-[2.5rem] border-4 border-on-background bg-white p-8 shadow-[10px_10px_0_#0f172a]">
+        <h2 className="mb-3 font-headline text-3xl font-black uppercase italic tracking-tighter">
+          Start With The Calculator, Then Learn The Pattern
+        </h2>
+        <p className="mb-6 max-w-3xl text-sm font-bold leading-relaxed text-on-surface-variant">
+          If you want the answer quickly, try the <Link to="/time-complexity-calculator" className="text-primary underline">time complexity calculator</Link>.
+          If you want to understand why the answer is O(log N), O(N), or O(N²), these tutorials are
+          the next step.
+        </p>
+        <div className="flex flex-wrap gap-4">
+          <Link
+            to="/time-complexity-calculator"
+            className="inline-flex items-center gap-2 rounded-full border-4 border-on-background bg-primary px-6 py-3 font-headline text-sm font-black uppercase text-white shadow-[4px_4px_0_#064e3b]"
+          >
+            Open Time Calculator
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+          <Link
+            to="/space-complexity-calculator"
+            className="inline-flex items-center gap-2 rounded-full border-4 border-on-background bg-secondary-container px-6 py-3 font-headline text-sm font-black uppercase text-on-background shadow-[4px_4px_0_#0f172a]"
+          >
+            Open Space Calculator
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </section>
 
       <div className="flex flex-col lg:flex-row gap-12">
         <aside className="lg:w-1/4 space-y-8">

@@ -163,6 +163,64 @@ export const blogPosts: BlogPostData[] = [
     ),
   },
   {
+    slug: 'how-to-calculate-time-complexity',
+    ...blogMetadataBySlug['how-to-calculate-time-complexity'],
+    content: (
+      <article className="prose prose-slate max-w-none">
+        <p>
+          Calculating time complexity means asking one question repeatedly: how does the amount of
+          work grow when the input gets larger? You do not need an exact stopwatch answer. You need
+          a stable model for growth.
+        </p>
+
+        <h2>1. Start With Loops</h2>
+        <p>
+          A single pass over an array is usually linear. A loop inside another loop is often
+          quadratic. If the loop bound keeps halving the search space, you may be looking at
+          logarithmic growth.
+        </p>
+
+        <h2>2. Check Recursion Carefully</h2>
+        <p>
+          Recursion can be cheap or explosive depending on how many branches each call creates.
+          One recursive call that shrinks the problem often behaves very differently from two or
+          more recursive calls that expand into a tree.
+        </p>
+
+        <h2>3. Notice Data Structures and Built-In Operations</h2>
+        <p>
+          Hash-table lookups, sorting calls, heap operations, and string slicing can dominate the
+          final answer. Time complexity is not only about your visible loops. It is also about what
+          the underlying operation costs.
+        </p>
+
+        <h2>4. Keep the Dominant Term</h2>
+        <p>
+          Once you combine the major costs, drop constants and lower-order terms. That is why
+          <code>3N + 8</code> becomes <code>O(N)</code>, and why <code>N^2 + N</code> becomes
+          <code>O(N^2)</code>.
+        </p>
+
+        <h2>Common Examples</h2>
+        <ul>
+          <li>Binary search: O(log N)</li>
+          <li>Linear scan: O(N)</li>
+          <li>Nested comparisons: O(N^2)</li>
+          <li>Merge sort: O(N log N)</li>
+        </ul>
+
+        <h2>When a Time Complexity Calculator Helps</h2>
+        <p>
+          Manual analysis is still important, but a calculator is useful when you want a fast
+          second opinion on unfamiliar code, interview practice, or code with multiple moving
+          parts. Use the <a href="/time-complexity-calculator">time complexity calculator</a> for
+          quick feedback, then read the <a href="/blog/big-o-notation-explained">Big O guide</a>
+          if you want the underlying theory.
+        </p>
+      </article>
+    ),
+  },
+  {
     slug: 'big-o-notation-explained',
     ...blogMetadataBySlug['big-o-notation-explained'],
     content: (

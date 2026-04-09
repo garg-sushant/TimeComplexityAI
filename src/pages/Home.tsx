@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Editor from 'react-simple-code-editor';
+import EditorModule from 'react-simple-code-editor';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-javascript';
@@ -14,6 +14,9 @@ import { Zap, BookOpen, Cpu, Activity, Lightbulb, Save, Copy, Check, ArrowRight,
 import { LazyComplexityCalculator } from '../components/LazyComplexityCalculator';
 import Seo from '../components/Seo';
 import { homeRouteMetadata, SITE_URL } from '../data/contentMetadata';
+
+const CodeEditor =
+  (EditorModule as unknown as { default?: typeof EditorModule }).default ?? EditorModule;
 
 export default function Home() {
   const { user } = useAuth();
@@ -136,6 +139,128 @@ export default function Home() {
   const isTimeCalculator = pagePath === '/time-complexity-calculator';
   const isSpaceCalculator = pagePath === '/space-complexity-calculator';
   const isServer = typeof window === 'undefined';
+  const pageLead = isSpaceCalculator
+    ? 'Useful for queries like space complexity calc, auxiliary space calculator, and memory complexity analyzer.'
+    : isTimeCalculator
+      ? 'Useful if you are searching for a time complexity calc, Big O calculator, runtime complexity analyzer, or code complexity calculator.'
+      : 'Use AlgoStory as a learning hub for calculators, Big O explainers, tutorials, and algorithm breakdowns.';
+
+  const processTitle = isSpaceCalculator
+    ? 'How This Space Complexity Calculator Works'
+    : isTimeCalculator
+      ? 'How This Time Complexity Calculator Works'
+      : 'How AlgoStory Helps You Learn Complexity';
+  const processIntro = isSpaceCalculator
+    ? 'Estimate auxiliary memory growth, recursion stack usage, and temporary storage from real code.'
+    : isTimeCalculator
+      ? 'Paste code, inspect loops and recursion, and turn runtime growth into a readable Big O explanation.'
+      : 'Move from quick answers to deeper understanding with calculators, articles, and guided tutorials.';
+  const processSteps = isSpaceCalculator
+    ? [
+        {
+          title: 'Paste Code',
+          description: 'Drop in Python, JavaScript, Java, C, or C++ code that allocates arrays, maps, stacks, or recursive calls.',
+          icon: <Copy className="w-5 h-5" />,
+        },
+        {
+          title: 'Inspect Memory Growth',
+          description: 'The analyzer looks for auxiliary arrays, recursion depth, and data structures that grow with input size.',
+          icon: <Cpu className="w-5 h-5" />,
+        },
+        {
+          title: 'Read The Tradeoff',
+          description: 'Get a clearer view of how time and space interact so you can compare implementations more confidently.',
+          icon: <Lightbulb className="w-5 h-5" />,
+        },
+      ]
+    : isTimeCalculator
+      ? [
+          {
+            title: 'Paste Code',
+            description: 'Use Python, JavaScript, Java, C, or C++ snippets that you want to estimate quickly.',
+            icon: <Copy className="w-5 h-5" />,
+          },
+          {
+            title: 'Trace Loops And Recursion',
+            description: 'The calculator checks iteration depth, repeated work, divide-and-conquer patterns, and built-in operations.',
+            icon: <Activity className="w-5 h-5" />,
+          },
+          {
+            title: 'Get Big O',
+            description: 'Read the estimated runtime class, then follow the explanation to see why the growth rate fits.',
+            icon: <Zap className="w-5 h-5" />,
+          },
+        ]
+      : [
+          {
+            title: 'Analyze',
+            description: 'Use the free calculators for fast feedback on runtime and memory behavior.',
+            icon: <Zap className="w-5 h-5" />,
+          },
+          {
+            title: 'Understand',
+            description: 'Use the math lab and tutorials to connect loops, recursion, and data structures to Big O.',
+            icon: <BookOpen className="w-5 h-5" />,
+          },
+          {
+            title: 'Apply',
+            description: 'Carry the patterns into interviews, coursework, and production code reviews.',
+            icon: <Lightbulb className="w-5 h-5" />,
+          },
+        ];
+  const faqItems = isSpaceCalculator
+    ? [
+        {
+          q: 'What does this space complexity calculator measure?',
+          a: 'It estimates auxiliary memory growth, including temporary arrays, maps, recursion stack usage, and other input-dependent storage.',
+          icon: <Cpu className="w-5 h-5" />,
+        },
+        {
+          q: 'Does it include recursion stack and helper data structures?',
+          a: 'Yes. The goal is to explain both explicit allocations and implicit memory growth from recursion depth and support structures.',
+          icon: <Activity className="w-5 h-5" />,
+        },
+        {
+          q: 'Can I compare time and space complexity together?',
+          a: 'Yes. The calculator and linked guides are meant to help you compare runtime efficiency against memory tradeoffs.',
+          icon: <Lightbulb className="w-5 h-5" />,
+        },
+      ]
+    : isTimeCalculator
+      ? [
+          {
+            q: 'What does this time complexity calculator analyze?',
+            a: 'It estimates how runtime grows with input size by looking at loops, nested loops, recursion, and common operations in your code.',
+            icon: <Zap className="w-5 h-5" />,
+          },
+          {
+            q: 'Is this also a Big O calculator?',
+            a: 'Yes. If you searched for a Big O calculator or time complexity calc, this page is designed for that exact use case.',
+            icon: <Activity className="w-5 h-5" />,
+          },
+          {
+            q: 'Can I use this time complexity calc for Python, JavaScript, Java, C, and C++?',
+            a: 'Yes. The interface is built around those languages so you can estimate runtime complexity across common interview and coursework code.',
+            icon: <BookOpen className="w-5 h-5" />,
+          },
+        ]
+      : [
+          {
+            q: 'When should I use the time complexity calculator?',
+            a: 'Use it when you want to estimate how runtime changes as input size grows, especially for loops, recursion, and repeated work.',
+            icon: <Zap className="w-5 h-5" />,
+          },
+          {
+            q: 'When should I use the space complexity calculator?',
+            a: 'Use it when memory growth matters, including recursion stack depth, temporary arrays, maps, and helper data structures.',
+            icon: <Cpu className="w-5 h-5" />,
+          },
+          {
+            q: 'Can I learn Big O here as well?',
+            a: 'Yes. AlgoStory combines calculators with tutorials, blog explainers, and a step-by-step lab so you can move from answer to understanding.',
+            icon: <Lightbulb className="w-5 h-5" />,
+          },
+        ];
 
   const schema = [
     {
@@ -158,32 +283,14 @@ export default function Home() {
     {
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
-      mainEntity: [
-        {
-          '@type': 'Question',
-          name: 'What does this complexity calculator do?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: 'AlgoStory reviews your code and explains how time and space complexity grow as the input size increases.',
-          },
+      mainEntity: faqItems.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a,
         },
-        {
-          '@type': 'Question',
-          name: 'Can it help with Big O notation?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: 'Yes. It turns loops, recursion, and data structure usage into readable Big O explanations.',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: 'Does it cover both time and space complexity?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: 'Yes. The analyzer surfaces both runtime growth and auxiliary memory usage so you can compare tradeoffs clearly.',
-          },
-        },
-      ],
+      })),
     },
   ];
 
@@ -195,10 +302,10 @@ export default function Home() {
         path={pagePath}
         keywords={
           isSpaceCalculator
-            ? 'space complexity calculator, auxiliary space calculator, memory complexity, big o space complexity'
+            ? 'space complexity calculator, space complexity calc, auxiliary space calculator, memory complexity analyzer, big o space complexity'
             : isTimeCalculator
-              ? 'time complexity calculator, big o calculator, runtime complexity analyzer, algorithm complexity'
-              : 'code complexity analyzer, big o notation, time complexity, space complexity, algorithm tutorials'
+              ? 'time complexity calculator, time complexity calc, big o calculator, big o calc, runtime complexity analyzer, code complexity calculator'
+              : 'algostory, code complexity analyzer, big o notation, algorithm tutorials, time complexity calculator, space complexity calculator'
         }
         schema={schema}
       />
@@ -234,6 +341,9 @@ export default function Home() {
         >
           {pageSeo.intro}
         </motion.p>
+        <p className="mx-auto max-w-3xl text-sm font-bold uppercase tracking-wider text-on-surface-variant/70">
+          {pageLead}
+        </p>
       </div>
 
       <div className="grid lg:grid-cols-12 gap-12 items-start">
@@ -277,7 +387,7 @@ export default function Home() {
                     <code>{code}</code>
                   </pre>
                 ) : (
-                  <Editor
+                  <CodeEditor
                     value={code}
                     onValueChange={code => setCode(code)}
                     highlight={value => Prism.highlight(value, Prism.languages.python, 'python')}
@@ -442,6 +552,72 @@ export default function Home() {
         </div>
       )}
 
+      <section className="mt-24 mb-20 rounded-[3rem] border-2 border-on-background bg-white px-8 py-14 shadow-neo-xl">
+        <div className="mb-10 max-w-3xl">
+          <h2 className="mb-4 font-headline text-4xl sm:text-5xl font-black uppercase italic tracking-tighter">
+            {processTitle}
+          </h2>
+          <p className="text-lg font-bold leading-relaxed text-on-surface-variant opacity-80">
+            {processIntro}
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {processSteps.map((step) => (
+            <article
+              key={step.title}
+              className="rounded-[2rem] border-2 border-on-background bg-surface-container-low p-6 shadow-neo"
+            >
+              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl border-2 border-on-background bg-white text-primary shadow-neo">
+                {step.icon}
+              </div>
+              <h3 className="mb-3 font-headline text-2xl font-black uppercase italic tracking-tighter">
+                {step.title}
+              </h3>
+              <p className="text-sm font-bold leading-relaxed text-on-surface-variant opacity-80">
+                {step.description}
+              </p>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-10 flex flex-wrap gap-3">
+          {['Python', 'JavaScript', 'Java', 'C', 'C++'].map((language) => (
+            <span
+              key={language}
+              className="rounded-full border-2 border-on-background bg-primary-container px-4 py-2 text-xs font-black uppercase tracking-widest text-on-background shadow-neo"
+            >
+              {language}
+            </span>
+          ))}
+        </div>
+
+        <p className="mt-8 max-w-3xl text-sm font-bold leading-relaxed text-on-surface-variant">
+          {isSpaceCalculator
+            ? 'This page is built for space complexity queries, but it also works best when paired with the time complexity calculator so you can compare speed against memory usage.'
+            : isTimeCalculator
+              ? 'This page is designed to match tool intent. If someone searches for a Big O calculator, time complexity calc, or runtime complexity analyzer, the goal is to answer that need directly on this URL.'
+              : 'The homepage is the overview. For search intent that is specifically tool-driven, the main target page is the time complexity calculator.'}
+        </p>
+
+        <div className="mt-8 flex flex-wrap gap-4">
+          <Link
+            to="/blog/how-to-calculate-time-complexity"
+            className="inline-flex items-center gap-2 rounded-full border-2 border-on-background bg-white px-5 py-3 text-xs font-black uppercase tracking-widest shadow-neo"
+          >
+            How To Calculate Time Complexity
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            to="/blog/big-o-notation-explained"
+            className="inline-flex items-center gap-2 rounded-full border-2 border-on-background bg-secondary-container px-5 py-3 text-xs font-black uppercase tracking-widest shadow-neo"
+          >
+            Read The Big O Guide
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
+
       {/* Common Complexity Classes Section */}
       <section className="mt-32 mb-16 px-4">
         <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-8">
@@ -452,10 +628,14 @@ export default function Home() {
             className="max-w-2xl text-center md:text-left"
           >
             <h2 className="font-headline font-black text-4xl sm:text-6xl tracking-tighter uppercase italic mb-6">
-              Common <span className="modern-gradient-text">Complexity</span> Classes
+              Common <span className="modern-gradient-text">{isTimeCalculator ? 'Big O' : 'Complexity'}</span> Classes
             </h2>
             <p className="text-xl text-on-surface-variant font-bold leading-relaxed opacity-80">
-              Every algorithm has its own growth story. Here are the most common computational arcs you'll encounter in the wild.
+              {isSpaceCalculator
+                ? 'These patterns help you compare how memory grows, especially when recursion, auxiliary arrays, and data structures are involved.'
+                : isTimeCalculator
+                  ? 'These are the runtime growth patterns a time complexity calculator usually maps to when it sees loops, recursion, and divide-and-conquer structure.'
+                  : 'Every algorithm has its own growth story. Here are the most common computational arcs you will encounter in the wild.'}
             </p>
           </motion.div>
           <motion.div 
@@ -531,10 +711,26 @@ export default function Home() {
       <section className="mb-16 pt-16 border-t-2 border-on-background/10">
         <div className="text-center mb-16 px-4">
           <h2 className="font-headline text-4xl sm:text-5xl md:text-6xl font-black text-on-background mb-4 uppercase italic tracking-tighter">
-            The <span className="text-primary italic">Free Complexity</span> Storyteller
+            {isSpaceCalculator ? 'The ' : 'The '}
+            <span className="text-primary italic">
+              {isSpaceCalculator
+                ? 'Free Space Complexity'
+                : isTimeCalculator
+                  ? 'Free Time Complexity'
+                  : 'Free Complexity'}
+            </span>{' '}
+            {isSpaceCalculator
+              ? 'Calculator'
+              : isTimeCalculator
+                ? 'Calculator'
+                : 'Storyteller'}
           </h2>
           <p className="text-xl text-on-surface-variant max-w-2xl mx-auto font-bold opacity-80">
-            AlgoStory provides deep computational insights for free. Every algorithm deserves its narrative.
+            {isSpaceCalculator
+              ? 'Estimate memory growth, auxiliary storage, and recursion stack usage without signing up.'
+              : isTimeCalculator
+                ? 'Estimate runtime growth, compare Big O classes, and understand why the code scales the way it does.'
+                : 'AlgoStory provides deep computational insights for free. Every algorithm deserves its narrative.'}
           </p>
         </div>
 
@@ -644,31 +840,23 @@ export default function Home() {
       <section className="mb-20 px-4">
         <div className="mb-12 max-w-3xl">
           <h2 className="mb-4 font-headline text-4xl font-black uppercase italic tracking-tighter">
-            Complexity FAQ
+            {isSpaceCalculator
+              ? 'Space Complexity Calculator FAQ'
+              : isTimeCalculator
+                ? 'Time Complexity Calculator FAQ'
+                : 'Complexity FAQ'}
           </h2>
           <p className="text-lg font-bold text-on-surface-variant opacity-80">
-            Answers to common questions about algorithmic complexity and how to use our toolkit.
+            {isSpaceCalculator
+              ? 'Answers to common questions about memory growth, auxiliary space, and how to use this page.'
+              : isTimeCalculator
+                ? 'Answers to common questions about Big O, runtime growth, and using this time complexity calculator.'
+                : 'Answers to common questions about algorithmic complexity and how to use our toolkit.'}
           </p>
         </div>
 
         <div className="grid gap-8 md:grid-cols-3">
-          {[
-            {
-              q: 'When to use the Time Analyzer?',
-              a: 'Use it when you want to estimate how runtime changes as input size grows, especially for loops and recursion.',
-              icon: <Zap className="w-5 h-5" />
-            },
-            {
-              q: 'When to use the Space Lab?',
-              a: 'Use it when memory growth matters, including recursion stack depth and temporary data structures.',
-              icon: <Cpu className="w-5 h-5" />
-            },
-            {
-              q: 'Can I learn Big O here?',
-              a: 'Yes. The toolkit is paired with tutorials and a step-by-step lab to move you from answers to understanding.',
-              icon: <Lightbulb className="w-5 h-5" />
-            },
-          ].map((item, idx) => (
+          {faqItems.map((item, idx) => (
             <motion.article
               key={idx}
               whileHover={{ y: -5 }}

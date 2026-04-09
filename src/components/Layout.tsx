@@ -30,7 +30,7 @@ export default function Layout() {
             
             <div className="hidden md:flex items-center gap-4">
               {[
-                { to: '/', label: 'Analyzer' },
+                { to: '/time-complexity-calculator', label: 'Time Calculator' },
                 { to: '/tutorials', label: 'Tutorials' },
                 { to: '/inside-math', label: 'Math Lab' },
                 { to: '/blog', label: 'Blog' }
@@ -123,10 +123,11 @@ export default function Layout() {
             </div>
 
             <FooterList title="Product" items={[
-              { to: '/', label: 'AI Analyzer' },
-              { to: '/tutorials', label: 'Docs' },
+              { to: '/time-complexity-calculator', label: 'Time Calculator' },
+              { to: '/space-complexity-calculator', label: 'Space Calculator' },
+              { to: '/tutorials', label: 'Tutorials' },
               { to: '/inside-math', label: 'Math Lab' },
-              { to: '/blog', label: 'Blog' }
+              { to: '/blog', label: 'Big O Blog' }
             ]} />
 
             <div className="space-y-6">
@@ -147,6 +148,7 @@ export default function Layout() {
           <div className="mt-16 pt-8 border-t-2 border-on-background/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-on-surface-variant">
             <p>© 2026 AlgoStory. Every line of code tells a story. 📖</p>
             <div className="flex gap-6">
+              <Link to="/time-complexity-calculator" className="hover:text-primary transition-colors">Time Calculator</Link>
               <Link to="/blog" className="hover:text-primary transition-colors">Blog</Link>
               <Link to="/tutorials" className="hover:text-primary transition-colors">Tutorials</Link>
             </div>

@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Seo from '../components/Seo';
-import { tutorialMetadata } from '../data/contentMetadata';
+import { SITE_URL, tutorialMetadata } from '../data/contentMetadata';
 import { tutorialsById } from '../data/tutorials';
 import NotFound from './NotFound';
 
@@ -34,21 +34,21 @@ export default function TutorialPost() {
       author: {
         '@type': 'Organization',
         name: 'AlgoStory',
-        url: 'https://algostory.com',
+        url: SITE_URL,
       },
       publisher: {
         '@type': 'Organization',
         name: 'AlgoStory',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://algostory.com/logo.png',
+          url: `${SITE_URL}/favicon.png`,
         },
       },
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `https://algostory.com/tutorials/${tutorial.id}`,
+        '@id': `${SITE_URL}/tutorials/${tutorial.id}`,
       },
-      url: `https://algostory.com/tutorials/${tutorial.id}`,
+      url: `${SITE_URL}/tutorials/${tutorial.id}`,
       articleSection: tutorial.category,
       keywords: `${tutorial.title}, ${tutorial.category}, algorithm, big o notation`,
     },
@@ -100,6 +100,23 @@ export default function TutorialPost() {
             </>
           )}
         </div>
+
+        <section className="mt-12 rounded-3xl border-4 border-on-background bg-secondary-container p-8">
+          <h2 className="mb-3 font-headline text-3xl font-black uppercase italic tracking-tighter">
+            Try The Time Complexity Calculator
+          </h2>
+          <p className="mb-5 text-sm font-bold leading-relaxed text-on-secondary-container">
+            If you want to test similar code instantly, use the live time complexity calculator and
+            compare the result with the explanation in this tutorial.
+          </p>
+          <Link
+            to="/time-complexity-calculator"
+            className="inline-flex items-center gap-2 rounded-full border-4 border-on-background bg-white px-6 py-3 font-headline text-sm font-black uppercase text-on-background shadow-[4px_4px_0_#0f172a]"
+          >
+            Open Time Calculator
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </section>
 
         {relatedTutorials.length > 0 ? (
           <section className="mt-14 rounded-3xl border-4 border-on-background bg-surface-container-low p-8">

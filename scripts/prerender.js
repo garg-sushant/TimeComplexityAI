@@ -89,6 +89,34 @@ if (typeof globalThis !== 'undefined') {
   // Re-verify window and self pointers
   globalThis.window = globalThis;
   globalThis.self = globalThis;
+
+  // Framer Motion touches browser globals during prerender.
+  if (typeof globalThis.addEventListener !== 'function') {
+    globalThis.addEventListener = () => {};
+  }
+
+  if (typeof globalThis.removeEventListener !== 'function') {
+    globalThis.removeEventListener = () => {};
+  }
+
+  if (typeof globalThis.dispatchEvent !== 'function') {
+    globalThis.dispatchEvent = () => false;
+  }
+
+  if (typeof globalThis.requestAnimationFrame !== 'function') {
+    globalThis.requestAnimationFrame = (callback) =>
+      setTimeout(() => callback(Date.now()), 0);
+  }
+
+  if (typeof globalThis.cancelAnimationFrame !== 'function') {
+    globalThis.cancelAnimationFrame = (handle) => clearTimeout(handle);
+  }
+
+  if (typeof globalThis.getComputedStyle !== 'function') {
+    globalThis.getComputedStyle = () => ({
+      getPropertyValue: () => '',
+    });
+  }
 }
 
 // 1. Load the pre-extracted routes

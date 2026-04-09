@@ -1,6 +1,6 @@
 # 📖 AlgoStory: The Premium AI Code Complexity Architect
 
-[![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-000000.svg?style=for-the-badge&logo=vercel)](https://algostory-pi.vercel.app/)
+[![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-000000.svg?style=for-the-badge&logo=vercel)](https://timecomplexityai.vercel.app/)
 [![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
 [![Groq Llama 3.3](https://img.shields.io/badge/Groq_Fallback-Llama_3.3_70B-orange?style=for-the-badge)](https://groq.com/)
 [![Gemini 2.0](https://img.shields.io/badge/Primary_AI-Gemini_2.0_Flash-blue?style=for-the-badge)](https://ai.google.dev/)

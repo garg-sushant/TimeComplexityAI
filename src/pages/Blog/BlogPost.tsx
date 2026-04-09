@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { BookOpen, AlertTriangle, ArrowRight } from 'lucide-react';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import Seo from '../../components/Seo';
+import { SITE_URL } from '../../data/contentMetadata';
 import { blogPosts, blogPostBySlug } from '../../data/blogPosts';
 import NotFound from '../NotFound';
 
@@ -14,7 +15,7 @@ export default function BlogPost() {
 
   const post = blogPostBySlug[slug];
   const relatedPosts = blogPosts.filter((item) => item.slug !== slug).slice(0, 2);
-  const url = `https://algostory.com/blog/${slug}`;
+  const url = `${SITE_URL}/blog/${slug}`;
 
   const structuredData = [
     {
@@ -31,7 +32,7 @@ export default function BlogPost() {
         name: 'AlgoStory',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://algostory.com/favicon.png',
+          url: `${SITE_URL}/favicon.png`,
         },
       },
       mainEntityOfPage: {
@@ -71,13 +72,13 @@ export default function BlogPost() {
           <div>
             <h2 className="font-bold text-lg text-on-secondary-container mb-2">Want to see this in action?</h2>
             <p className="text-on-secondary-container mb-4">
-              Jump directly into our interactive analyzer to see how code translates to mathematical growth.
+              Jump directly into the time complexity calculator to see how code translates to Big O growth.
             </p>
             <Link
               to="/time-complexity-calculator"
               className="inline-flex items-center gap-2 px-6 py-2 bg-on-background text-background font-bold rounded-lg shadow-sm hover:translate-y-px transition-transform"
             >
-              Go To Calculator
+              Open Time Complexity Calculator
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

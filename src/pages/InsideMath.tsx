@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Editor from 'react-simple-code-editor';
+import EditorModule from 'react-simple-code-editor';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-javascript';
@@ -10,6 +10,10 @@ import { StepByStepAnalysis } from '../types';
 import { Calculator, Zap, ListOrdered, Copy, Check } from 'lucide-react';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Seo from '../components/Seo';
+import { SITE_URL } from '../data/contentMetadata';
+
+const CodeEditor =
+  (EditorModule as unknown as { default?: typeof EditorModule }).default ?? EditorModule;
 
 export default function InsideMath() {
   const [code, setCode] = useState(`def fibonacci(n):
@@ -64,7 +68,7 @@ export default function InsideMath() {
           '@type': 'WebApplication',
           name: 'AlgoStory Complexity Lab',
           description: 'Step-by-step mathematical breakdown of time and space complexity.',
-          url: 'https://algostory.com/inside-math',
+          url: `${SITE_URL}/inside-math`,
         }}
       />
 
@@ -108,7 +112,7 @@ export default function InsideMath() {
                   <code>{code}</code>
                 </pre>
               ) : (
-                <Editor
+                <CodeEditor
                   value={code}
                   onValueChange={value => setCode(value)}
                   highlight={value => Prism.highlight(value, Prism.languages.python, 'python')}

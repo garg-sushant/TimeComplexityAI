@@ -32,12 +32,12 @@ export default function Seo({
   path,
   type = 'website',
   keywords,
-  robots,
+  robots = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
   schema,
   image,
 }: SeoProps) {
   const url = toAbsoluteUrl(path);
-  const imageUrl = image ? toAbsoluteUrl(image) : `${SITE_URL}/og-image.png`;
+  const imageUrl = image ? toAbsoluteUrl(image) : `${SITE_URL}/favicon.png`;
   const structuredData = Array.isArray(schema) ? schema : schema ? [schema] : [];
 
   return (
@@ -45,7 +45,7 @@ export default function Seo({
       <title>{title}</title>
       <meta name="description" content={description} />
       {keywords ? <meta name="keywords" content={keywords} /> : null}
-      {robots ? <meta name="robots" content={robots} /> : null}
+      <meta name="robots" content={robots} />
       <meta name="author" content={SITE_NAME} />
       <link rel="canonical" href={url} />
 

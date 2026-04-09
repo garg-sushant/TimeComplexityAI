@@ -1,27 +1,37 @@
-export const SITE_URL = 'https://algostory.com';
+import { getEnv } from '../utils/env';
+
+const DEFAULT_SITE_URL = 'https://timecomplexityai.vercel.app';
+
+function normalizeSiteUrl(url: string) {
+  return url.replace(/\/+$/, '');
+}
+
+export const SITE_URL = normalizeSiteUrl(
+  getEnv('VITE_SITE_URL') || getEnv('APP_URL') || DEFAULT_SITE_URL,
+);
 export const SITE_NAME = 'AlgoStory';
 
 export const homeRouteMetadata = {
   '/': {
-    title: 'AlgoStory - Free Time Complexity & Big O Calculator | AI Code Analyzer',
+    title: 'AlgoStory | Time Complexity Calculator, Big O Guides, and Algorithm Tutorials',
     description:
-      'Free online time complexity calculator with Big O notation analyzer. Paste code, instantly get O(N) analysis. AI-powered algorithm complexity analyzer. Better than BigOCalc.',
+      'Learn Big O notation, analyze code complexity, and explore algorithm tutorials. Use the free time complexity calculator, space complexity calculator, and step-by-step complexity lab.',
     heading: 'Every line of code tells a story.',
     intro:
-      'Paste your code below and watch the complexity come to life with our whimsical analyzer.',
+      'Use the calculator for quick answers, then go deeper with Big O guides, tutorials, and line-by-line explanations.',
   },
   '/time-complexity-calculator': {
-    title: 'Time Complexity Calculator - Analyze Big O Notation | Free | AlgoStory',
+    title: 'Time Complexity Calculator & Big O Calculator | Free Code Analyzer | AlgoStory',
     description:
-      'Free time complexity calculator to analyze Big O of your code. Instant O(N) analysis with AI explanations. Better than BigOCalc. No signup needed.',
+      'Free time complexity calculator and Big O calculator for Python, JavaScript, Java, C, and C++. Paste code to estimate runtime complexity and get AI explanations.',
     heading: 'Time complexity calculator',
     intro:
-      'Paste your code and get an AI-assisted breakdown of runtime growth, loop nesting, and Big O behavior.',
+      'Paste code and get an AI-assisted breakdown of runtime growth, loop nesting, recursion, and Big O behavior.',
   },
   '/space-complexity-calculator': {
-    title: 'Space Complexity Calculator - Analyze Memory Usage | Free Tool | AlgoStory',
+    title: 'Space Complexity Calculator | Free Memory Complexity Analyzer | AlgoStory',
     description:
-      'Free space complexity calculator to analyze auxiliary memory usage. Estimate O notation growth for algorithm memory. AI-powered space analysis with explanations.',
+      'Free space complexity calculator to estimate auxiliary memory, recursion stack usage, and memory growth for Python, JavaScript, Java, C, and C++.',
     heading: 'Space complexity calculator',
     intro:
       'Paste your code and get an AI-assisted explanation of memory growth, auxiliary storage, and recursion stack usage.',
@@ -161,6 +171,12 @@ export const blogMetadataBySlug = {
     description:
       'A comprehensive reference table for time and space complexities of sorting, graph algorithms, and common DSA patterns.',
     readTime: '15 min read',
+  },
+  'how-to-calculate-time-complexity': {
+    title: 'How to Calculate Time Complexity: Step-by-Step Guide With Examples',
+    description:
+      'Learn how to calculate time complexity from loops, recursion, and data structures, with practical examples and a faster way to check your code.',
+    readTime: '10 min read',
   },
   'big-o-notation-explained': {
     title: 'Big O Notation Explained: The Ultimate Guide',

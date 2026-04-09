@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, Home } from 'lucide-react';
-import { blogMetadataBySlug, tutorialMetadataById } from '../data/contentMetadata';
+import { blogMetadataBySlug, SITE_URL, tutorialMetadataById } from '../data/contentMetadata';
 
 function formatTitle(segment: string) {
   return segment.replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
@@ -38,13 +38,13 @@ export default function Breadcrumbs() {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://algostory.com/',
+        item: `${SITE_URL}/`,
       },
       ...crumbs.map((crumb, index) => ({
         '@type': 'ListItem',
         position: index + 2,
         name: crumb.label,
-        item: `https://algostory.com${crumb.href}`,
+        item: `${SITE_URL}${crumb.href}`,
       })),
     ],
   };
