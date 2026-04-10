@@ -482,7 +482,7 @@ function Seo({
   image
 }) {
   const url = toAbsoluteUrl(path);
-  const imageUrl = image ? toAbsoluteUrl(image) : `${SITE_URL}/favicon.png`;
+  const imageUrl = image ? toAbsoluteUrl(image) : `${SITE_URL}/logo-zap.png`;
   const structuredData = Array.isArray(schema) ? schema : schema ? [schema] : [];
   return /* @__PURE__ */ jsxs(Helmet, { children: [
     /* @__PURE__ */ jsx("title", { children: title }),
@@ -539,7 +539,7 @@ function Home() {
     const timer = setTimeout(async () => {
       if (code.trim().length > 10) {
         try {
-          const { fastCodeHint } = await import("./assets/ai-BPFm9c63.js");
+          const { fastCodeHint } = await import("./assets/ai-BUhzuA3Z.js");
           const quickHint = await fastCodeHint(code);
           if (!cancelled) {
             setHint(quickHint);
@@ -560,7 +560,7 @@ function Home() {
     setResult(null);
     setIsSaved(false);
     try {
-      const { analyzeCodeComplexity } = await import("./assets/ai-BPFm9c63.js");
+      const { analyzeCodeComplexity } = await import("./assets/ai-BUhzuA3Z.js");
       const res = await analyzeCodeComplexity(code);
       setResult(res);
       setAnalyzedCode(code);
@@ -2105,7 +2105,7 @@ function Tutorials() {
     setIsSearching(true);
     setSearchResult("");
     try {
-      const { searchTutorials } = await import("./assets/ai-BPFm9c63.js");
+      const { searchTutorials } = await import("./assets/ai-BUhzuA3Z.js");
       const result = await searchTutorials(query);
       setSearchResult(result);
     } catch (error) {
@@ -2392,7 +2392,7 @@ function TutorialPost() {
         name: "TimeComplexityAI",
         logo: {
           "@type": "ImageObject",
-          url: `${SITE_URL}/favicon.png`
+          url: `${SITE_URL}/logo-zap.png`
         }
       },
       mainEntityOfPage: {
@@ -2504,7 +2504,7 @@ function InsideMath() {
     setIsAnalyzing(true);
     setResult(null);
     try {
-      const { analyzeCodeStepByStep } = await import("./assets/ai-BPFm9c63.js");
+      const { analyzeCodeStepByStep } = await import("./assets/ai-BUhzuA3Z.js");
       const res = await analyzeCodeStepByStep(code);
       setResult(res);
     } catch (error) {
@@ -3120,7 +3120,7 @@ function BlogPost() {
         name: "TimeComplexityAI",
         logo: {
           "@type": "ImageObject",
-          url: `${SITE_URL}/favicon.png`
+          url: `${SITE_URL}/logo-zap.png`
         }
       },
       mainEntityOfPage: {

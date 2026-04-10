@@ -39,7 +39,7 @@ export default function Seo({
   image,
 }: SeoProps) {
   const url = toAbsoluteUrl(path);
-  const imageUrl = image ? toAbsoluteUrl(image) : `${SITE_URL}/favicon.png`;
+  const imageUrl = image ? toAbsoluteUrl(image) : `${SITE_URL}/logo-zap.png`;
   const structuredData = Array.isArray(schema) ? schema : schema ? [schema] : [];
 
   return (

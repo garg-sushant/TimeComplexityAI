@@ -70,7 +70,7 @@ class OfflineProvider implements AIProvider {
     // We only call it O(1) if it's truly trivial to avoid mislabeling recursive functions.
     const hasLoops = cleaned.includes('for') || cleaned.includes('while');
     const hasFunctionCalls = (cleaned.match(/[a-zA-Z_]\w*\(/g) || [])
-      .filter(m => !linearMethods.includes(m) && !m.startsWith('print(') && !m.startsWith('console.')).length > 0;
+      .filter((m: string) => !linearMethods.includes(m) && !m.startsWith('print(') && !m.startsWith('console.')).length > 0;
 
     if (!hasLoops && !hasFunctionCalls) {
       return {
@@ -142,7 +142,7 @@ class GeminiProvider implements AIProvider {
 
   async analyzeComplexity(code: string): Promise<AnalysisResult> {
     const promptText = `Analyze the following code and provide its time and space complexity. Provide a clear, straightforward, and mathematical explanation of how the algorithm works and why it has that complexity. Do not use a story-like or whimsical tone. Structure the explanation as a precise list of points.\n\nCode:\n${code}`;
-    const config = {
+    const generationConfig = {
       responseMimeType: 'application/json',
       responseSchema: {
         type: Type.OBJECT,
@@ -155,13 +155,13 @@ class GeminiProvider implements AIProvider {
         required: ['complexity', 'complexityClass', 'spaceComplexity', 'explanationPoints']
       }
     };
-    const response = await this.callWithFallback(promptText, config);
+    const response = await this.callWithFallback(promptText, generationConfig);
     return JSON.parse(response) as AnalysisResult;
   }
 
   async analyzeStepByStep(code: string): Promise<StepByStepAnalysis> {
     const promptText = `Analyze the following code step-by-step and provide its time and space complexity. Break the code down into logical blocks or lines. For each block, provide the code snippet, its specific time complexity, and a mathematical explanation of why. Finally, provide the overall time and space complexity.\n\nCode:\n${code}`;
-    const config = {
+    const generationConfig = {
       responseMimeType: 'application/json',
       responseSchema: {
         type: Type.OBJECT,
@@ -184,7 +184,7 @@ class GeminiProvider implements AIProvider {
         required: ['overallTimeComplexity', 'overallSpaceComplexity', 'steps']
       }
     };
-    const response = await this.callWithFallback(promptText, config);
+    const response = await this.callWithFallback(promptText, generationConfig);
     return JSON.parse(response) as StepByStepAnalysis;
   }
 
@@ -200,7 +200,7 @@ class GeminiProvider implements AIProvider {
       const resp = await (this.ai as any).models.generateContent({
         model: 'gemini-1.5-flash',
         contents: [{ role: 'user', parts: [{ text: `Search for the latest information and tutorials about: ${query}. Provide a short, engaging summary and list 3 key concepts to learn.` }] }],
-        tools: [{ googleSearch: {} } as any]
+        tools: [{ googleSearchRetrieval: {} } as any]
       });
       return (resp as any).text || 'Could not find tutorials.';
     } catch (e: any) {
@@ -212,10 +212,10 @@ class GeminiProvider implements AIProvider {
   private async callWithFallback(promptText: string, config: any = {}): Promise<string> {
     const models = ['gemini-2.0-flash', 'gemini-1.5-flash'];
     let lastError: any;
-    for (const model of models) {
+    for (const modelName of models) {
       try {
         const result = await (this.ai as any).models.generateContent({
-          model,
+          model: modelName,
           contents: [{ role: 'user', parts: [{ text: promptText }] }],
           config,
         });

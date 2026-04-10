@@ -32,7 +32,7 @@ export default function BlogPost() {
         name: 'TimeComplexityAI',
         logo: {
           '@type': 'ImageObject',
-          url: `${SITE_URL}/favicon.png`,
+          url: `${SITE_URL}/logo-zap.png`,
         },
       },
       mainEntityOfPage: {
