@@ -213,8 +213,31 @@ class GeminiProvider implements AIProvider {
         required: ['reasoning', 'complexity', 'complexityClass', 'spaceComplexity', 'explanationPoints']
       }
     };
-    const response = await this.callWithFallback(promptText, generationConfig);
-    return JSON.parse(response) as AnalysisResult;
+    const firstResponse = await this.callWithFallback(promptText, generationConfig);
+    const firstResult = JSON.parse(firstResponse) as AnalysisResult;
+
+    // Call 2: Cross-verify and correct any logic errors or hallucinations
+    const verificationPrompt = `You are an expert algorithm complexity reviewer. Your task is to verify the time and space complexity calculated for the given code.
+   
+    Code under review:
+    ${code}
+   
+    Initial analysis to verify:
+    - Reasoning: ${firstResult.reasoning}
+    - Time Complexity: ${firstResult.complexity}
+    - Time Complexity Class: ${firstResult.complexityClass}
+    - Space Complexity: ${firstResult.spaceComplexity}
+    - Key Explanations: ${(firstResult.explanationPoints || []).join('\n')}
+   
+    Instructions:
+    1. Cross-examine the initial analysis. Check for logical flaws (e.g. confusing sequential loops as nested, ignoring helper function overhead, miscalculating logarithmic step updates, or wrong recursion depth).
+    2. If the initial analysis is correct, output it exactly.
+    3. If you find any error, perform a corrected calculation. Explain the flaw you found under the "reasoning" key, and output the correct complexity values.
+   
+    Structure your output in the same strict JSON format.`;
+
+    const verifiedResponse = await this.callWithFallback(verificationPrompt, generationConfig);
+    return JSON.parse(verifiedResponse) as AnalysisResult;
   }
 
   async analyzeStepByStep(code: string): Promise<StepByStepAnalysis> {
@@ -324,7 +347,44 @@ class GroqProvider implements AIProvider {
       }],
       response_format: { type: 'json_object' }
     });
-    return JSON.parse(response.choices[0].message.content || '{}') as AnalysisResult;
+    const firstResult = JSON.parse(response.choices[0].message.content || '{}') as AnalysisResult;
+
+    // Call 2: Verify and correct any flaws or hallucinations
+    const verifiedResponse = await this.client.chat.completions.create({
+      model: this.model,
+      messages: [{ 
+        role: 'user', 
+        content: `You are an expert algorithm complexity reviewer. Your task is to verify the time and space complexity calculated for the given code.
+        
+        Code under review:
+        ${code}
+        
+        Initial analysis to verify:
+        - Reasoning: ${firstResult.reasoning}
+        - Time Complexity: ${firstResult.complexity}
+        - Time Complexity Class: ${firstResult.complexityClass}
+        - Space Complexity: ${firstResult.spaceComplexity}
+        - Key Explanations: ${(firstResult.explanationPoints || []).join('\n')}
+        
+        Instructions:
+        1. Cross-examine the initial analysis. Check for logical flaws (e.g. confusing sequential loops as nested, ignoring helper function overhead, miscalculating logarithmic step updates, or wrong recursion depth).
+        2. If the initial analysis is correct, output it exactly.
+        3. If you find any error, perform a corrected calculation. Explain the flaw you found under the "reasoning" key, and output the correct complexity values.
+        
+        JSON Structure: { 
+          "reasoning": string,
+          "complexity": string, 
+          "complexityClass": "O(1)" | "O(log N)" | "O(N)" | "O(N log N)" | "O(N^2)" | "O(2^N)" | "O(N!)" | "Unknown", 
+          "spaceComplexity": string, 
+          "explanationPoints": string[] 
+        }
+        
+        Return strict JSON only.`
+      }],
+      response_format: { type: 'json_object' }
+    });
+
+    return JSON.parse(verifiedResponse.choices[0].message.content || '{}') as AnalysisResult;
   }
 
   async analyzeStepByStep(code: string): Promise<StepByStepAnalysis> {
