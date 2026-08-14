@@ -191,7 +191,8 @@ class GeminiProvider implements AIProvider {
     1. Identify all loop constructs (for, while, recursion) and check if they are nested or consecutive/sequential. Sequential loops sum up (O(N) + O(N) = O(N)), whereas nested loops multiply (O(N) * O(N) = O(N^2)).
     2. Check the loop step updates carefully (e.g., standard incrementing/decrementing vs logarithmic dividing/multiplying).
     3. Analyze helper function calls and their respective complexities.
-    4. Provide a clear, straightforward, and mathematical explanation of how the algorithm works and why it has that complexity. Do not use a story-like or whimsical tone. Structure the explanation as a precise list of points.
+    4. Start by explaining your step-by-step reasoning under the "reasoning" key before arriving at the final complexity scores.
+    5. Provide a clear, straightforward, and mathematical explanation of how the algorithm works and why it has that complexity. Do not use a story-like or whimsical tone. Structure the explanation as a precise list of points.
 
     Code:
     ${code}`;
@@ -200,12 +201,16 @@ class GeminiProvider implements AIProvider {
       responseSchema: {
         type: Type.OBJECT,
         properties: {
+          reasoning: { type: Type.STRING },
           complexity: { type: Type.STRING },
-          complexityClass: { type: Type.STRING },
+          complexityClass: { 
+            type: Type.STRING,
+            enum: ['O(1)', 'O(log N)', 'O(N)', 'O(N log N)', 'O(N^2)', 'O(2^N)', 'O(N!)', 'Unknown']
+          },
           spaceComplexity: { type: Type.STRING },
           explanationPoints: { type: Type.ARRAY, items: { type: Type.STRING } }
         },
-        required: ['complexity', 'complexityClass', 'spaceComplexity', 'explanationPoints']
+        required: ['reasoning', 'complexity', 'complexityClass', 'spaceComplexity', 'explanationPoints']
       }
     };
     const response = await this.callWithFallback(promptText, generationConfig);
@@ -213,14 +218,12 @@ class GeminiProvider implements AIProvider {
   }
 
   async analyzeStepByStep(code: string): Promise<StepByStepAnalysis> {
-    const promptText = `Analyze the following code step-by-step and provide its time and space complexity. Break the code down into logical blocks or lines. For each block, provide the code snippet, its specific time complexity, and a mathematical explanation of why. Finally, provide the overall time and space complexity.\n\nCode:\n${code}`;
+    const promptText = `Analyze the following code step-by-step and provide its time and space complexity. Break the code down into logical blocks or lines. For each block, provide the code snippet, its specific time complexity, and a mathematical explanation of why. List the detailed step-by-step blocks under the "steps" key first, and only then summarize the "overallTimeComplexity" and "overallSpaceComplexity" at the end.\n\nCode:\n${code}`;
     const generationConfig = {
       responseMimeType: 'application/json',
       responseSchema: {
         type: Type.OBJECT,
         properties: {
-          overallTimeComplexity: { type: Type.STRING },
-          overallSpaceComplexity: { type: Type.STRING },
           steps: {
             type: Type.ARRAY,
             items: {
@@ -232,9 +235,11 @@ class GeminiProvider implements AIProvider {
               },
               required: ['codeSnippet', 'timeComplexity', 'explanation']
             }
-          }
+          },
+          overallTimeComplexity: { type: Type.STRING },
+          overallSpaceComplexity: { type: Type.STRING }
         },
-        required: ['overallTimeComplexity', 'overallSpaceComplexity', 'steps']
+        required: ['steps', 'overallTimeComplexity', 'overallSpaceComplexity']
       }
     };
     const response = await this.callWithFallback(promptText, generationConfig);
@@ -304,8 +309,15 @@ class GroqProvider implements AIProvider {
         1. Identify all loop constructs (for, while, recursion) and check if they are nested or consecutive/sequential. Sequential loops sum up (O(N) + O(N) = O(N)), whereas nested loops multiply (O(N) * O(N) = O(N^2)).
         2. Check the loop step updates carefully (e.g., standard incrementing/decrementing vs logarithmic dividing/multiplying).
         3. Analyze helper function calls and their respective complexities.
+        4. Start by explaining your step-by-step reasoning under the "reasoning" key before arriving at the final complexity scores.
         
-        JSON Structure: { "complexity": string, "complexityClass": "O(1)" | "O(log N)" | "O(N)" | "O(N log N)" | "O(N^2)" | "O(2^N)" | "O(N!)" | "Unknown", "spaceComplexity": string, "explanationPoints": string[] }
+        JSON Structure: { 
+          "reasoning": string,
+          "complexity": string, 
+          "complexityClass": "O(1)" | "O(log N)" | "O(N)" | "O(N log N)" | "O(N^2)" | "O(2^N)" | "O(N!)" | "Unknown", 
+          "spaceComplexity": string, 
+          "explanationPoints": string[] 
+        }
         
         Code:
         ${code}`
@@ -321,7 +333,14 @@ class GroqProvider implements AIProvider {
       messages: [{ 
         role: 'user', 
         content: `Analyze the following code step-by-step and return strict JSON.
-        JSON Structure: { "overallTimeComplexity": string, "overallSpaceComplexity": string, "steps": [{ "codeSnippet": string, "timeComplexity": string, "explanation": string }] }
+        
+        Break the code down into logical blocks or lines. List the detailed step-by-step blocks under the "steps" key first, and only then summarize the overall complexities at the end.
+        
+        JSON Structure: { 
+          "steps": [{ "codeSnippet": string, "timeComplexity": string, "explanation": string }],
+          "overallTimeComplexity": string, 
+          "overallSpaceComplexity": string
+        }
         
         Code:
         ${code}`

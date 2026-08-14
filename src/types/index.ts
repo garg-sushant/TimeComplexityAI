@@ -1,6 +1,7 @@
 import React from 'react';
 
 export interface AnalysisResult {
+  reasoning?: string;
   complexity: string;
   complexityClass: string;
   spaceComplexity: string;
