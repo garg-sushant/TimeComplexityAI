@@ -85,33 +85,77 @@ class OfflineProvider implements AIProvider {
       };
     }
 
-    // Pattern: O(N) - Linear Time (single loop)
-    const loopCount = (cleaned.match(/\bfor\b|\bwhile\b/g) || []).length;
-    if (loopCount === 1 && !cleaned.includes('nested')) {
-      return {
-        complexity: 'O(N)',
-        complexityClass: 'O(N)',
-        spaceComplexity: 'O(1)',
-        explanationPoints: [
-          'The code contains a single linear loop over the input.',
-          'The number of operations scales directly with the size of the input (N).',
-          'Space complexity remains O(1) as no dynamic memory is allocated based on input size.'
-        ]
-      };
+    // Pattern: Loop Analysis
+    const loopRegex = /\bfor\b|\bwhile\b/g;
+    const loopIndices: number[] = [];
+    let match;
+    while ((match = loopRegex.exec(cleaned)) !== null) {
+      loopIndices.push(match.index);
     }
+    const loopCount = loopIndices.length;
 
-    // Pattern: O(N^2) - Quadratic Time (nested loops)
-    if (loopCount === 2 && (cleaned.includes('for') && cleaned.match(/for.*for/s))) {
-      return {
-        complexity: 'O(N^2)',
-        complexityClass: 'O(N^2)',
-        spaceComplexity: 'O(1)',
-        explanationPoints: [
-          'Detected a nested loop structure where an inner loop runs for every iteration of an outer loop.',
-          'The total number of operations is approximately proportional to N * N.',
-          'Typical for algorithms like Bubble Sort or processing 2D grids.'
-        ]
+    if (loopCount > 0) {
+      // Helper function to check if loop at idx2 is nested inside loop at idx1
+      const areLoopsNested = (cleanedStr: string, idx1: number, idx2: number): boolean => {
+        const nextOpenBrace = cleanedStr.indexOf('{', idx1);
+        if (nextOpenBrace === -1 || nextOpenBrace > idx2) {
+          return true;
+        }
+        let depth = 1;
+        let matchingCloseBrace = -1;
+        for (let i = nextOpenBrace + 1; i < cleanedStr.length; i++) {
+          if (cleanedStr[i] === '{') depth++;
+          else if (cleanedStr[i] === '}') depth--;
+          if (depth === 0) {
+            matchingCloseBrace = i;
+            break;
+          }
+        }
+        if (matchingCloseBrace === -1) {
+          return true;
+        }
+        return idx2 < matchingCloseBrace;
       };
+
+      // Check if there is any nested loop
+      let hasNesting = false;
+      for (let i = 0; i < loopCount; i++) {
+        for (let j = i + 1; j < loopCount; j++) {
+          if (areLoopsNested(cleaned, loopIndices[i], loopIndices[j])) {
+            hasNesting = true;
+            break;
+          }
+        }
+        if (hasNesting) break;
+      }
+
+      // If loops exist but no nested loops, they are consecutive: O(N)
+      if (!hasNesting) {
+        return {
+          complexity: 'O(N)',
+          complexityClass: 'O(N)',
+          spaceComplexity: 'O(1)',
+          explanationPoints: [
+            'The code contains linear loop(s) executed consecutively.',
+            'The total number of operations is a sum of linear passes, which scales as O(N).',
+            'Space complexity remains O(1) as no dynamic memory is allocated based on input size.'
+          ]
+        };
+      }
+
+      // If there are exactly two loops and one is nested inside the other: O(N^2)
+      if (loopCount === 2 && hasNesting) {
+        return {
+          complexity: 'O(N^2)',
+          complexityClass: 'O(N^2)',
+          spaceComplexity: 'O(1)',
+          explanationPoints: [
+            'Detected a nested loop structure where an inner loop runs for every iteration of an outer loop.',
+            'The total number of operations is approximately proportional to N * N.',
+            'Typical for algorithms like Bubble Sort or processing 2D grids.'
+          ]
+        };
+      }
     }
 
     throw new Error('Pattern too complex for local analysis.');
@@ -141,7 +185,16 @@ class GeminiProvider implements AIProvider {
   constructor(private ai: GoogleGenAI) {}
 
   async analyzeComplexity(code: string): Promise<AnalysisResult> {
-    const promptText = `Analyze the following code and provide its time and space complexity. Provide a clear, straightforward, and mathematical explanation of how the algorithm works and why it has that complexity. Do not use a story-like or whimsical tone. Structure the explanation as a precise list of points.\n\nCode:\n${code}`;
+    const promptText = `Analyze the following code and provide its time and space complexity.
+    
+    Guidelines:
+    1. Identify all loop constructs (for, while, recursion) and check if they are nested or consecutive/sequential. Sequential loops sum up (O(N) + O(N) = O(N)), whereas nested loops multiply (O(N) * O(N) = O(N^2)).
+    2. Check the loop step updates carefully (e.g., standard incrementing/decrementing vs logarithmic dividing/multiplying).
+    3. Analyze helper function calls and their respective complexities.
+    4. Provide a clear, straightforward, and mathematical explanation of how the algorithm works and why it has that complexity. Do not use a story-like or whimsical tone. Structure the explanation as a precise list of points.
+
+    Code:
+    ${code}`;
     const generationConfig = {
       responseMimeType: 'application/json',
       responseSchema: {
@@ -198,7 +251,7 @@ class GeminiProvider implements AIProvider {
   async searchTutorials(query: string): Promise<string> {
     try {
       const resp = await (this.ai as any).models.generateContent({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-3.5-flash',
         contents: [{ role: 'user', parts: [{ text: `Search for the latest information and tutorials about: ${query}. Provide a short, engaging summary and list 3 key concepts to learn.` }] }],
         tools: [{ googleSearchRetrieval: {} } as any]
       });
@@ -210,7 +263,7 @@ class GeminiProvider implements AIProvider {
   }
 
   private async callWithFallback(promptText: string, config: any = {}): Promise<string> {
-    const models = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+    const models = ['gemini-3.7-flash', 'gemini-3.5-flash'];
     let lastError: any;
     for (const modelName of models) {
       try {
@@ -232,11 +285,11 @@ class GeminiProvider implements AIProvider {
 }
 
 /**
- * ⚡ Groq Provider Implementation (Llama 3.3 70B)
+ * ⚡ Groq Provider Implementation (GPT OSS 120B)
  */
 class GroqProvider implements AIProvider {
   name = 'Groq';
-  private model = 'llama-3.3-70b-versatile';
+  private model = 'openai/gpt-oss-120b';
 
   constructor(private client: OpenAI) {}
 
@@ -246,6 +299,12 @@ class GroqProvider implements AIProvider {
       messages: [{ 
         role: 'user', 
         content: `Analyze the following code and return its time/space complexity in strict JSON format.
+        
+        Guidelines:
+        1. Identify all loop constructs (for, while, recursion) and check if they are nested or consecutive/sequential. Sequential loops sum up (O(N) + O(N) = O(N)), whereas nested loops multiply (O(N) * O(N) = O(N^2)).
+        2. Check the loop step updates carefully (e.g., standard incrementing/decrementing vs logarithmic dividing/multiplying).
+        3. Analyze helper function calls and their respective complexities.
+        
         JSON Structure: { "complexity": string, "complexityClass": "O(1)" | "O(log N)" | "O(N)" | "O(N log N)" | "O(N^2)" | "O(2^N)" | "O(N!)" | "Unknown", "spaceComplexity": string, "explanationPoints": string[] }
         
         Code:
@@ -381,6 +440,7 @@ class AIOrchestrator {
 
     // 3. Try Gemini pool
     let result: T | null = null;
+    let lastError: any = null;
     if (this.geminiKeys.length > 0) {
       for (let i = 0; i < this.geminiKeys.length; i++) {
         const idx = (this.currentGeminiIndex + i) % this.geminiKeys.length;
@@ -396,12 +456,9 @@ class AIOrchestrator {
           break;
         } catch (err: any) {
           console.warn(`[AI] Gemini key [${idx}] failed. Error: ${err.message}`);
-          if (this.isQuotaError(err)) {
-            console.error(`[AI] ⛔ Gemini key [${idx}] quota reached. Putting on cooldown...`);
-            this.setCooldown(key);
-            continue;
-          }
-          throw err;
+          lastError = err;
+          this.setCooldown(key);
+          continue;
         }
       }
     }
@@ -427,12 +484,9 @@ class AIOrchestrator {
           break;
         } catch (err: any) {
           console.warn(`[AI] Groq key [${idx}] failed: ${err.message}`);
-          if (this.isQuotaError(err)) {
-            console.error(`[AI] ⛔ Groq key [${idx}] quota reached. Putting on cooldown...`);
-            this.setCooldown(key);
-            continue;
-          }
-          throw err;
+          lastError = err;
+          this.setCooldown(key);
+          continue;
         }
       }
     }
@@ -442,7 +496,7 @@ class AIOrchestrator {
       return result;
     }
 
-    throw new Error('All AI providers exhausted or unavailable. Please check your API quotas.');
+    throw lastError || new Error('All AI providers exhausted or unavailable. Please check your API quotas.');
   }
 
   private isQuotaError(err: any): boolean {

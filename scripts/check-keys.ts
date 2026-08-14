@@ -31,7 +31,7 @@ const sampleCode = `function sum(arr) {
 async function testGemini(key: string, index: number) {
   console.log(`\n[GEMINI] Key ${index + 1}: ${key.slice(0, 8)}...`);
   const ai = new GoogleGenAI({ apiKey: key, apiVersion: 'v1beta' });
-  const model = 'gemini-1.5-flash';
+  const model = 'gemini-3.5-flash';
   
   try {
     const result = await (ai as any).models.generateContent({
@@ -67,7 +67,7 @@ async function testGroq(key: string, index: number) {
   
   try {
     const response = await client.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-120b',
       messages: [{ 
         role: 'user', 
         content: `Analyze the following code and return its time/space complexity in strict JSON.

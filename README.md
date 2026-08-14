@@ -2,10 +2,10 @@
 
 [![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-000000.svg?style=for-the-badge&logo=vercel)](https://timecomplexityai.vercel.app/)
 [![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
-[![Groq Llama 3.3](https://img.shields.io/badge/Groq_Fallback-Llama_3.3_70B-orange?style=for-the-badge)](https://groq.com/)
-[![Gemini 1.5](https://img.shields.io/badge/Primary_AI-Gemini_1.5_Flash-blue?style=for-the-badge)](https://ai.google.dev/)
+[![Groq GPT OSS 120B](https://img.shields.io/badge/Groq_Fallback-GPT_OSS_120B-orange?style=for-the-badge)](https://groq.com/)
+[![Gemini 3.5](https://img.shields.io/badge/Primary_AI-Gemini_3.5_Flash-blue?style=for-the-badge)](https://ai.google.dev/)
 
-**TimeComplexityAI** is an elite developer platform that transforms the abstract world of Big O notation into high-fidelity, interactive narratives. Engineered with a **Multi-Provider AI Fallback Architecture**, it ensures 100% service uptime by cycling through an elastic pool of Gemini and Groq (Llama 3.3 70B) engines to provide mathematically precise algorithm analysis.
+**TimeComplexityAI** is an elite developer platform that transforms the abstract world of Big O notation into high-fidelity, interactive narratives. Engineered with a **Multi-Provider AI Fallback Architecture**, it ensures 100% service uptime by cycling through an elastic pool of Gemini and Groq (GPT OSS 120B) engines to provide mathematically precise algorithm analysis.
 
 ---
 
@@ -18,7 +18,7 @@ graph TD
     Orchestrator -->|Miss| Local[Offline Heuristic Engine]
     Local -->|Simple| Result([O-Notation Result])
     Local -->|Complex| GeminiPool[Gemini Key Rotation Pool]
-    GeminiPool -->|Quota Reached| GroqPool[Groq Llama 3.3 Fallback]
+    GeminiPool -->|Quota Reached| GroqPool[Groq GPT OSS 120B Fallback]
     GroqPool --> Result
 ```
 
@@ -26,7 +26,7 @@ graph TD
 
 ## ✨ Cutting-Edge Features
 
-- **🚀 Hybrid AI Orchestrator**: Uses a primary Gemini key rotation pool with ultra-fast Groq/Llama fallbacks to guarantee uninterrupted analysis.
+- **🚀 Hybrid AI Orchestrator**: Uses a primary Gemini key rotation pool with ultra-fast Groq (GPT OSS 120B) fallbacks to guarantee uninterrupted analysis.
 - **🏠 Adaptive Local Engine**: Built-in heuristic analyzer identifies O(1), O(N), and O(N log N) patterns instantly without hitting your API quota.
 - **📦 Intelligent Persistent Caching**: Deterministic code hashing and `localStorage` integration ensure re-analyzing the same code is instantaneous (0.1ms).
 - **🎨 Emerald Neobrutalist UI**: A premium, high-contrast aesthetic built with Framer Motion for a fluid, tactile development experience.
