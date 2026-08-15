@@ -36,7 +36,8 @@ export function AppRoutes() {
         <Route path="tutorials" element={<Tutorials />} />
         <Route path="tutorials/:slug" element={<TutorialPost />} />
         <Route path="inside-math" element={<InsideMath />} />
-        <Route path="complexity-lab" element={<Navigate to="/inside-math" replace />} />        <Route path="blog" element={<BlogIndex />} />
+        <Route path="complexity-lab" element={<Navigate to="/inside-math" replace />} />
+        <Route path="blog" element={<BlogIndex />} />
         <Route path="blog/:slug" element={<BlogPost />} />
 
         <Route path="big-o-notation-explained" element={<Navigate to="/blog/big-o-notation-explained" replace />} />
