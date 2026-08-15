@@ -8,9 +8,9 @@ import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-c';
 import 'prismjs/components/prism-cpp';
 import { useAuth } from '../contexts/AuthContext';
-import { AnalysisResult } from '../types';
+import { AnalysisResult, SavedAnalysis } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, BookOpen, Cpu, Activity, Lightbulb, Save, Copy, Check, ArrowRight, Sparkles } from 'lucide-react';
+import { Zap, BookOpen, Cpu, Activity, Lightbulb, Save, Copy, Check, ArrowRight, Sparkles, History, Trash2, ArrowUpRight, Clock } from 'lucide-react';
 import { LazyComplexityCalculator } from '../components/LazyComplexityCalculator';
 import Seo from '../components/Seo';
 import { homeRouteMetadata, SITE_URL } from '../data/contentMetadata';
@@ -36,6 +36,79 @@ export default function Home() {
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // 📜 Saved Analyses State
+  const [savedAnalyses, setSavedAnalyses] = useState<SavedAnalysis[]>([]);
+  const [isLoadingSaved, setIsLoadingSaved] = useState(false);
+
+  const fetchSavedAnalyses = async () => {
+    if (!user) {
+      setSavedAnalyses([]);
+      return;
+    }
+    setIsLoadingSaved(true);
+    try {
+      const [{ db }, firestore] = await Promise.all([
+        import('../lib/firebase'),
+        import('firebase/firestore'),
+      ]);
+      const q = firestore.query(
+        firestore.collection(db, 'users', user.uid, 'analyses'),
+        firestore.orderBy('createdAt', 'desc')
+      );
+      const querySnapshot = await firestore.getDocs(q);
+      const list: SavedAnalysis[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        list.push({
+          id: doc.id,
+          code: data.code || '',
+          complexity: data.complexity || '',
+          complexityClass: data.complexityClass || 'O(1)',
+          spaceComplexity: data.spaceComplexity || 'O(1)',
+          explanationPoints: data.explanationPoints || [],
+          createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : null,
+        });
+      });
+      setSavedAnalyses(list);
+    } catch (error) {
+      console.error("Error fetching analyses:", error);
+    } finally {
+      setIsLoadingSaved(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSavedAnalyses();
+  }, [user]);
+
+  const handleDeleteAnalysis = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) return;
+    try {
+      const [{ db }, firestore] = await Promise.all([
+        import('../lib/firebase'),
+        import('firebase/firestore'),
+      ]);
+      await firestore.deleteDoc(firestore.doc(db, 'users', user.uid, 'analyses', id));
+      setSavedAnalyses(prev => prev.filter(item => item.id !== id));
+    } catch (error) {
+      console.error("Error deleting analysis:", error);
+    }
+  };
+
+  const handleLoadAnalysis = (item: SavedAnalysis) => {
+    setCode(item.code);
+    setAnalyzedCode(item.code);
+    setResult({
+      complexity: item.complexity,
+      complexityClass: item.complexityClass,
+      spaceComplexity: item.spaceComplexity,
+      explanationPoints: item.explanationPoints || [],
+    });
+    setIsSaved(true);
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  };
 
   const handleCopy = async () => {
     try {
@@ -125,6 +198,7 @@ export default function Home() {
         createdAt: firestore.serverTimestamp()
       });
       setIsSaved(true);
+      fetchSavedAnalyses();
     } catch (error) {
       console.error("Error saving analysis:", error);
       alert("Failed to save analysis.");
@@ -354,11 +428,26 @@ export default function Home() {
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="lg:col-span-5 space-y-8"
         >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-primary-container rounded-2xl border-2 border-on-background shadow-neo">
-              <Activity className="text-primary w-8 h-8" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-primary-container rounded-2xl border-2 border-on-background shadow-neo">
+                <Activity className="text-primary w-8 h-8" />
+              </div>
+              <h2 className="font-headline font-black text-3xl tracking-tighter uppercase italic">The Lab</h2>
             </div>
-            <h2 className="font-headline font-black text-3xl tracking-tighter uppercase italic">The Lab</h2>
+            {user && (
+              <button
+                onClick={() => {
+                  const historyEl = document.getElementById('history-section');
+                  historyEl?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-on-background rounded-full font-headline font-black text-xs shadow-neo hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer"
+                title="View your saved analyses"
+              >
+                <History className="w-4 h-4 text-primary" />
+                <span>History ({savedAnalyses.length})</span>
+              </button>
+            )}
           </div>
 
           <div className="relative group px-1 sm:px-0">
@@ -449,92 +538,108 @@ export default function Home() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] rounded-full pointer-events-none group-hover:bg-primary/10 transition-colors"></div>
             
             <AnimatePresence mode="wait">
-              {!result && !isAnalyzing ? (
-                <motion.div 
-                  key="empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex-grow flex flex-col items-center justify-center text-on-surface-variant font-headline text-lg italic gap-4"
-                >
-                  <div className="p-4 bg-surface-container rounded-3xl opacity-20">
-                    <Sparkles className="w-12 h-12" />
-                  </div>
-                  <span className="opacity-40">"Your code is a blank page. Let's write the story."</span>
-                </motion.div>
-              ) : isAnalyzing ? (
+              {isAnalyzing ? (
                 <motion.div 
                   key="analyzing"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex-grow flex flex-col items-center justify-center gap-6"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="flex-1 flex flex-col items-center justify-center gap-6 py-12 text-center"
                 >
                   <div className="relative">
-                    <div className="w-20 h-20 border-4 border-primary/20 rounded-full"></div>
-                    <div className="absolute top-0 left-0 w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                    <Activity className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary w-8 h-8 animate-pulse" />
+                    <div className="w-20 h-20 bg-primary/20 rounded-full animate-ping absolute inset-0"></div>
+                    <div className="w-20 h-20 bg-primary-container border-2 border-on-background rounded-full flex items-center justify-center relative shadow-neo">
+                      <Cpu className="w-10 h-10 text-primary animate-pulse" />
+                    </div>
                   </div>
-                  <p className="font-headline font-black text-primary uppercase tracking-tighter animate-pulse text-xl">Consulting the math wizards...</p>
+                  <div className="space-y-2">
+                    <h3 className="font-headline font-black text-2xl uppercase tracking-tighter">Deconstructing Algorithm...</h3>
+                    <p className="font-bold text-on-surface-variant max-w-sm text-sm">Our AI engine is currently mapping your loop invariants and memory footprints.</p>
+                  </div>
                 </motion.div>
               ) : result ? (
                 <motion.div 
                   key="result"
-                  initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex-grow flex flex-col h-full"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-8 flex-1 flex flex-col justify-between relative z-10"
                 >
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                    <div className="flex flex-col">
-                      <span className="font-label text-[10px] font-black text-on-surface-variant uppercase tracking-widest opacity-60">Growth Metric</span>
-                      <span className="font-headline font-black text-xl italic uppercase tracking-tighter">Computational Velocity</span>
-                    </div>
-                    <div className="flex flex-wrap gap-3 items-center">
-                      <div className="px-4 py-2 bg-primary-container border-2 border-on-background rounded-full text-xs font-black font-label shadow-neo">
-                        Time: {result.complexityClass}
+                  <div className="space-y-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-on-background/10 pb-6">
+                      <div>
+                        <span className="font-label text-xs font-black uppercase tracking-widest text-primary">Verdict Reached</span>
+                        <h3 className="font-headline font-black text-3xl sm:text-4xl uppercase tracking-tighter mt-1">{result.complexity}</h3>
                       </div>
-                      <div className="px-4 py-2 bg-secondary-container border-2 border-on-background rounded-full text-xs font-black font-label shadow-neo">
-                        Space: {result.spaceComplexity}
+                      <div className="flex flex-wrap gap-3 items-center">
+                        <div className="px-4 py-2 bg-primary-container border-2 border-on-background rounded-full text-xs font-black font-label shadow-neo">
+                          Time: {result.complexityClass}
+                        </div>
+                        <div className="px-4 py-2 bg-secondary-container border-2 border-on-background rounded-full text-xs font-black font-label shadow-neo">
+                          Space: {result.spaceComplexity}
+                        </div>
+                        <button 
+                          onClick={handleSaveAnalysis}
+                          disabled={isSaving || isSaved}
+                          className="px-4 py-2 bg-white border-2 border-on-background rounded-full text-xs font-black font-label shadow-neo hover:translate-y-0.5 hover:shadow-none transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        >
+                          <Save className="w-3.5 h-3.5" />
+                          {isSaved ? 'Saved!' : isSaving ? 'Saving...' : 'Save Analysis'}
+                        </button>
                       </div>
-                      <button 
-                        onClick={handleSaveAnalysis}
-                        disabled={isSaving || isSaved}
-                        className="flex items-center gap-2 px-6 py-2 bg-tertiary text-white rounded-full font-black text-xs shadow-neo border-2 border-on-background hover:translate-y-0.5 hover:shadow-none transition-all disabled:opacity-50"
-                      >
-                        <Save className="w-4 h-4" />
-                        {isSaving ? 'Saving...' : isSaved ? 'Saved!' : 'Save Analysis'}
-                      </button>
                     </div>
-                  </div>
 
-                  <div className="w-full mb-10">
-                    <LazyComplexityCalculator complexityClass={result.complexityClass} />
-                  </div>
-
-                  <div className="mt-auto flex flex-col sm:flex-row items-center sm:items-start gap-6 pt-8 border-t-2 border-on-background/5">
-                    <div className="w-20 h-20 rounded-3xl border-2 border-on-background bg-secondary-container shadow-neo flex items-center justify-center shrink-0">
-                      <Cpu className="w-10 h-10 text-on-secondary-container" />
+                    <div className="w-full mb-6">
+                      <LazyComplexityCalculator complexityClass={result.complexityClass} />
                     </div>
-                    <div className="p-6 bg-surface-container-low border-2 border-on-background rounded-[2rem] shadow-neo w-full relative">
-                      <div className="absolute -top-3 -left-3 bg-primary text-white p-2 rounded-xl border-2 border-on-background shadow-neo rotate-[-6deg]">
-                        <Lightbulb className="w-4 h-4" />
-                      </div>
-                      <h3 className="font-headline font-black text-2xl text-primary mb-4 italic uppercase tracking-tighter">
-                        {result.complexity}
-                      </h3>
-                      <ul className="font-body text-on-surface leading-relaxed space-y-3 list-none">
-                        {result.explanationPoints?.map((point, index) => (
-                          <li key={index} className="text-sm font-bold flex gap-3 items-start">
-                            <span className="text-primary mt-1 flex-shrink-0">●</span>
-                            {point}
-                          </li>
+
+                    <div className="space-y-4">
+                      <h4 className="font-headline font-black text-lg uppercase tracking-tight flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-tertiary" />
+                        Executive Breakdown
+                      </h4>
+                      <ul className="space-y-3">
+                        {result.explanationPoints?.map((point, idx) => (
+                          <motion.li 
+                            key={idx}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                            className="flex items-start gap-3 bg-surface-container-lowest p-4 rounded-2xl border-2 border-on-background shadow-neo font-bold text-sm leading-relaxed"
+                          >
+                            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-tertiary-container border border-on-background flex items-center justify-center text-xs font-black font-label">
+                              {idx + 1}
+                            </span>
+                            <span>{point}</span>
+                          </motion.li>
                         ))}
                       </ul>
                     </div>
                   </div>
+
+                  <div className="pt-6 border-t-2 border-on-background/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-bold text-on-surface-variant">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                      <span>Deterministic Mathematical Bounds Confirmed</span>
+                    </div>
+                    <span>Ready for another test? Update the editor code.</span>
+                  </div>
                 </motion.div>
-              ) : null}
+              ) : (
+                <motion.div 
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex-1 flex flex-col items-center justify-center gap-4 text-center py-16 text-on-surface-variant"
+                >
+                  <div className="w-16 h-16 rounded-2xl bg-surface-container-highest border-2 border-on-background flex items-center justify-center opacity-40">
+                    <Zap className="w-8 h-8" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-headline font-bold text-lg uppercase">Awaiting Transmission</h3>
+                    <p className="text-sm font-medium max-w-xs opacity-70">Push the analyze button to calculate Big-O time and space complexity with step-by-step proofs.</p>
+                  </div>
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
         </motion.section>
@@ -554,6 +659,122 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* 📜 User Analysis History Section */}
+      <section id="history-section" className="mt-20 mb-16 rounded-[3rem] border-4 border-on-background bg-white px-6 sm:px-10 py-10 sm:py-14 shadow-neo-xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-10 pb-6 border-b-2 border-on-background/10">
+          <div className="flex items-center gap-4">
+            <div className="p-4 bg-tertiary-container rounded-3xl border-2 border-on-background shadow-neo">
+              <History className="w-8 h-8 text-on-tertiary-container" />
+            </div>
+            <div>
+              <h2 className="font-headline text-2xl sm:text-4xl font-black uppercase italic tracking-tighter">
+                Your Saved History
+              </h2>
+              <p className="text-xs sm:text-sm font-bold text-on-surface-variant">
+                {user 
+                  ? `Logged in as ${user.displayName || user.email} • ${savedAnalyses.length} saved analyses`
+                  : 'Log in with Google to view and access your past code analyses.'}
+              </p>
+            </div>
+          </div>
+          {user ? (
+            <button
+              onClick={fetchSavedAnalyses}
+              disabled={isLoadingSaved}
+              className="px-5 py-2.5 bg-surface-container-low border-2 border-on-background rounded-full font-headline font-black text-xs shadow-neo hover:translate-y-0.5 hover:shadow-none transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <Clock className={`w-3.5 h-3.5 ${isLoadingSaved ? 'animate-spin' : ''}`} />
+              <span>Refresh</span>
+            </button>
+          ) : (
+            <button
+              onClick={async () => {
+                const { signInWithGoogle } = await import('../lib/firebase');
+                await signInWithGoogle();
+              }}
+              className="px-6 py-3 bg-primary text-white border-2 border-on-background rounded-full font-headline font-black text-xs shadow-neo hover:translate-y-0.5 hover:shadow-none transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <span>Login with Google to View History</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {user ? (
+          isLoadingSaved ? (
+            <div className="py-16 text-center text-on-surface-variant font-bold flex flex-col items-center gap-3">
+              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+              <span>Loading your saved analyses...</span>
+            </div>
+          ) : savedAnalyses.length === 0 ? (
+            <div className="py-16 text-center text-on-surface-variant/60 font-bold bg-surface-container-lowest border-2 border-dashed border-outline-variant rounded-3xl p-8">
+              <Sparkles className="w-12 h-12 mx-auto mb-3 opacity-30 text-primary" />
+              <h3 className="font-headline font-black text-xl mb-1 uppercase">No Saved Analyses Yet</h3>
+              <p className="text-sm max-w-md mx-auto">
+                Paste any code into The Lab above, click <strong>"Analyze Story"</strong>, and then press <strong>"Save Analysis"</strong> to bookmark it here for later review.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {savedAnalyses.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-surface-container-lowest p-6 rounded-[2rem] border-2 border-on-background shadow-neo hover:shadow-neo-lg transition-all flex flex-col justify-between group"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex flex-wrap gap-2">
+                        <span className="px-3 py-1 bg-primary-container border border-on-background rounded-full font-headline font-black text-[11px] uppercase tracking-tighter">
+                          Time: {item.complexityClass}
+                        </span>
+                        <span className="px-3 py-1 bg-secondary-container border border-on-background rounded-full font-headline font-black text-[11px] uppercase tracking-tighter">
+                          Space: {item.spaceComplexity}
+                        </span>
+                      </div>
+                      <button
+                        onClick={(e) => handleDeleteAnalysis(item.id, e)}
+                        className="text-on-surface-variant hover:text-error p-1.5 rounded-lg transition-colors cursor-pointer"
+                        title="Delete from History"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="bg-[#0f172a] p-3.5 rounded-xl border border-on-background/20 max-h-32 overflow-hidden relative font-mono text-xs text-white/90">
+                      <pre className="m-0 overflow-hidden line-clamp-4">
+                        <code>{item.code}</code>
+                      </pre>
+                    </div>
+
+                    {item.createdAt && (
+                      <p className="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-wider">
+                        Analyzed on {new Date(item.createdAt).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => handleLoadAnalysis(item)}
+                    className="mt-6 w-full py-2.5 bg-white hover:bg-primary-container border-2 border-on-background rounded-xl font-headline font-black text-xs uppercase shadow-neo hover:translate-y-0.5 hover:shadow-none transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span>Load Into Editor</span>
+                    <ArrowUpRight className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )
+        ) : (
+          <div className="py-12 text-center text-on-surface-variant bg-surface-container-lowest border-2 border-dashed border-outline-variant rounded-3xl p-8 space-y-4">
+            <Cpu className="w-12 h-12 mx-auto text-primary opacity-40" />
+            <h3 className="font-headline font-black text-2xl uppercase">History Sync Requires Login</h3>
+            <p className="text-sm max-w-md mx-auto font-bold opacity-80">
+              Sign in with your Google account so your time & space complexity analyses are securely stored and synced across all your sessions.
+            </p>
+          </div>
+        )}
+      </section>
 
       <section className="mt-24 mb-20 rounded-[3rem] border-2 border-on-background bg-white px-8 py-14 shadow-neo-xl">
         <div className="mb-10 max-w-3xl">

@@ -29,3 +29,14 @@ export interface Tutorial {
   bgClass: string;
   content: React.ReactNode;
 }
+
+export interface SavedAnalysis {
+  id: string;
+  code: string;
+  complexity: string;
+  complexityClass: string;
+  spaceComplexity: string;
+  explanationPoints?: string[];
+  createdAt?: any;
+}
+
