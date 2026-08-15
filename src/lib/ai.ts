@@ -1,5 +1,4 @@
 import { GoogleGenAI, Type } from '@google/genai';
-import { OpenAI } from 'openai';
 import { getEnv } from '../utils/env';
 import { AnalysisResult, StepByStepAnalysis } from '../types';
 
@@ -323,123 +322,140 @@ class GeminiProvider implements AIProvider {
 }
 
 /**
- * ⚡ Groq Provider Implementation (GPT OSS 120B)
+ * ⚡ Groq Provider Implementation (Direct Fetch with Model Fallback)
  */
 class GroqProvider implements AIProvider {
   name = 'Groq';
-  private model = 'openai/gpt-oss-120b';
+  private models = ['openai/gpt-oss-120b', 'llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
 
-  constructor(private client: OpenAI) {}
+  constructor(private apiKey: string) {}
+
+  private async callGroq(messages: any[], jsonMode = false): Promise<string> {
+    const cleanKey = this.apiKey.trim().replace(/^["']+|["']+$/g, '');
+    let lastError: any;
+
+    for (const model of this.models) {
+      try {
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${cleanKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model,
+            messages,
+            ...(jsonMode ? { response_format: { type: 'json_object' } } : {}),
+          }),
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          const errMsg = errData?.error?.message || `HTTP ${res.status}`;
+          const err: any = new Error(errMsg);
+          err.status = res.status;
+          throw err;
+        }
+
+        const data = await res.json();
+        const content = data?.choices?.[0]?.message?.content || '';
+        if (content) return content;
+      } catch (err: any) {
+        lastError = err;
+        const msg = (err.message || '').toLowerCase();
+        if (err.status === 404 || msg.includes('model') || msg.includes('not found') || msg.includes('decommissioned')) {
+          continue;
+        }
+        throw err;
+      }
+    }
+
+    throw lastError || new Error('Groq request failed.');
+  }
 
   async analyzeComplexity(code: string): Promise<AnalysisResult> {
-    const response = await this.client.chat.completions.create({
-      model: this.model,
-      messages: [{ 
-        role: 'user', 
-        content: `Analyze the following code and return its time/space complexity in strict JSON format.
+    const firstPrompt = `Analyze the following code and return its time/space complexity in strict JSON format.
         
-        Guidelines:
-        1. Identify all loop constructs (for, while, recursion) and check if they are nested or consecutive/sequential. Sequential loops sum up (O(N) + O(N) = O(N)), whereas nested loops multiply (O(N) * O(N) = O(N^2)).
-        2. Check the loop step updates carefully (e.g., standard incrementing/decrementing vs logarithmic dividing/multiplying).
-        3. Analyze helper function calls and their respective complexities.
-        4. Start by explaining your step-by-step reasoning under the "reasoning" key before arriving at the final complexity scores.
-        
-        JSON Structure: { 
-          "reasoning": string,
-          "complexity": string, 
-          "complexityClass": "O(1)" | "O(log N)" | "O(N)" | "O(N log N)" | "O(N^2)" | "O(2^N)" | "O(N!)" | "Unknown", 
-          "spaceComplexity": string, 
-          "explanationPoints": string[] 
-        }
-        
-        Code:
-        ${code}`
-      }],
-      response_format: { type: 'json_object' }
-    });
-    const firstResult = JSON.parse(response.choices[0].message.content || '{}') as AnalysisResult;
+Guidelines:
+1. Identify all loop constructs (for, while, recursion) and check if they are nested or consecutive/sequential. Sequential loops sum up (O(N) + O(N) = O(N)), whereas nested loops multiply (O(N) * O(N) = O(N^2)).
+2. Check the loop step updates carefully (e.g., standard incrementing/decrementing vs logarithmic dividing/multiplying).
+3. Analyze helper function calls and their respective complexities.
+4. Start by explaining your step-by-step reasoning under the "reasoning" key before arriving at the final complexity scores.
+
+JSON Structure: { 
+  "reasoning": string,
+  "complexity": string, 
+  "complexityClass": "O(1)" | "O(log N)" | "O(N)" | "O(N log N)" | "O(N^2)" | "O(2^N)" | "O(N!)" | "Unknown", 
+  "spaceComplexity": string, 
+  "explanationPoints": string[] 
+}
+
+Code:
+${code}`;
+
+    const firstResponse = await this.callGroq([{ role: 'user', content: firstPrompt }], true);
+    const firstResult = JSON.parse(firstResponse || '{}') as AnalysisResult;
 
     // Call 2: Verify and correct any flaws or hallucinations
-    const verifiedResponse = await this.client.chat.completions.create({
-      model: this.model,
-      messages: [{ 
-        role: 'user', 
-        content: `You are an expert algorithm complexity reviewer. Your task is to verify the time and space complexity calculated for the given code.
-        
-        Code under review:
-        ${code}
-        
-        Initial analysis to verify:
-        - Reasoning: ${firstResult.reasoning}
-        - Time Complexity: ${firstResult.complexity}
-        - Time Complexity Class: ${firstResult.complexityClass}
-        - Space Complexity: ${firstResult.spaceComplexity}
-        - Key Explanations: ${(firstResult.explanationPoints || []).join('\n')}
-        
-        Instructions:
-        1. Cross-examine the initial analysis. Check for logical flaws (e.g. confusing sequential loops as nested, ignoring helper function overhead, miscalculating logarithmic step updates, or wrong recursion depth).
-        2. If the initial analysis is correct, output it exactly.
-        3. If you find any error, perform a corrected calculation. Explain the flaw you found under the "reasoning" key, and output the correct complexity values.
-        
-        JSON Structure: { 
-          "reasoning": string,
-          "complexity": string, 
-          "complexityClass": "O(1)" | "O(log N)" | "O(N)" | "O(N log N)" | "O(N^2)" | "O(2^N)" | "O(N!)" | "Unknown", 
-          "spaceComplexity": string, 
-          "explanationPoints": string[] 
-        }
-        
-        Return strict JSON only.`
-      }],
-      response_format: { type: 'json_object' }
-    });
+    const verificationPrompt = `You are an expert algorithm complexity reviewer. Your task is to verify the time and space complexity calculated for the given code.
 
-    return JSON.parse(verifiedResponse.choices[0].message.content || '{}') as AnalysisResult;
+Code under review:
+${code}
+
+Initial analysis to verify:
+- Reasoning: ${firstResult.reasoning}
+- Time Complexity: ${firstResult.complexity}
+- Time Complexity Class: ${firstResult.complexityClass}
+- Space Complexity: ${firstResult.spaceComplexity}
+- Key Explanations: ${(firstResult.explanationPoints || []).join('\n')}
+
+Instructions:
+1. Cross-examine the initial analysis. Check for logical flaws (e.g. confusing sequential loops as nested, ignoring helper function overhead, miscalculating logarithmic step updates, or wrong recursion depth).
+2. If the initial analysis is correct, output it exactly.
+3. If you find any error, perform a corrected calculation. Explain the flaw you found under the "reasoning" key, and output the correct complexity values.
+
+JSON Structure: { 
+  "reasoning": string,
+  "complexity": string, 
+  "complexityClass": "O(1)" | "O(log N)" | "O(N)" | "O(N log N)" | "O(N^2)" | "O(2^N)" | "O(N!)" | "Unknown", 
+  "spaceComplexity": string, 
+  "explanationPoints": string[] 
+}
+
+Return strict JSON only.`;
+
+    const verifiedResponse = await this.callGroq([{ role: 'user', content: verificationPrompt }], true);
+    return JSON.parse(verifiedResponse || '{}') as AnalysisResult;
   }
 
   async analyzeStepByStep(code: string): Promise<StepByStepAnalysis> {
-    const response = await this.client.chat.completions.create({
-      model: this.model,
-      messages: [{ 
-        role: 'user', 
-        content: `Analyze the following code step-by-step and return strict JSON.
-        
-        Break the code down into logical blocks or lines. List the detailed step-by-step blocks under the "steps" key first, and only then summarize the overall complexities at the end.
-        
-        JSON Structure: { 
-          "steps": [{ "codeSnippet": string, "timeComplexity": string, "explanation": string }],
-          "overallTimeComplexity": string, 
-          "overallSpaceComplexity": string
-        }
-        
-        Code:
-        ${code}`
-      }],
-      response_format: { type: 'json_object' }
-    });
-    return JSON.parse(response.choices[0].message.content || '{}') as StepByStepAnalysis;
+    const prompt = `Analyze the following code step-by-step and return strict JSON.
+
+Break the code down into logical blocks or lines. List the detailed step-by-step blocks under the "steps" key first, and only then summarize the overall complexities at the end.
+
+JSON Structure: { 
+  "steps": [{ "codeSnippet": string, "timeComplexity": string, "explanation": string }],
+  "overallTimeComplexity": string, 
+  "overallSpaceComplexity": string
+}
+
+Code:
+${code}`;
+
+    const response = await this.callGroq([{ role: 'user', content: prompt }], true);
+    return JSON.parse(response || '{}') as StepByStepAnalysis;
   }
 
   async getHint(code: string): Promise<string> {
-    const response = await this.client.chat.completions.create({
-      model: this.model,
-      messages: [{ 
-        role: 'user', 
-        content: `Give a very short, 1-sentence whimsical hint about the time complexity of this code:\n\n${code}`
-      }]
-    });
-    return response.choices[0].message.content || 'Mysterious code detected!';
+    const prompt = `Give a very short, 1-sentence whimsical hint about the time complexity of this code:\n\n${code}`;
+    const response = await this.callGroq([{ role: 'user', content: prompt }], false);
+    return response || 'Mysterious code detected!';
   }
 
   async searchTutorials(query: string): Promise<string> {
-    const response = await this.client.chat.completions.create({
-      model: this.model,
-      messages: [{ 
-        role: 'user', 
-        content: `Provide a short, engaging summary and list 3 key concepts for this topic: ${query}`
-      }]
-    });
-    return response.choices[0].message.content || 'Could not find tutorials.';
+    const prompt = `Provide a short, engaging summary and list 3 key concepts for this topic: ${query}`;
+    const response = await this.callGroq([{ role: 'user', content: prompt }], false);
+    return response || 'Could not find tutorials.';
   }
 }
 
@@ -504,11 +520,17 @@ class AIOrchestrator {
   private refreshKeys() {
     const gKeys = getEnv('VITE_GEMINI_API_KEY');
     if (gKeys) {
-      this.geminiKeys = gKeys.split(',').map(k => k.trim()).filter(Boolean);
+      this.geminiKeys = gKeys
+        .split(',')
+        .map(k => k.trim().replace(/^["']+|["']+$/g, ''))
+        .filter(Boolean);
     }
     const qKeys = getEnv('VITE_GROQ_API_KEY');
     if (qKeys) {
-      this.groqKeys = qKeys.split(',').map(k => k.trim()).filter(Boolean);
+      this.groqKeys = qKeys
+        .split(',')
+        .map(k => k.trim().replace(/^["']+|["']+$/g, ''))
+        .filter(Boolean);
     }
   }
 
@@ -543,7 +565,8 @@ class AIOrchestrator {
         if (this.isCooldown(key)) continue;
 
         try {
-          const ai = new GoogleGenAI({ apiKey: key, apiVersion: 'v1beta' });
+          const cleanKey = key.trim().replace(/^["']+|["']+$/g, '');
+          const ai = new GoogleGenAI({ apiKey: cleanKey, apiVersion: 'v1beta' });
           const provider = new GeminiProvider(ai);
           result = await action(provider);
           this.currentGeminiIndex = (idx + 1) % this.geminiKeys.length;
@@ -567,12 +590,8 @@ class AIOrchestrator {
 
         try {
           console.log(`[AI] Attempting Groq fallback (key ${idx})...`);
-          const client = new OpenAI({ 
-            apiKey: key, 
-            baseURL: 'https://api.groq.com/openai/v1',
-            dangerouslyAllowBrowser: true 
-          });
-          const provider = new GroqProvider(client);
+          const cleanKey = key.trim().replace(/^["']+|["']+$/g, '');
+          const provider = new GroqProvider(cleanKey);
           result = await action(provider);
           this.currentGroqIndex = (idx + 1) % this.groqKeys.length;
           break;
