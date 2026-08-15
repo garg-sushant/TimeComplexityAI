@@ -491,14 +491,7 @@ class AIOrchestrator {
   private localEngine = new OfflineProvider();
 
   constructor() {
-    const gKeys = getEnv('VITE_GEMINI_API_KEY');
-    if (gKeys) {
-      this.geminiKeys = gKeys.split(',').map(k => k.trim()).filter(Boolean);
-    }
-    const qKeys = getEnv('VITE_GROQ_API_KEY');
-    if (qKeys) {
-      this.groqKeys = qKeys.split(',').map(k => k.trim()).filter(Boolean);
-    }
+    this.refreshKeys();
 
     if (typeof window !== 'undefined') {
       console.log(`[AIOrchestrator] 🚀 Initialized with ${this.geminiKeys.length} Gemini keys and ${this.groqKeys.length} Groq keys.`);
@@ -508,7 +501,19 @@ class AIOrchestrator {
     }
   }
 
+  private refreshKeys() {
+    const gKeys = getEnv('VITE_GEMINI_API_KEY');
+    if (gKeys) {
+      this.geminiKeys = gKeys.split(',').map(k => k.trim()).filter(Boolean);
+    }
+    const qKeys = getEnv('VITE_GROQ_API_KEY');
+    if (qKeys) {
+      this.groqKeys = qKeys.split(',').map(k => k.trim()).filter(Boolean);
+    }
+  }
+
   async runAction<T>(type: string, input: string, action: (provider: AIProvider) => Promise<T>): Promise<T> {
+    this.refreshKeys();
     // 1. Try Local Engine first (Rules)
     if (type === 'complexity' || type === 'hint') {
       try {
