@@ -237,9 +237,12 @@ export default function Home() {
       const res = await analyzeCodeComplexity(code);
       setResult(res);
       setAnalyzedCode(code);
-      // Automatically save to local history & cloud sync
-      await saveAnalysisRecord(code, res);
+      setIsAnalyzing(false); // ⚡ Instant UI transition to verdict!
+      
+      // Asynchronously sync to history in background without blocking UI
+      saveAnalysisRecord(code, res).catch((err) => console.warn('Background sync notice:', err));
     } catch (error: any) {
+      setIsAnalyzing(false);
       console.error("Analysis failed:", error);
       const msg = (error?.message || '').toLowerCase();
       const isQuotaLike =
