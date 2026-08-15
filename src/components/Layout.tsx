@@ -33,6 +33,7 @@ export default function Layout() {
             <div className="hidden md:flex items-center gap-4">
               {[
                 { to: '/time-complexity-calculator', label: 'Time Calculator' },
+                { to: '/space-complexity-calculator', label: 'Space Calculator' },
                 { to: '/tutorials', label: 'Tutorials' },
                 { to: '/inside-math', label: 'Math Lab' },
                 { to: '/blog', label: 'Blog' }

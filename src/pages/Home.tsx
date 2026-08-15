@@ -494,6 +494,9 @@ export default function Home() {
                       <div className="px-4 py-2 bg-primary-container border-2 border-on-background rounded-full text-xs font-black font-label shadow-neo">
                         Time: {result.complexityClass}
                       </div>
+                      <div className="px-4 py-2 bg-secondary-container border-2 border-on-background rounded-full text-xs font-black font-label shadow-neo">
+                        Space: {result.spaceComplexity}
+                      </div>
                       <button 
                         onClick={handleSaveAnalysis}
                         disabled={isSaving || isSaved}
