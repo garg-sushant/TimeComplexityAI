@@ -95,6 +95,16 @@ class OfflineProvider implements AIProvider {
     const loopCount = loopIndices.length;
 
     if (loopCount > 0) {
+      // ✅ Bypass local engine if code has indicators of logarithmic updates (like binary search, division/multiplication step modifiers, or bitwise shifts)
+      const hasLogarithmicIndicators = 
+        /\b(mid|low|high|left|right)\b/i.test(cleaned) ||
+        /\/=|\*=|\/\/=|>>=|<<=/.test(cleaned) ||
+        /[\/\*]\s*\d+|>>\s*\d+|<<\s*\d+/.test(cleaned);
+
+      if (hasLogarithmicIndicators) {
+        throw new Error('Logarithmic updates detected. Forwarding to AI model.');
+      }
+
       // Helper function to check if loop at idx2 is nested inside loop at idx1
       const areLoopsNested = (cleanedStr: string, idx1: number, idx2: number): boolean => {
         const nextOpenBrace = cleanedStr.indexOf('{', idx1);
