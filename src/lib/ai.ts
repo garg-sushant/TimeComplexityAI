@@ -3,15 +3,27 @@ import { getEnv } from '../utils/env';
 import { AnalysisResult, StepByStepAnalysis } from '../types';
 
 /**
- * 🧹 Logical Code Normalizer
- * Standardizes code by removing comments and collapsing whitespaces.
- * This ensures that logically identical code snippets resulted in consistent cache hits.
+ * 🧹 Multi-Language Logical Code Normalizer
+ * Standardizes code across major DSA languages (C++, Python, Java, C, JS, TS, Go, Rust, C#, etc.)
+ * by removing single/multi-line comments, docstrings, and collapsing whitespaces.
+ * This ensures that adding comments or formatting changes results in consistent cache hits.
  */
 function normalizeCode(code: string): string {
+  if (!code) return '';
   return code
-    .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '') // Remove all comments
-    .replace(/\s+/g, ' ')                   // Collapse all whitespace to single spaces
-    .trim();                                // Trim edges
+    // 1. Remove multi-line comments & docstrings: /* ... */, """...""", '''...''', =begin...=end, <!--...-->
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/"""[\s\S]*?"""|'''[\s\S]*?'''/g, '')
+    .replace(/^=begin[\s\S]*?^=end/gm, '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+    // 2. Remove single-line comments:
+    // C-style //... (C++, Java, JS, TS, Go, Rust, C#, Kotlin, Swift, etc.)
+    .replace(/\/\/.*/g, '')
+    // Hash-style #... (Python, Ruby, Shell), while preserving C/C++ preprocessor directives (#include, #define, etc.)
+    .replace(/#(?!include|define|pragma|ifdef|ifndef|endif|else|elif|error|warning).*/g, '')
+    // 3. Collapse all whitespaces, tabs, and newlines into single spaces
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /**
@@ -645,25 +657,15 @@ class AIOrchestrator {
 
   async runAction<T>(type: string, input: string, action: (provider: AIProvider) => Promise<T>): Promise<T> {
     this.refreshKeys();
-    // 1. Try Local Engine first (Rules)
-    if (type === 'complexity' || type === 'hint') {
-      try {
-        const localResult = await action(this.localEngine);
-        console.log('[AI] 🏠 Local match found!');
-        return localResult;
-      } catch {
-        // Continue to cache
-      }
-    }
 
-    // 2. Try Cache
+    // 1. Check Persistent Cache (Normalized History Cache) first
     const cached = PersistentCache.get<T>(input, type);
     if (cached) {
       console.log(`[AI] 📦 Cache hit for ${type}!`);
       return cached;
     }
 
-    // 3. Try Gemini pool
+    // 2. Try LLM (Gemini pool)
     let result: T | null = null;
     let lastError: any = null;
     if (this.geminiKeys.length > 0) {

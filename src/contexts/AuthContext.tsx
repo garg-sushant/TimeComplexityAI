@@ -1,12 +1,20 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { User } from 'firebase/auth';
+import { auth, db, signInWithGoogle, logOut } from '../lib/firebase';
 
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
+  signInWithGoogle: () => Promise<any>;
+  logOut: () => Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextType>({ user: null, loading: false });
+export const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: false,
+  signInWithGoogle: async () => {},
+  logOut: async () => {},
+});
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -24,35 +32,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const setupAuth = async () => {
       try {
-        const [{ onAuthStateChanged }, { auth, db }, firestore] = await Promise.all([
+        const [{ onAuthStateChanged, getRedirectResult }, firestore] = await Promise.all([
           import('firebase/auth'),
-          import('../lib/firebase'),
           import('firebase/firestore'),
         ]);
 
-        unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-          setUser(currentUser);
+        if (auth) {
+          getRedirectResult(auth)
+            .then((credential) => {
+              if (credential?.user) {
+                setUser(credential.user);
+              }
+            })
+            .catch((err) => {
+              console.warn('Redirect auth result notice:', err);
+            });
 
-          if (currentUser) {
-            const userRef = firestore.doc(db, 'users', currentUser.uid);
-            const userSnap = await firestore.getDoc(userRef);
+          unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            setUser(currentUser);
+            setLoading(false);
 
-            if (!userSnap.exists()) {
+            if (currentUser && db) {
               try {
-                await firestore.setDoc(userRef, {
-                  displayName: currentUser.displayName,
-                  email: currentUser.email,
-                  photoURL: currentUser.photoURL,
-                  createdAt: firestore.serverTimestamp(),
-                });
+                const userRef = firestore.doc(db, 'users', currentUser.uid);
+                const userSnap = await firestore.getDoc(userRef);
+
+                if (!userSnap.exists()) {
+                  await firestore.setDoc(userRef, {
+                    displayName: currentUser.displayName,
+                    email: currentUser.email,
+                    photoURL: currentUser.photoURL,
+                    createdAt: firestore.serverTimestamp(),
+                  });
+                }
               } catch (error) {
-                console.error('Error creating user document', error);
+                console.warn('Firestore user profile sync notice:', error);
               }
             }
-          }
-
+          });
+        } else {
           setLoading(false);
-        });
+        }
       } catch (error) {
         console.error('Failed to initialize auth context', error);
         setLoading(false);
@@ -65,7 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [isBrowser]);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, signInWithGoogle, logOut }}>
       {children}
     </AuthContext.Provider>
   );

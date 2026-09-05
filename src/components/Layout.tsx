@@ -1,43 +1,59 @@
+import React, { useState, useEffect } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogIn, LogOut, User, Github, Linkedin, Mail, ArrowRight, Zap } from 'lucide-react';
+import { LogIn, LogOut, User, Github, Linkedin, Mail, ArrowRight, Zap, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const NAV_ITEMS = [
+  { to: '/time-complexity-calculator', label: 'Time Calculator' },
+  { to: '/space-complexity-calculator', label: 'Space Calculator' },
+  { to: '/tutorials', label: 'Tutorials' },
+  { to: '/inside-math', label: 'Math Lab' },
+  { to: '/blog', label: 'Blog' }
+];
+
 export default function Layout() {
-  const { user } = useAuth();
+  const { user, signInWithGoogle, logOut } = useAuth();
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const handleSignIn = async () => {
-    const { signInWithGoogle } = await import('../lib/firebase');
-    await signInWithGoogle();
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      console.warn('Sign-in cancelled or failed:', err);
+    }
   };
 
   const handleSignOut = async () => {
-    const { logOut } = await import('../lib/firebase');
-    await logOut();
+    try {
+      await logOut();
+    } catch (err) {
+      console.warn('Sign-out error:', err);
+    }
   };
 
   return (
     <div className="min-h-screen bg-background font-body text-on-background selection:bg-primary selection:text-white flex flex-col">
       {/* 🚀 Floating Glass Header */}
-      <header className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
-        <nav className="glass-header w-full max-w-5xl rounded-[2.5rem] px-6 h-16 flex justify-between items-center shadow-floating">
+      <header className="fixed top-6 left-0 right-0 z-50 flex flex-col items-center px-4">
+        <nav className="glass-header w-full max-w-5xl rounded-[2.5rem] px-5 sm:px-6 h-16 flex justify-between items-center shadow-floating border-2 border-on-background/10">
           <div className="flex items-center gap-6">
             <Link to="/" className="text-lg sm:text-xl font-black text-primary italic font-headline flex items-center gap-2 hover:scale-105 transition-transform active:scale-95">
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white border-2 border-on-background shadow-neo">
                 <Zap className="w-4 h-4 fill-white text-white" />
               </div>
-              <span className="hidden sm:inline">TimeComplexityAI</span>
+              <span className="inline">TimeComplexityAI</span>
             </Link>
             
+            {/* Desktop Navigation Links */}
             <div className="hidden md:flex items-center gap-4">
-              {[
-                { to: '/time-complexity-calculator', label: 'Time Calculator' },
-                { to: '/space-complexity-calculator', label: 'Space Calculator' },
-                { to: '/tutorials', label: 'Tutorials' },
-                { to: '/inside-math', label: 'Math Lab' },
-                { to: '/blog', label: 'Blog' }
-              ].map((item) => (
+              {NAV_ITEMS.map((item) => (
                 <NavLink 
                   key={item.to}
                   to={item.to} 
@@ -56,7 +72,7 @@ export default function Layout() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {user ? (
               <>
                 <div className="hidden sm:flex items-center gap-2 text-on-surface-variant font-headline font-bold text-xs">
@@ -67,20 +83,88 @@ export default function Layout() {
                   )}
                   <span className="max-w-[80px] truncate">{user.displayName}</span>
                 </div>
-                <button onClick={handleSignOut} className="bg-surface-container-high text-on-surface p-2 rounded-full font-headline font-bold text-xs hover:bg-error-container hover:text-error transition-all group">
+                <button onClick={handleSignOut} title="Sign Out" className="bg-surface-container-high text-on-surface p-2 rounded-full font-headline font-bold text-xs hover:bg-error-container hover:text-error transition-all group cursor-pointer">
                   <LogOut className="w-4 h-4 group-hover:scale-110" />
                 </button>
               </>
             ) : (
               <button 
                 onClick={handleSignIn} 
-                className="bg-primary text-white px-5 py-2 rounded-full font-headline font-black text-xs hover:scale-105 active:scale-95 transition-all duration-200 border-2 border-on-primary-container shadow-neo flex items-center gap-2"
+                className="bg-primary text-white px-4 sm:px-5 py-2 rounded-full font-headline font-black text-xs hover:scale-105 active:scale-95 transition-all duration-200 border-2 border-on-primary-container shadow-neo flex items-center gap-1.5 sm:gap-2 cursor-pointer"
               >
                 <LogIn className="w-3.5 h-3.5" /> <span>Login</span>
               </button>
             )}
+
+            {/* 📱 3-Line Mobile Hamburger Menu Toggle Button */}
+            <button
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              aria-label="Toggle navigation menu"
+              className="md:hidden p-2 rounded-full bg-surface-container-high border-2 border-on-background text-on-background hover:bg-primary hover:text-white transition-all duration-200 active:scale-90 cursor-pointer shadow-neo"
+            >
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
           </div>
         </nav>
+
+        {/* 📱 Mobile Dropdown Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -12, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -12, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="md:hidden w-full max-w-5xl mt-3 bg-white/95 backdrop-blur-xl border-4 border-on-background rounded-[2rem] p-4 shadow-neo-xl flex flex-col gap-2 z-50"
+            >
+              {NAV_ITEMS.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === '/'}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center justify-between px-4 py-3 rounded-xl font-headline font-black text-sm tracking-tight transition-all ${
+                      isActive
+                        ? 'bg-primary text-white border-2 border-on-background shadow-neo'
+                        : 'text-on-background hover:bg-surface-container-low border-2 border-transparent'
+                    }`
+                  }
+                >
+                  <span>{item.label}</span>
+                  <ArrowRight className="w-4 h-4 opacity-70" />
+                </NavLink>
+              ))}
+
+              {user && (
+                <div className="pt-2 mt-2 border-t-2 border-outline-variant flex items-center justify-between px-3 py-2">
+                  <div className="flex items-center gap-2.5">
+                    {user.photoURL ? (
+                      <img src={user.photoURL} alt="Profile" className="w-7 h-7 rounded-full border-2 border-primary" referrerPolicy="no-referrer" />
+                    ) : (
+                      <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                        <User className="w-4 h-4" />
+                      </div>
+                    )}
+                    <span className="font-headline font-bold text-xs text-on-surface truncate max-w-[150px]">
+                      {user.displayName || user.email}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleSignOut();
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-error-container text-error rounded-full font-headline font-black text-xs hover:scale-105 active:scale-95 transition-all border border-error/30 cursor-pointer"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       <AnimatePresence mode="wait">

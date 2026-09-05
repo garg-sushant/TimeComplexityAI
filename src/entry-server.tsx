@@ -88,7 +88,7 @@ export async function renderRoute(url: string) {
     const { pipe, abort } = renderToPipeableStream(
       <HelmetProvider context={helmetContext}>
         <ErrorBoundary>
-          <AuthContext.Provider value={{ user: null, loading: false }}>
+          <AuthContext.Provider value={{ user: null, loading: false, signInWithGoogle: async () => {}, logOut: async () => {} }}>
             <MemoryRouter initialEntries={[url]}>
               <Suspense fallback={<LoadingFallback />}>
                 <AppRoutesServer />

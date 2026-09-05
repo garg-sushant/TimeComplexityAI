@@ -19,7 +19,7 @@ const CodeEditor =
   (EditorModule as unknown as { default?: typeof EditorModule }).default ?? EditorModule;
 
 export default function Home() {
-  const { user } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   const { pathname } = useLocation();
   const [code, setCode] = useState(`def bubble_sort(arr):
     n = len(arr)
@@ -761,8 +761,11 @@ export default function Home() {
           ) : (
             <button
               onClick={async () => {
-                const { signInWithGoogle } = await import('../lib/firebase');
-                await signInWithGoogle();
+                try {
+                  await signInWithGoogle();
+                } catch (err) {
+                  console.warn('Sign-in cancelled or failed:', err);
+                }
               }}
               className="px-6 py-3 bg-primary text-white border-2 border-on-background rounded-full font-headline font-black text-xs shadow-neo hover:translate-y-0.5 hover:shadow-none transition-all flex items-center gap-2 cursor-pointer"
             >
