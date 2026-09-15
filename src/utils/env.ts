@@ -1,8 +1,9 @@
 const sanitize = (val: any): string | undefined => {
   if (typeof val === 'string') {
-    return val.trim().replace(/^["']+|["']+$/g, '');
+    const trimmed = val.trim().replace(/^["']+|["']+$/g, '');
+    return trimmed.length > 0 ? trimmed : undefined;
   }
-  return val;
+  return undefined;
 };
 
 /**
@@ -13,18 +14,17 @@ const sanitize = (val: any): string | undefined => {
 export const getEnv = (name: string): string | undefined => {
   // 1. Check Vite's import.meta.env first (for browser/Vite bundled code)
   try {
-    if (typeof import.meta !== 'undefined' && (import.meta as any).env) {
-      // Direct literal access is more reliable for Vite's static replacement
-      if (name === 'VITE_GEMINI_API_KEY') return sanitize((import.meta as any).env.VITE_GEMINI_API_KEY);
-      if (name === 'VITE_GROQ_API_KEY') return sanitize((import.meta as any).env.VITE_GROQ_API_KEY);
-      if (name === 'VITE_FIREBASE_API_KEY') return sanitize((import.meta as any).env.VITE_FIREBASE_API_KEY);
-      if (name === 'VITE_FIREBASE_AUTH_DOMAIN') return sanitize((import.meta as any).env.VITE_FIREBASE_AUTH_DOMAIN);
-      if (name === 'VITE_FIREBASE_PROJECT_ID') return sanitize((import.meta as any).env.VITE_FIREBASE_PROJECT_ID);
-      if (name === 'VITE_FIREBASE_STORAGE_BUCKET') return sanitize((import.meta as any).env.VITE_FIREBASE_STORAGE_BUCKET);
-      if (name === 'VITE_FIREBASE_MESSAGING_SENDER_ID') return sanitize((import.meta as any).env.VITE_FIREBASE_MESSAGING_SENDER_ID);
-      if (name === 'VITE_FIREBASE_APP_ID') return sanitize((import.meta as any).env.VITE_FIREBASE_APP_ID);
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      if (name === 'VITE_GEMINI_API_KEY') return sanitize(import.meta.env.VITE_GEMINI_API_KEY);
+      if (name === 'VITE_GROQ_API_KEY') return sanitize(import.meta.env.VITE_GROQ_API_KEY);
+      if (name === 'VITE_FIREBASE_API_KEY') return sanitize(import.meta.env.VITE_FIREBASE_API_KEY);
+      if (name === 'VITE_FIREBASE_AUTH_DOMAIN') return sanitize(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN);
+      if (name === 'VITE_FIREBASE_PROJECT_ID') return sanitize(import.meta.env.VITE_FIREBASE_PROJECT_ID);
+      if (name === 'VITE_FIREBASE_STORAGE_BUCKET') return sanitize(import.meta.env.VITE_FIREBASE_STORAGE_BUCKET);
+      if (name === 'VITE_FIREBASE_MESSAGING_SENDER_ID') return sanitize(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID);
+      if (name === 'VITE_FIREBASE_APP_ID') return sanitize(import.meta.env.VITE_FIREBASE_APP_ID);
 
-      const value = (import.meta as any).env[name];
+      const value = (import.meta.env as any)[name];
       if (value !== undefined) return sanitize(value);
     }
   } catch (e) {

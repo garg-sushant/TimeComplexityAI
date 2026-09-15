@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import {
   getAuth,
   GoogleAuthProvider,
@@ -9,15 +9,22 @@ import {
 import { getFirestore } from "firebase/firestore";
 import { getEnv } from "../utils/env";
 
-// ✅ SSR-safe env variables
-const firebaseConfig = {
-  apiKey: getEnv('VITE_FIREBASE_API_KEY'),
-  authDomain: getEnv('VITE_FIREBASE_AUTH_DOMAIN'),
-  projectId: getEnv('VITE_FIREBASE_PROJECT_ID'),
-  storageBucket: getEnv('VITE_FIREBASE_STORAGE_BUCKET'),
-  messagingSenderId: getEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
-  appId: getEnv('VITE_FIREBASE_APP_ID'),
+// ✅ Helper to check if a string is a real configured value and not a placeholder
+const isRealValue = (val?: string) => Boolean(val && val.length > 5 && !val.includes('...'));
+
+// ✅ SSR-safe env variables resolution
+const resolveFirebaseConfig = () => {
+  return {
+    apiKey: getEnv('VITE_FIREBASE_API_KEY') || '',
+    authDomain: getEnv('VITE_FIREBASE_AUTH_DOMAIN') || '',
+    projectId: getEnv('VITE_FIREBASE_PROJECT_ID') || '',
+    storageBucket: getEnv('VITE_FIREBASE_STORAGE_BUCKET') || '',
+    messagingSenderId: getEnv('VITE_FIREBASE_MESSAGING_SENDER_ID') || '',
+    appId: getEnv('VITE_FIREBASE_APP_ID') || '',
+  };
 };
+
+const firebaseConfig = resolveFirebaseConfig();
 
 // ✅ SSR-safe initialization: Only initialize if this is running in a browser!
 const isBrowser = typeof window !== 'undefined';
@@ -28,9 +35,13 @@ let db: any;
 
 if (isBrowser) {
   try {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
+    if (isRealValue(firebaseConfig.apiKey) && isRealValue(firebaseConfig.projectId)) {
+      app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+    } else {
+      console.warn("[Firebase] Incomplete or placeholder Firebase configuration. Please check your .env file.");
+    }
   } catch (err) {
     console.error("Firebase initialization failed:", err);
   }
@@ -95,7 +106,7 @@ export const signInWithGoogle = async () => {
     } else if (code === 'auth/operation-not-allowed') {
       alert("Google Sign-In is not enabled in your Firebase project.\n\nPlease enable Google in Firebase Console -> Authentication -> Sign-in method.");
     } else if (code === 'auth/invalid-api-key' || code === 'auth/api-key-not-valid') {
-      alert("Invalid Firebase API Key. Please verify VITE_FIREBASE_API_KEY in your .env file.");
+      alert(`Invalid Firebase API Key for domain '${window.location.hostname}'.\n\nPossible causes:\n1. Local .env file has an invalid or placeholder key.\n2. Google Cloud API Key has HTTP Referrer restrictions that only allow your production domain (and block localhost / 127.0.0.1).\n\nTo fix in Google Cloud Console:\nGo to Credentials -> Edit your Firebase API Key -> Under Website Restrictions, add 'http://localhost:*' and 'http://127.0.0.1:*'.`);
     } else if (code === 'auth/invalid-credential' && message.includes('userinfo')) {
       alert("Google Sign-in failed (401 Unauthorized from Google userinfo API).\n\nThis typically means the OAuth Client Secret in Firebase Console is out of sync with Google Cloud Console.\n\nTo fix:\n1. Open Firebase Console -> Authentication -> Sign-in method -> Google.\n2. Expand 'Web SDK configuration'.\n3. Check the Web Client ID and Web Client Secret against Google Cloud Console -> APIs & Services -> Credentials -> OAuth 2.0 Client IDs (Web client).\n4. Ensure Google People API / Identity Toolkit API is enabled in Google Cloud Console.");
     } else {

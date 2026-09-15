@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogIn, LogOut, User, Github, Linkedin, Mail, ArrowRight, Zap, Menu, X } from 'lucide-react';
+import { LogIn, LogOut, User, Github, Linkedin, ArrowRight, Zap, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const NAV_ITEMS = [
@@ -16,6 +16,9 @@ export default function Layout() {
   const { user, signInWithGoogle, logOut } = useAuth();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const [loginBusy, setLoginBusy] = useState(false);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -23,10 +26,22 @@ export default function Layout() {
   }, [location.pathname]);
 
   const handleSignIn = async () => {
+    setLoginError('');
+    setLoginBusy(true);
     try {
       await signInWithGoogle();
+      setLoginOpen(false);
     } catch (err) {
       console.warn('Sign-in cancelled or failed:', err);
+      const error = err as { code?: string; message?: string };
+      if (error.code !== 'auth/popup-closed-by-user') {
+        const message = error.code === 'auth/configuration-not-found'
+          ? 'Firebase Authentication is not configured for this project. Enable Google in Firebase Console, then add this domain under Authorized domains.'
+          : `${error.code || 'Google sign-in error'}: ${error.message || 'Check Firebase Console settings.'}`;
+        setLoginError(message);
+      }
+    } finally {
+      setLoginBusy(false);
     }
   };
 
@@ -89,7 +104,10 @@ export default function Layout() {
               </>
             ) : (
               <button 
-                onClick={handleSignIn} 
+                onClick={() => {
+                  setLoginError('');
+                  setLoginOpen(true);
+                }} 
                 className="bg-primary text-white px-4 sm:px-5 py-2 rounded-full font-headline font-black text-xs hover:scale-105 active:scale-95 transition-all duration-200 border-2 border-on-primary-container shadow-neo flex items-center gap-1.5 sm:gap-2 cursor-pointer"
               >
                 <LogIn className="w-3.5 h-3.5" /> <span>Login</span>
@@ -166,6 +184,49 @@ export default function Layout() {
           )}
         </AnimatePresence>
       </header>
+
+      <AnimatePresence>
+        {loginOpen && (
+          <motion.div
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-on-background/40 px-4 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setLoginOpen(false)}
+          >
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="login-title"
+              className="w-full max-w-md rounded-3xl border-2 border-on-background bg-white p-6 shadow-neo-xl"
+              initial={{ opacity: 0, y: 16, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.96 }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="mb-6 flex items-start justify-between gap-4">
+                <div>
+                  <h2 id="login-title" className="font-headline text-2xl font-black text-on-background">
+                    Continue with Google
+                  </h2>
+                  <p className="mt-1 text-sm text-on-surface-variant">
+                    Sign in to access your saved analyses.
+                  </p>
+                </div>
+                <button type="button" onClick={() => setLoginOpen(false)} aria-label="Close login" className="rounded-full p-2 text-on-surface-variant hover:bg-surface-container-high">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {loginError && <p role="alert" className="mb-4 rounded-xl bg-error-container px-3 py-2 text-sm font-semibold text-error">{loginError}</p>}
+
+              <button type="button" disabled={loginBusy} onClick={handleSignIn} className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-on-background px-4 py-3 font-headline text-sm font-black text-on-background hover:bg-surface-container-low disabled:cursor-wait disabled:opacity-60">
+                <LogIn className="h-4 w-4" /> Continue with Google
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence mode="wait">
         <motion.main 
