@@ -39,19 +39,19 @@ flowchart TD
         FirestoreDB[("Cloud Firestore (User Profiles & History)")]
     end
 
-    UI -->|1. Submit Code| LocalCache
-    LocalCache -->|Cache Hit| UI
-    LocalCache -->|Cache Miss| Heuristic
-    Heuristic -->|Simple Pattern O(1), O(N)| UI
-    Heuristic -->|Complex Analysis Required| Rotator
+    UI -->|"1. Submit Code"| LocalCache
+    LocalCache -->|"Cache Hit"| UI
+    LocalCache -->|"Cache Miss"| Heuristic
+    Heuristic -->|"Simple Pattern: O(1), O(N)"| UI
+    Heuristic -->|"Complex Analysis Required"| Rotator
 
-    Rotator -->|Primary Dispatch| GeminiPool
-    GeminiPool -->|Quota Exceeded / Rate Limit| GroqPool
-    GeminiPool -->|Success| UI
-    GroqPool -->|Success| UI
+    Rotator -->|"Primary Dispatch"| GeminiPool
+    GeminiPool -->|"Quota Exceeded / 429 Rate Limit"| GroqPool
+    GeminiPool -->|"Success"| UI
+    GroqPool -->|"Success"| UI
 
-    AuthContext <-->|OAuth 2.0| FirebaseAuth
-    UI <-->|Sync Saved Analyses| FirestoreDB
+    AuthContext <-->|"OAuth 2.0"| FirebaseAuth
+    UI <-->|"Sync Saved Analyses"| FirestoreDB
 ```
 
 ### 2. Multi-Stage AI Fallback & Resilience Pipeline
@@ -59,38 +59,38 @@ flowchart TD
 ```mermaid
 sequenceDiagram
     autonumber
-    actor User
+    actor User as User
     participant App as TimeComplexityAI Web
     participant Local as Offline Heuristic Engine
-    participant Cache as LocalStorage Cache
+    participant Cache as Local Cache
     participant Gemini as Gemini 3.5 Flash Pool
     participant Groq as Groq GPT OSS 120B Pool
 
-    User->>App: Paste Code & Click "Analyze Complexity"
-    App->>Cache: Query SHA-256 Code Hash
+    User->>App: Paste Code & Click Analyze
+    App->>Cache: Check Code Hash
     alt Cache Hit
-        Cache-->>App: Return Cached JSON Analysis (<0.1ms)
+        Cache-->>App: Return Cached JSON Analysis
     else Cache Miss
-        App->>Local: Run AST Loop & Pattern Analysis
-        alt Simple Pattern Detected (O(1), O(N), O(N^2))
+        App->>Local: Run AST Pattern Analysis
+        alt Simple Pattern Detected
             Local-->>App: Return Heuristic Breakdown
         else Non-Trivial Algorithm
-            App->>Gemini: Request Structured Analysis (Key #1)
+            App->>Gemini: Request Analysis (Key 1)
             alt Gemini Success
-                Gemini-->>App: Return Strict JSON (Time, Space, Steps, Chart)
-            else Gemini Rate Limit (429) / Quota Hit
-                App->>Gemini: Rotate to Next Gemini Key in Pool
-                alt Secondary Gemini Key Success
-                    Gemini-->>App: Return Structured Analysis
+                Gemini-->>App: Return Strict JSON Breakdown
+            else Gemini Quota Limit (429)
+                App->>Gemini: Rotate to Next Gemini Key
+                alt Secondary Key Success
+                    Gemini-->>App: Return Strict JSON Breakdown
                 else All Gemini Keys Exhausted
                     App->>Groq: Dispatch to Groq Fallback (GPT OSS 120B)
-                    Groq-->>App: Return Structured Analysis
+                    Groq-->>App: Return Strict JSON Breakdown
                 end
             end
-            App->>Cache: Save Analysis to Cache
+            App->>Cache: Persist Analysis to Cache
         end
     end
-    App-->>User: Render Interactive Visualizer, KaTeX Math & Big-O Chart
+    App-->>User: Render Interactive Visualizer & Big-O Chart
 ```
 
 ---
