@@ -14,83 +14,74 @@
 
 ## 🏗️ System Architecture
 
-### 1. High-Level System Workflow
-
 ```mermaid
 flowchart TD
-    subgraph Client ["Client Browser (React 19 + Framer Motion)"]
-        UI["Code Editor & Analysis Workspace"]
-        AuthContext["Auth Context (Google Sign-In)"]
-        LocalCache[("LocalStorage Cache")]
-    end
+    %% ─── CLIENT LAYER ───
+    User(["<b>User Code Submission</b><br/>React 19 & Framer Motion UI"]):::client
+    Normalize["<b>Code Normalizer & Sanitizer</b><br/>Strip docstrings, comments & collapse spaces"]:::client
+    HashCheck{"<b>SHA-256 Code Hash Check</b><br/>Deterministic Cache Lookup"}:::decision
 
-    subgraph Orchestration ["Intelligent AI Orchestration Layer"]
-        Heuristic["Local Offline AST Heuristic Analyzer"]
-        Rotator["Dynamic Multi-Key Provider Rotator"]
-    end
+    %% ─── CACHE LAYER ───
+    LocalCache[("<b>Persistent LocalStorage</b><br/>Zero-latency cached analysis (<0.1ms)")]:::storage
 
-    subgraph Providers ["AI Inference Engine Pools"]
-        GeminiPool["Google Gemini 3.5 Flash Pool (Auto-Rotating Keys)"]
-        GroqPool["Groq High-Speed Inference (GPT OSS 120B)"]
-    end
+    %% ─── ORCHESTRATION LAYER ───
+    Orchestrator["<b>AI Orchestration & Key Manager</b><br/>Cooldown tracker & auto-rotating provider dispatcher"]:::client
 
-    subgraph Cloud ["Cloud Infrastructure & Persistence"]
-        FirebaseAuth["Firebase Authentication (Google OAuth)"]
-        FirestoreDB[("Cloud Firestore (User Profiles & History)")]
-    end
+    %% ─── STAGE 1: GEMINI POOL ───
+    GeminiPool["<b>Stage 1: Google Gemini Pool</b><br/>gemini-3.5-flash / gemini-3.7-flash<br/>Elastic API key pool with 60s cooldown"]:::primary
+    GeminiVerify["<b>Gemini 2-Pass Self-Verification</b><br/>Cross-examines reasoning & corrects hallucinations"]:::primary
+    GeminiCheck{"<b>Gemini Response Check</b><br/>HTTP 200 vs 429 Quota Exceeded"}:::decision
 
-    UI -->|"1. Submit Code"| LocalCache
-    LocalCache -->|"Cache Hit"| UI
-    LocalCache -->|"Cache Miss"| Heuristic
-    Heuristic -->|"Simple Pattern: O(1), O(N)"| UI
-    Heuristic -->|"Complex Analysis Required"| Rotator
+    %% ─── STAGE 2: GROQ POOL ───
+    GroqPool["<b>Stage 2: Groq High-Speed Pool</b><br/>openai/gpt-oss-120b & llama-3.3-70b<br/>Ultra-fast multi-model fallback"]:::fallback
+    GroqVerify["<b>Groq 2-Pass Schema Verification</b><br/>Validates strict JSON mathematical schema"]:::fallback
+    GroqCheck{"<b>Groq Status Check</b><br/>Valid Response vs Pool Exhausted"}:::decision
 
-    Rotator -->|"Primary Dispatch"| GeminiPool
-    GeminiPool -->|"Quota Exceeded / 429 Rate Limit"| GroqPool
-    GeminiPool -->|"Success"| UI
-    GroqPool -->|"Success"| UI
+    %% ─── STAGE 3: OFFLINE HEURISTIC ───
+    OfflineEngine["<b>Stage 3: Offline Heuristic Engine</b><br/>AST Loop & Recursion Pattern Analyzer<br/>O(1), O(N), O(N log N), O(N^2), O(2^N)"]:::heuristic
 
-    AuthContext <-->|"OAuth 2.0"| FirebaseAuth
-    UI <-->|"Sync Saved Analyses"| FirestoreDB
-```
+    %% ─── PERSISTENCE & AUTH ───
+    FirebaseAuth["<b>Firebase Authentication</b><br/>Google OAuth 2.0 with popup/redirect fallback"]:::auth
+    FirestoreDB[("<b>Cloud Firestore Database</b><br/>users/{uid}/analyses history sync")]:::storage
 
-### 2. Multi-Stage AI Fallback & Resilience Pipeline
+    %% ─── OUTPUT LAYER ───
+    OutputNode["<b>Interactive Analysis Workspace</b><br/>KaTeX Math, Recharts Complexity Curve & Line Tracing"]:::output
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User as User
-    participant App as TimeComplexityAI Web
-    participant Local as Offline Heuristic Engine
-    participant Cache as Local Cache
-    participant Gemini as Gemini 3.5 Flash Pool
-    participant Groq as Groq GPT OSS 120B Pool
+    %% ─── FLOW CONNECTIONS ───
+    User --> Normalize
+    Normalize --> HashCheck
 
-    User->>App: Paste Code & Click Analyze
-    App->>Cache: Check Code Hash
-    alt Cache Hit
-        Cache-->>App: Return Cached JSON Analysis
-    else Cache Miss
-        App->>Local: Run AST Pattern Analysis
-        alt Simple Pattern Detected
-            Local-->>App: Return Heuristic Breakdown
-        else Non-Trivial Algorithm
-            App->>Gemini: Request Analysis (Key 1)
-            alt Gemini Success
-                Gemini-->>App: Return Strict JSON Breakdown
-            else Gemini Quota Limit (429)
-                App->>Gemini: Rotate to Next Gemini Key
-                alt Secondary Key Success
-                    Gemini-->>App: Return Strict JSON Breakdown
-                else All Gemini Keys Exhausted
-                    App->>Groq: Dispatch to Groq Fallback (GPT OSS 120B)
-                    Groq-->>App: Return Strict JSON Breakdown
-                end
-            end
-            App->>Cache: Persist Analysis to Cache
-        end
-    end
-    App-->>User: Render Interactive Visualizer & Big-O Chart
+    HashCheck -->|"Cache Hit (0ms)"| OutputNode
+    HashCheck -->|"Cache Miss"| Orchestrator
+
+    Orchestrator -->|"Primary Dispatch"| GeminiPool
+    GeminiPool --> GeminiVerify
+    GeminiVerify --> GeminiCheck
+
+    GeminiCheck -->|"Success (HTTP 200)"| OutputNode
+    GeminiCheck -->|"429 Rate Limit / Quota Exceeded"| GroqPool
+
+    GroqPool --> GroqVerify
+    GroqVerify --> GroqCheck
+
+    GroqCheck -->|"Success (HTTP 200)"| OutputNode
+    GroqCheck -->|"All AI Keys Exhausted"| OfflineEngine
+
+    OfflineEngine -->|"Deterministic AST Breakdown"| OutputNode
+
+    OutputNode -.->|"Persist Result"| LocalCache
+    FirebaseAuth <==>|"User Session"| OutputNode
+    OutputNode -.->|"Cloud Sync"| FirestoreDB
+
+    %% ─── STYLING / THEMES ───
+    classDef client fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef decision fill:#1c1917,stroke:#f59e0b,stroke-width:2px,color:#fef3c7;
+    classDef primary fill:#0b213f,stroke:#3b82f6,stroke-width:2px,color:#eff6ff;
+    classDef fallback fill:#240c3c,stroke:#a855f7,stroke-width:2px,color:#faf5ff;
+    classDef heuristic fill:#042f2e,stroke:#10b981,stroke-width:2px,color:#ecfdf5;
+    classDef storage fill:#082f49,stroke:#06b6d4,stroke-width:2px,color:#f0fdfa;
+    classDef auth fill:#3b0718,stroke:#f43f5e,stroke-width:2px,color:#fff1f2;
+    classDef output fill:#14532d,stroke:#22c55e,stroke-width:2px,color:#f0fdf4;
 ```
 
 ---
